@@ -1,2 +1,3 @@
 ssh/*
 !.keep
+id_rsa.pub
