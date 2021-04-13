@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  bot:
+    build: .
+    environment:
+        DOKKU_HOST: "localhost"
+        DOKKU_USER: "dokku"
+        DOKKU_SSH_PORT: 3022
+        DOKKU_HTTP_PORT: 3080
+        DOKKU_HTTPS_PORT: 3443
+    ports:
+      - "5000:5000"
+    volumes:
+        - type: bind
+          source: .
+          target: /code
+        - type: bind
+          source: /var/lib/dokku
+          target: /dokku
+    command: bash ./run_dev.sh
+  dokku:
+    image: "dokku/dokku:latest"
+    depends_on:
+        - bot
+    ports:
+        - "3022:22"
+        - "3080:80"
+        - "3443:443"
+    volumes:
+        - "/var/lib/dokku:/mnt/dokku"
+        - "/var/run/docker.sock:/var/run/docker.sock"
