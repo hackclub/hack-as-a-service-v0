@@ -3,52 +3,55 @@ package dokku
 import (
 	"golang.org/x/crypto/ssh"
 	"os"
-	"fmt"
 	"io/ioutil"
 )
 
-func PublicKeyFile(file string) ssh.AuthMethod {
+func PublicKeyFile(file string) (ssh.AuthMethod, error) {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	key, err := ssh.ParsePrivateKey(buffer)
 	if err != nil {
-		fmt.Printf("%s", err)
-		return nil
+		return nil, err
 	}
-	return ssh.PublicKeys(key)
+	return ssh.PublicKeys(key), err
 }
 
-func RunCommand(cmd string) string {
-
+func RunCommand(cmd string) (string, error) {
+	key, err := PublicKeyFile(os.Getenv("HOME")+"/.ssh/id_rsa")
+	if err != nil {
+		return "", err
+	}
+	
 	sshConfig := &ssh.ClientConfig {
 		User: os.Getenv("DOKKU_USER"),
 		// we should really change this in the future
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Auth: []ssh.AuthMethod{
-			PublicKeyFile(os.Getenv("HOME")+"/.ssh/id_rsa"),
+			key,
 		},
 	}
 
-	 host := os.Getenv("DOKKU_HOST") + ":" + os.Getenv("DOKKU_SSH_PORT")
+	host := os.Getenv("DOKKU_HOST") + ":" + os.Getenv("DOKKU_SSH_PORT")
 
 	connection, err := ssh.Dial("tcp", host, sshConfig)
 	if err != nil {
-		fmt.Printf("Failed to dial: %s", err)
-		return ""
+		return "", err
 	}
 
 	session, err := connection.NewSession()
 	if err != nil {
-		fmt.Printf("Failed to create session: %s", err)
-		return ""
+		return "", err
 	}
 
 	output, err := session.CombinedOutput(cmd)
+	if err != nil {
+		return string(output), err
+	}
 	
-	return string(output)
+	return string(output), nil
 
 		
 }

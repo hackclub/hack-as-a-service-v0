@@ -2,8 +2,11 @@ package main
 
 import (
 	"github.com/hackclub/hack-as-a-service/dokku"
+	"fmt"
 )
 
 func main() {
-	dokku.RunCommand("help")
+	output, err := dokku.RunCommand("help")
+	fmt.Printf(output)
+	fmt.Printf("%s", err)
 }
