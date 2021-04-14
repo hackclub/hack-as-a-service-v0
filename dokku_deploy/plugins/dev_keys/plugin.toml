@@ -1,0 +1,5 @@
+[plugin]
+description = "Sets up SSH keys for development"
+version = "0.1.0"
+
+[plugin.config]
