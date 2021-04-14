@@ -1,1 +1,2 @@
 acl: https://github.com/dokku-community/dokku-acl
+setup_ssh: file:///mnt/dokku/plugins/dev_keys
