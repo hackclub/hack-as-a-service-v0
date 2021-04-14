@@ -3,11 +3,11 @@ services:
   bot:
     build: .
     environment:
-        DOKKU_HOST: "localhost"
+        DOKKU_HOST: "dokku"
         DOKKU_USER: "dokku"
-        DOKKU_SSH_PORT: 3022
-        DOKKU_HTTP_PORT: 3080
-        DOKKU_HTTPS_PORT: 3443
+        DOKKU_SSH_PORT: 22
+        DOKKU_HTTP_PORT: 80
+        DOKKU_HTTPS_PORT: 443
     ports:
       - "5000:5000"
     volumes:
