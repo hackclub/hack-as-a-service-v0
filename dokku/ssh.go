@@ -1,13 +1,14 @@
 package dokku
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 
 	"golang.org/x/crypto/ssh"
 )
 
-func PublicKeyFile(file string) (ssh.AuthMethod, error) {
+func PrivateKeyFile(file string) (ssh.AuthMethod, error) {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -20,10 +21,26 @@ func PublicKeyFile(file string) (ssh.AuthMethod, error) {
 	return ssh.PublicKeys(key), err
 }
 
-func RunCommand(cmd string) (string, error) {
-	key, err := PublicKeyFile(os.Getenv("HOME") + "/.ssh/id_rsa")
+func PrivateKeyFromEnv() (ssh.AuthMethod, error) {
+	keybuf, ok := os.LookupEnv("SSH_PRIVATE_KEY_DOKKU")
+	if !ok {
+		return nil, errors.New("key not found in env")
+	}
+
+	key, err := ssh.ParsePrivateKey([]byte(keybuf))
 	if err != nil {
-		return "", err
+		return nil, err
+	}
+	return ssh.PublicKeys(key), err
+}
+
+func RunCommand(cmd string) (string, error) {
+	key, err := PrivateKeyFile(os.Getenv("HOME") + "/.ssh/id_rsa")
+	if err != nil {
+		key, err = PrivateKeyFromEnv()
+		if err != nil {
+			return "", err
+		}
 	}
 
 	sshConfig := &ssh.ClientConfig{
