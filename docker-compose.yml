@@ -15,7 +15,7 @@ services:
           source: .
           target: /code
         - type: bind
-          source: /var/lib/dokku
+          source: ./dokku_data
           target: /dokku
     command: bash ./run_dev.sh
   dokku:
@@ -27,5 +27,5 @@ services:
         - "3080:80"
         - "3443:443"
     volumes:
-        - "/var/lib/dokku:/mnt/dokku"
+        - "./dokku_data:/mnt/dokku"
         - "/var/run/docker.sock:/var/run/docker.sock"

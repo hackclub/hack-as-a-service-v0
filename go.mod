@@ -18,6 +18,6 @@ require (
 	github.com/spf13/cobra v1.1.3 // indirect
 	go.starlark.net v0.0.0-20210406145628-7a1108eaa012 // indirect
 	golang.org/x/arch v0.0.0-20210405154355-08b684f594a5 // indirect
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
+	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
 	golang.org/x/sys v0.0.0-20210412220455-f1c623a9e750 // indirect
 )

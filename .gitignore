@@ -1,3 +1,4 @@
+dokku_data/*
 ssh/*
 !.keep
 id_rsa.pub

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
-
-dokku ssh-keys:remove admin
-dokku ssh-keys:add admin /mnt/dokku/misc/id_rsa.pub
