@@ -1,9 +1,10 @@
 package dokku
 
 import (
-	"golang.org/x/crypto/ssh"
-	"os"
 	"io/ioutil"
+	"os"
+
+	"golang.org/x/crypto/ssh"
 )
 
 func PublicKeyFile(file string) (ssh.AuthMethod, error) {
@@ -20,12 +21,12 @@ func PublicKeyFile(file string) (ssh.AuthMethod, error) {
 }
 
 func RunCommand(cmd string) (string, error) {
-	key, err := PublicKeyFile(os.Getenv("HOME")+"/.ssh/id_rsa")
+	key, err := PublicKeyFile(os.Getenv("HOME") + "/.ssh/id_rsa")
 	if err != nil {
 		return "", err
 	}
-	
-	sshConfig := &ssh.ClientConfig {
+
+	sshConfig := &ssh.ClientConfig{
 		User: os.Getenv("DOKKU_USER"),
 		// we should really change this in the future
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
@@ -50,8 +51,7 @@ func RunCommand(cmd string) (string, error) {
 	if err != nil {
 		return string(output), err
 	}
-	
+
 	return string(output), nil
 
-		
 }
