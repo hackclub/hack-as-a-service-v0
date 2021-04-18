@@ -9,8 +9,20 @@ import (
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
 
+func get_api_key() string {
+	if key, ok := os.LookupEnv("API_KEY"); ok {
+		return key
+	} else {
+		return "testinghaasapikey"
+	}
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
+	if query.Get("api_key") != get_api_key() {
+		w.WriteHeader(401)
+		return
+	}
 	res, err := dokku.RunCommand(query.Get("command"))
 	if err != nil {
 		fmt.Fprintf(w, "Error! %s", err)
