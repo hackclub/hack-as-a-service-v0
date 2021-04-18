@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
@@ -18,7 +19,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func get_port() string {
+	if port, ok := os.LookupEnv("PORT"); ok {
+		return port
+	} else {
+		return "5000"
+	}
+}
+
 func main() {
 	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	log.Fatal(http.ListenAndServe(":"+get_port(), nil))
 }
