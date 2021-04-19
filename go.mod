@@ -15,7 +15,9 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sfreiberg/simplessh v0.0.0-20180301191542-495cbb862a9c // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750 // indirect
 	github.com/spf13/cobra v1.1.3 // indirect
+	go.lsp.dev/jsonrpc2 v0.9.0
 	go.starlark.net v0.0.0-20210406145628-7a1108eaa012 // indirect
 	golang.org/x/arch v0.0.0-20210405154355-08b684f594a5 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2

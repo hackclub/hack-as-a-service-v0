@@ -1,0 +1,14 @@
+[Unit]
+Description=Dokku daemon service (Go)
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=dokku
+ExecStart=/opt/dokkud/dokkud
+
+[Install]
+WantedBy=multi-user.target
