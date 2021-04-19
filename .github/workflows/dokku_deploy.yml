@@ -14,5 +14,5 @@ jobs:
       - uses: dokku/github-action@v1.0.2
         with:
           git_push_flags: "--force"
-          git_remote_url: "ssh://dokku@haas.hackclub.com/haas"
+          git_remote_url: "ssh://dokku@45.55.45.5/haas"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
