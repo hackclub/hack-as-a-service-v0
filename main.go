@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
@@ -17,13 +19,19 @@ func get_api_key() string {
 	}
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	conn dokku.DokkuConn
+}
+
+func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("api_key") != get_api_key() {
 		w.WriteHeader(401)
 		return
 	}
-	res, err := dokku.RunCommand(query.Get("command"))
+	split := strings.Split(query.Get("command"), " ")
+	first, last := split[0], split[1:]
+	res, err := handler.conn.RunCommand(r.Context(), first, last)
 	if err != nil {
 		fmt.Fprintf(w, "Error! %s", err)
 	} else {
@@ -40,6 +48,11 @@ func get_port() string {
 }
 
 func main() {
-	http.HandleFunc("/", handler)
+	conn, err := dokku.DokkuConnect(context.Background())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	hand := Handler{conn}
+	http.Handle("/", &hand)
 	log.Fatal(http.ListenAndServe(":"+get_port(), nil))
 }

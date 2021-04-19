@@ -11,19 +11,9 @@ import (
 	"strings"
 
 	"go.lsp.dev/jsonrpc2"
+
+	"github.com/hackclub/hack-as-a-service/dokku"
 )
-
-type Params struct {
-	Command struct {
-		Exe  string
-		Args []string
-	}
-}
-
-type Output struct {
-	Stdout string `json:"stdout"`
-	Stderr string `json:"stderr"`
-}
 
 func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 	// log.Printf("Got connection! Method = %s\n", req.Method())
@@ -32,7 +22,7 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 		return errors.New("unsupported method")
 	}
 
-	var params Params
+	var params dokku.CommandParams
 	err := json.Unmarshal(req.Params(), &params)
 	if err != nil {
 		return err
@@ -68,7 +58,7 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 		return err
 	}
 
-	output := Output{
+	output := dokku.CommandOutput{
 		Stdout: string(stdout),
 		Stderr: string(stderr),
 	}
