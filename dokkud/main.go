@@ -16,27 +16,29 @@ import (
 
 func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 	if req.Method() != "command" {
-		return errors.New("unsupported method")
+		reply(ctx, nil, errors.New("unsupported method"))
+		return nil
 	}
 
 	var params dokku.CommandParams
 	err := json.Unmarshal(req.Params(), &params)
 	if err != nil {
-		return err
+		reply(ctx, nil, err)
+		return nil
 	}
 
 	log.Printf("Request to execute command %s %s", params.Command.Exe, strings.Join(params.Command.Args, " "))
 
 	cmd := exec.Command(params.Command.Exe, params.Command.Args...)
 
-	stderr := []byte{}
 	stdout, err := cmd.Output()
 
 	if err != nil {
 		switch v := err.(type) {
 		case *exec.ExitError:
 			log.Printf("Error while running command: %s", v.Stderr)
-			stderr = v.Stderr
+			reply(ctx, nil, errors.New(string(v.Stderr)))
+			return nil
 		default:
 			log.Println(err.Error())
 			reply(ctx, dokku.CommandOutput{Stdout: "", Stderr: ""}, nil)
@@ -44,14 +46,11 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 		}
 	}
 
-	output := dokku.CommandOutput{
-		Stdout: string(stdout),
-		Stderr: string(stderr),
-	}
+	output := string(stdout)
 
 	err = reply(ctx, output, nil)
 	if err != nil {
-		return err
+		reply(ctx, nil, err)
 	}
 	return nil
 }
