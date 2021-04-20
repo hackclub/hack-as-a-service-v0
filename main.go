@@ -25,7 +25,20 @@ type Handler struct {
 
 func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
-	if query.Get("api_key") != get_api_key() {
+	api_key := ""
+	api_key2, ok := query["api_key"]
+	if !ok {
+		// Get from auth header if possible
+		if auth_header, ok := r.Header["Authorization"]; ok {
+			auth_header2 := auth_header[0]
+			if strings.HasPrefix(auth_header2, "Bearer ") {
+				api_key = strings.TrimPrefix(auth_header2, "Bearer ")
+			}
+		}
+	} else {
+		api_key = api_key2[0]
+	}
+	if api_key != get_api_key() {
 		w.WriteHeader(401)
 		return
 	}
