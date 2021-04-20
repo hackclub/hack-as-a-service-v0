@@ -29,9 +29,10 @@ func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(401)
 		return
 	}
-	split := strings.Split(query.Get("command"), " ")
-	first, last := split[0], split[1:]
-	res, err := handler.conn.RunCommand(r.Context(), first, last)
+
+	args := strings.Split(query.Get("command"), " ")
+
+	res, err := handler.conn.RunCommand(r.Context(), args)
 	if err != nil {
 		fmt.Fprintf(w, "Error! %s", err)
 	} else {

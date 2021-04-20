@@ -7,41 +7,17 @@ import (
 	"go.lsp.dev/jsonrpc2"
 )
 
-type CommandParams struct {
-	Command struct {
-		Exe  string
-		Args []string
-	}
-}
-
-type CommandOutput struct {
-	Stdout string
-	Stderr string
-}
-
-type DokkuConn interface {
-	// Run a command
-	RunCommand(ctx context.Context, exe string, args []string) (CommandOutput, error)
-}
-
-type dokkuconn struct {
+type DokkuConn struct {
 	conn jsonrpc2.Conn
 }
 
-func (conn *dokkuconn) RunCommand(ctx context.Context, exe string, args []string) (CommandOutput, error) {
-	p := CommandParams{
-		Command: struct {
-			Exe  string
-			Args []string
-		}{
-			exe, args,
-		},
-	}
-	var res CommandOutput
-	_, err := conn.conn.Call(ctx, "command", p, &res)
+func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, error) {
+	var res string
+	_, err := conn.conn.Call(ctx, "command", args, &res)
 	if err != nil {
-		return CommandOutput{}, err
+		return "", err
 	}
+
 	return res, nil
 }
 
@@ -49,10 +25,10 @@ func (conn *dokkuconn) RunCommand(ctx context.Context, exe string, args []string
 func DokkuConnect(ctx context.Context) (DokkuConn, error) {
 	stream, err := net.Dial("unix", "/var/run/dokku-daemon/dokkud.sock")
 	if err != nil {
-		return nil, err
+		return DokkuConn{}, err
 	}
 	stream2 := jsonrpc2.NewStream(stream)
 	conn := jsonrpc2.NewConn(stream2)
 	conn.Go(ctx, jsonrpc2.MethodNotFoundHandler)
-	return &dokkuconn{conn}, nil
+	return DokkuConn{conn}, nil
 }
