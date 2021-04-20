@@ -7,11 +7,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 
 	"go.lsp.dev/jsonrpc2"
-
-	"github.com/hackclub/hack-as-a-service/dokku"
 )
 
 func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
@@ -20,16 +17,16 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 		return nil
 	}
 
-	var params dokku.CommandParams
-	err := json.Unmarshal(req.Params(), &params)
+	var args []string
+	err := json.Unmarshal(req.Params(), &args)
 	if err != nil {
 		reply(ctx, nil, err)
 		return nil
 	}
 
-	log.Printf("Request to execute command %s %s", params.Command.Exe, strings.Join(params.Command.Args, " "))
+	log.Printf("Request to execute command %s %s", "dokku", args)
 
-	cmd := exec.Command(params.Command.Exe, params.Command.Args...)
+	cmd := exec.Command("dokku", args...)
 
 	stdout, err := cmd.Output()
 
@@ -41,7 +38,7 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 			return nil
 		default:
 			log.Println(err.Error())
-			reply(ctx, dokku.CommandOutput{Stdout: "", Stderr: ""}, nil)
+			reply(ctx, "", nil)
 			return nil
 		}
 	}

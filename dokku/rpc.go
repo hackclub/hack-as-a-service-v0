@@ -7,41 +7,22 @@ import (
 	"go.lsp.dev/jsonrpc2"
 )
 
-type CommandParams struct {
-	Command struct {
-		Exe  string
-		Args []string
-	}
-}
-
-type CommandOutput struct {
-	Stdout string
-	Stderr string
-}
-
 type DokkuConn interface {
 	// Run a command
-	RunCommand(ctx context.Context, exe string, args []string) (CommandOutput, error)
+	RunCommand(ctx context.Context, args []string) (string, error)
 }
 
 type dokkuconn struct {
 	conn jsonrpc2.Conn
 }
 
-func (conn *dokkuconn) RunCommand(ctx context.Context, exe string, args []string) (CommandOutput, error) {
-	p := CommandParams{
-		Command: struct {
-			Exe  string
-			Args []string
-		}{
-			exe, args,
-		},
-	}
-	var res CommandOutput
-	_, err := conn.conn.Call(ctx, "command", p, &res)
+func (conn *dokkuconn) RunCommand(ctx context.Context, args []string) (string, error) {
+	var res string
+	_, err := conn.conn.Call(ctx, "command", args, &res)
 	if err != nil {
-		return CommandOutput{}, err
+		return "", err
 	}
+
 	return res, nil
 }
 
