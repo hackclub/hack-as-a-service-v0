@@ -38,8 +38,9 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 			log.Printf("Error while running command: %s", v.Stderr)
 			stderr = v.Stderr
 		default:
-			log.Printf(err.Error())
-			return err
+			log.Println(err.Error())
+			reply(ctx, dokku.CommandOutput{Stdout: "", Stderr: ""}, nil)
+			return nil
 		}
 	}
 
