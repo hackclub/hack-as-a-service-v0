@@ -47,7 +47,7 @@ func handler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) 
 
 	err = reply(ctx, output, nil)
 	if err != nil {
-		reply(ctx, nil, err)
+		return err
 	}
 	return nil
 }
