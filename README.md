@@ -18,3 +18,4 @@ To open a shell in a container, run `docker exec -it hack-as-a-service_bot_1 bas
 - `dokku/` - package for interacting with Dokku
 - `dokku_data/`, `dokku_deploy/` - data folders used for running Dokku in development (ignore)
 - `dokkud/` - daemon that connects to Dokku. this should remain relatively stagnant
+- `frontend/` - the Next.js frontend for the app
