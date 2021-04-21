@@ -1,4 +1,4 @@
-package dokku
+package db
 
 import (
 	"gorm.io/gorm"

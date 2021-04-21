@@ -1,39 +1,15 @@
-package dokku
+package db
 
 import (
-	"fmt"
-	"os"
 	"strconv"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
 
-var db *gorm.DB
-
-func get_gsn() string {
-	db_password := os.Getenv("POSTGRES_PASSWORD")
-	return fmt.Sprintf("host=db user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_password)
-}
-
-func SetupRoutes(r *gin.RouterGroup) error {
-	_db, err := gorm.Open(postgres.Open(get_gsn()), &gorm.Config{})
-	if err != nil {
-		return err
-	}
-	db = _db
-	err = db.AutoMigrate(&User{})
-	if err != nil {
-		return err
-	}
-
-	r.POST("/users", handlePOSTUser)
-	r.GET("/users/:id", handleGETUser)
-	r.DELETE("/users/:id", handleDELETEUser)
-
-	return nil
+func setupUserRoutes(r *gin.RouterGroup) {
+	r.POST("/", handlePOSTUser)
+	r.GET("/:id", handleGETUser)
+	r.DELETE("/:id", handleDELETEUser)
 }
 
 func handleDELETEUser(c *gin.Context) {

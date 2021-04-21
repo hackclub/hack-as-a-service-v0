@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/hackclub/hack-as-a-service/db"
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
 
@@ -71,7 +72,7 @@ func main() {
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
 	r.GET("/api", HandleApi)
 	rg := r.Group("/api")
-	err = dokku.SetupRoutes(rg)
+	err = db.SetupRoutes(rg)
 	if err != nil {
 		log.Fatalln(err)
 	}
