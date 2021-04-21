@@ -31,8 +31,24 @@ func SetupRoutes(r *gin.RouterGroup) error {
 
 	r.POST("/users", handlePOSTUser)
 	r.GET("/users/:id", handleGETUser)
+	r.DELETE("/users/:id", handleDELETEUser)
 
 	return nil
+}
+
+func handleDELETEUser(c *gin.Context) {
+	id, err := strconv.Atoi(c.Params.ByName("id"))
+	if err != nil {
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID"})
+		return
+	}
+
+	result := db.Delete(&User{}, id)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+	} else {
+		c.JSON(200, gin.H{"status": "ok"})
+	}
 }
 
 func handleGETUser(c *gin.Context) {
