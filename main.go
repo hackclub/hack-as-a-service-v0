@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
@@ -13,7 +15,7 @@ import (
 
 var conn dokku.DokkuConn
 
-func get_api_key() string {
+func getApiKey() string {
 	if key, ok := os.LookupEnv("API_KEY"); ok {
 		return key
 	} else {
@@ -33,7 +35,7 @@ func HandleApi(c *gin.Context) {
 		}
 	}
 
-	if api_key != get_api_key() {
+	if api_key != getApiKey() {
 		c.String(401, "Invalid API key")
 		return
 	}
@@ -48,7 +50,7 @@ func HandleApi(c *gin.Context) {
 	}
 }
 
-func get_port() string {
+func getPort() string {
 	if port, ok := os.LookupEnv("PORT"); ok {
 		return port
 	} else {
@@ -69,5 +71,13 @@ func main() {
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
 	r.GET("/api", HandleApi)
 
-	r.Run("0.0.0.0:" + get_port())
+	r.GET("/oauth/login", func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("https://slack.com/oauth/v2/authorize?user_scope=identity.basic&client_id=%s", os.Getenv("SLACK_CLIENT_ID")))
+	})
+
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./frontend/out/404.html")
+	})
+
+	r.Run("0.0.0.0:" + getPort())
 }

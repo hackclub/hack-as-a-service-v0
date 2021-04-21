@@ -5,3 +5,4 @@ id_rsa.pub
 dokku_prod.key
 dokku_prod.key.pub
 /dokkud/dokkud
+*.env
