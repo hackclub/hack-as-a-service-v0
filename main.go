@@ -70,6 +70,11 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
 	r.GET("/api", HandleApi)
+	rg := r.Group("/api")
+	err = dokku.SetupRoutes(rg)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	r.GET("/oauth/login", func(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("https://slack.com/oauth/v2/authorize?user_scope=identity.basic&client_id=%s", os.Getenv("SLACK_CLIENT_ID")))
