@@ -24,9 +24,15 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	if err != nil {
 		return err
 	}
+	err = db.AutoMigrate(&BillingAccount{})
+	if err != nil {
+		return err
+	}
 
 	users_rg := r.Group("/users")
 	setupUserRoutes(users_rg)
+	billingAccounts_rg := r.Group("/billingAccounts")
+	setupBillingAccountsRoutes(billingAccounts_rg)
 
 	return nil
 }

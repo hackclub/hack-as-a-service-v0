@@ -10,6 +10,8 @@ require (
 	github.com/go-delve/delve v1.6.0 // indirect
 	github.com/go-playground/validator/v10 v10.5.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
+	github.com/jackc/pgx/v4 v4.11.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
@@ -30,7 +32,7 @@ require (
 	go.lsp.dev/pkg v0.0.0-20210323044036-f7deec69b52e // indirect
 	go.starlark.net v0.0.0-20210406145628-7a1108eaa012 // indirect
 	golang.org/x/arch v0.0.0-20210405154355-08b684f594a5 // indirect
-	golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc
+	golang.org/x/crypto v0.0.0-20210421142844-5bf0f12babf7
 	golang.org/x/sys v0.0.0-20210420205809-ac73e9fd8988 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
