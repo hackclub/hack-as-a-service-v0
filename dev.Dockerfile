@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine
+FROM golang:stretch
 
 COPY . /code
 

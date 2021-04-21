@@ -19,9 +19,12 @@ services:
       - type: bind
         source: ./dokku_data
         target: /dokku
+      - "./dokkud_sock:/var/run/dokku-daemon"
     command: bash ./run_dev.sh
   dokku:
-    image: "dokku/dokku:latest"
+    build:
+      context: .
+      dockerfile: dokku.dev.Dockerfile
     depends_on:
       - bot
     ports:
@@ -30,4 +33,5 @@ services:
       - "3443:443"
     volumes:
       - "./dokku_data:/mnt/dokku"
+      - "./dokkud_sock:/var/run/dokku-daemon"
       - "/var/run/docker.sock:/var/run/docker.sock"
