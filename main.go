@@ -2,14 +2,16 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
+
+var conn dokku.DokkuConn
 
 func get_api_key() string {
 	if key, ok := os.LookupEnv("API_KEY"); ok {
@@ -19,37 +21,30 @@ func get_api_key() string {
 	}
 }
 
-type Handler struct {
-	conn dokku.DokkuConn
-}
+func HandleApi(c *gin.Context) {
+	api_key := c.Query("api_key")
 
-func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	api_key := ""
-	api_key2, ok := query["api_key"]
-	if !ok {
+	if api_key == "" {
 		// Get from auth header if possible
-		if auth_header, ok := r.Header["Authorization"]; ok {
-			auth_header2 := auth_header[0]
-			if strings.HasPrefix(auth_header2, "Bearer ") {
-				api_key = strings.TrimPrefix(auth_header2, "Bearer ")
+		if auth_header := c.GetHeader("Authorization"); auth_header != "" {
+			if strings.HasPrefix(auth_header, "Bearer ") {
+				api_key = strings.TrimPrefix(auth_header, "Bearer ")
 			}
 		}
-	} else {
-		api_key = api_key2[0]
 	}
+
 	if api_key != get_api_key() {
-		w.WriteHeader(401)
+		c.String(401, "Invalid API key")
 		return
 	}
 
-	args := strings.Split(query.Get("command"), " ")
+	args := strings.Split(c.Query("command"), " ")
 
-	res, err := handler.conn.RunCommand(r.Context(), args)
+	res, err := conn.RunCommand(context.Background(), args)
 	if err != nil {
-		fmt.Fprintf(w, "Error! %s", err)
+		c.String(500, "Error! %s", err)
 	} else {
-		fmt.Fprintf(w, "Command success:\n%s", res)
+		c.String(200, "Command success:\n%s", res)
 	}
 }
 
@@ -62,11 +57,17 @@ func get_port() string {
 }
 
 func main() {
-	conn, err := dokku.DokkuConnect(context.Background())
+	_conn, err := dokku.DokkuConnect(context.Background())
 	if err != nil {
 		log.Fatalln(err)
 	}
-	hand := Handler{conn}
-	http.Handle("/", &hand)
-	log.Fatal(http.ListenAndServe(":"+get_port(), nil))
+
+	conn = _conn
+
+	r := gin.Default()
+
+	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
+	r.GET("/api", HandleApi)
+
+	r.Run("0.0.0.0:" + get_port())
 }

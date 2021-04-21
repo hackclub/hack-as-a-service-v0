@@ -1,31 +1,33 @@
 version: "3.9"
 services:
   bot:
-    build: .
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     environment:
-        DOKKU_HOST: "dokku"
-        DOKKU_USER: "dokku"
-        DOKKU_SSH_PORT: 22
-        DOKKU_HTTP_PORT: 80
-        DOKKU_HTTPS_PORT: 443
+      DOKKU_HOST: "dokku"
+      DOKKU_USER: "dokku"
+      DOKKU_SSH_PORT: 22
+      DOKKU_HTTP_PORT: 80
+      DOKKU_HTTPS_PORT: 443
     ports:
       - "5000:5000"
     volumes:
-        - type: bind
-          source: .
-          target: /code
-        - type: bind
-          source: ./dokku_data
-          target: /dokku
+      - type: bind
+        source: .
+        target: /code
+      - type: bind
+        source: ./dokku_data
+        target: /dokku
     command: bash ./run_dev.sh
   dokku:
     image: "dokku/dokku:latest"
     depends_on:
-        - bot
+      - bot
     ports:
-        - "3022:22"
-        - "3080:80"
-        - "3443:443"
+      - "3022:22"
+      - "3080:80"
+      - "3443:443"
     volumes:
-        - "./dokku_data:/mnt/dokku"
-        - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./dokku_data:/mnt/dokku"
+      - "/var/run/docker.sock:/var/run/docker.sock"
