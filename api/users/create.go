@@ -3,11 +3,9 @@ package users
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/db"
-	"gorm.io/gorm"
 )
 
 func handlePOSTUser(c *gin.Context) {
-	_db := c.MustGet("db").(*gorm.DB)
 	var json struct {
 		SlackUserID string
 	}
@@ -20,7 +18,7 @@ func handlePOSTUser(c *gin.Context) {
 
 	// create in db
 	user := db.User{SlackUserID: json.SlackUserID}
-	result := _db.Create(&user)
+	result := db.DB.Create(&user)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {

@@ -9,7 +9,6 @@ import (
 )
 
 func handlePUTAppUsers(c *gin.Context) {
-	_db := c.MustGet("db").(*gorm.DB)
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -26,7 +25,7 @@ func handlePUTAppUsers(c *gin.Context) {
 	}
 
 	var app db.App
-	result := _db.First(&app, "id = ?", id)
+	result := db.DB.First(&app, "id = ?", id)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 		return
@@ -36,7 +35,7 @@ func handlePUTAppUsers(c *gin.Context) {
 		app.Users = append(app.Users, db.User{Model: gorm.Model{ID: user}})
 	}
 
-	result = _db.Save(&app)
+	result = db.DB.Save(&app)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {

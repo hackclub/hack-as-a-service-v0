@@ -4,5 +4,7 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	SlackUserID string
+	SlackUserID string `gorm:"unique"`
+	Name        string
+	Avatar      string
 }

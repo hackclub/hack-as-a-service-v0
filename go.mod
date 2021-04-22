@@ -25,6 +25,7 @@ require (
 	github.com/segmentio/encoding v0.2.17 // indirect
 	github.com/sfreiberg/simplessh v0.0.0-20180301191542-495cbb862a9c // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/slack-go/slack v0.9.0 // indirect
 	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750 // indirect
 	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/ugorji/go v1.2.5 // indirect
