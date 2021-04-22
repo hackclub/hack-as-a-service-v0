@@ -16,12 +16,11 @@ import (
 )
 
 func getGsn() string {
-	db_password := os.Getenv("POSTGRES_PASSWORD")
-	db_host := "db"
-	if db_host2, ok := os.LookupEnv("DATABASE_URL"); ok {
-		db_host = db_host2
+	if db_host := os.Getenv("DATABASE_URL"); db_host != "" {
+		return db_host
 	}
-	return fmt.Sprintf("host=%s user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_host, db_password)
+	db_password := os.Getenv("POSTGRES_PASSWORD")
+	return fmt.Sprintf("host=db user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_password)
 }
 
 func SetupRoutes(r *gin.RouterGroup) error {
