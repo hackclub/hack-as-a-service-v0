@@ -15,9 +15,13 @@ import (
 	"gorm.io/gorm"
 )
 
-func get_gsn() string {
+func getGsn() string {
 	db_password := os.Getenv("POSTGRES_PASSWORD")
-	return fmt.Sprintf("host=db user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_password)
+	db_host := "db"
+	if db_host2, ok := os.LookupEnv("DATABASE_URL"); ok {
+		db_host = db_host2
+	}
+	return fmt.Sprintf("host=%s user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_host, db_password)
 }
 
 func SetupRoutes(r *gin.RouterGroup) error {
@@ -31,7 +35,7 @@ func SetupRoutes(r *gin.RouterGroup) error {
 
 	r.GET("/", handleApiCommand)
 
-	_db, err := gorm.Open(postgres.Open(get_gsn()), &gorm.Config{})
+	_db, err := gorm.Open(postgres.Open(getGsn()), &gorm.Config{})
 	if err != nil {
 		return err
 	}
