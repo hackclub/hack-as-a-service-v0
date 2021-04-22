@@ -1,4 +1,4 @@
-package db
+package api
 
 func removeDuplicates(a, b []uint) ([]uint, []uint) {
 	ma := make(map[uint]bool)
