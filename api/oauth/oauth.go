@@ -14,6 +14,15 @@ import (
 	"gorm.io/gorm"
 )
 
+func getRedirectUri() string {
+	redirect_uri := os.Getenv("SLACK_REDIRECT_URI")
+	if redirect_uri == "" {
+		redirect_uri = "https://haas.hackclub.com/oauth/code"
+	}
+
+	return redirect_uri
+}
+
 func generateToken() string {
 	b := make([]byte, 16)
 	rand.Read(b)
@@ -26,7 +35,7 @@ func generateAuthUrl() string {
 		Host:   "slack.com",
 		Path:   "/oauth/v2/authorize",
 		RawQuery: url.Values{
-			"redirect_uri": {"http://localhost:5000/oauth/code"},
+			"redirect_uri": {getRedirectUri()},
 			"user_scope":   {"identity.basic"},
 			"client_id":    {os.Getenv("SLACK_CLIENT_ID")},
 		}.Encode(),
@@ -45,7 +54,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	r.GET("/oauth/code", func(c *gin.Context) {
 		code := c.Query("code")
-		resp, err := slack.GetOAuthV2Response(http.DefaultClient, os.Getenv("SLACK_CLIENT_ID"), os.Getenv("SLACK_CLIENT_SECRET"), code, "http://localhost:5000/oauth/code")
+		resp, err := slack.GetOAuthV2Response(http.DefaultClient, os.Getenv("SLACK_CLIENT_ID"), os.Getenv("SLACK_CLIENT_SECRET"), code, getRedirectUri())
 		if err != nil {
 			c.String(500, err.Error())
 			return
