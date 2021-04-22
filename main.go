@@ -50,9 +50,9 @@ func HandleApi(c *gin.Context) {
 
 	res, err := conn.RunCommand(context.Background(), args)
 	if err != nil {
-		c.String(500, "Error! %s", err)
+		c.JSON(500, gin.H{"status": "error", "error": err})
 	} else {
-		c.String(200, "Command success:\n%s", res)
+		c.JSON(200, gin.H{"status": "ok", "output": res})
 	}
 }
 
