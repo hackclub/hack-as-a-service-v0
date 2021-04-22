@@ -10,6 +10,7 @@ func setupUserRoutes(r *gin.RouterGroup) {
 	r.POST("/", handlePOSTUser)
 	r.GET("/:id", handleGETUser)
 	r.DELETE("/:id", handleDELETEUser)
+	r.GET("/:id/apps", handleGETUserApps)
 }
 
 func handleDELETEUser(c *gin.Context) {
@@ -61,5 +62,21 @@ func handlePOSTUser(c *gin.Context) {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
 		c.JSON(200, gin.H{"status": "ok", "userID": user.ID})
+	}
+}
+
+func handleGETUserApps(c *gin.Context) {
+	id, err := strconv.Atoi(c.Params.ByName("id"))
+	if err != nil {
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID"})
+		return
+	}
+
+	var apps []App
+	result := db.Raw("SELECT apps.* FROM apps INNER JOIN user_apps ON user_apps.app_id = apps.id WHERE user_apps.user_id = ?", uint(id)).Scan(&apps)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+	} else {
+		c.JSON(200, gin.H{"status": "ok", "apps": apps})
 	}
 }

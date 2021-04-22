@@ -16,8 +16,9 @@ type BillingAccount struct {
 
 type App struct {
 	gorm.Model
-	name           string
-	billingAccount BillingAccount
-	users          []User
+	Name             string
+	BillingAccountID int
+	BillingAccount   BillingAccount
+	Users            []User `gorm:"many2many:user_apps;"`
 	// TODO: add more fields
 }

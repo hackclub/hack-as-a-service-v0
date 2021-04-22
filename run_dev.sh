@@ -9,6 +9,7 @@ mkdir -p /dokku/home/dokku/.ssh
 cat ~/.ssh/id_rsa.pub >> /dokku/home/dokku/.ssh/authorized_keys
 # dokku:dokku
 chown -R 200:200 /dokku
+rm -f /var/run/dokku-daemon/dokkud.sock
 while [ ! -S /var/run/dokku-daemon/dokkud.sock ]; do
     sleep 1
 done
