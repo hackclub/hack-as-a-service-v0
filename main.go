@@ -24,23 +24,28 @@ func getApiKey() string {
 	}
 }
 
-func HandleApi(c *gin.Context) {
-	api_key := c.Query("api_key")
+func RequireBearerAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		api_key := c.Query("api_key")
 
-	if api_key == "" {
-		// Get from auth header if possible
-		if auth_header := c.GetHeader("Authorization"); auth_header != "" {
-			if strings.HasPrefix(auth_header, "Bearer ") {
-				api_key = strings.TrimPrefix(auth_header, "Bearer ")
+		if api_key == "" {
+			// Get from auth header if possible
+			if auth_header := c.GetHeader("Authorization"); auth_header != "" {
+				if strings.HasPrefix(auth_header, "Bearer ") {
+					api_key = strings.TrimPrefix(auth_header, "Bearer ")
+				}
 			}
 		}
-	}
 
-	if api_key != getApiKey() {
-		c.String(401, "Invalid API key")
-		return
+		if api_key != getApiKey() {
+			c.AbortWithStatusJSON(401, gin.H{"status": "error", "message": "Invalid API key"})
+		} else {
+			c.Next()
+		}
 	}
+}
 
+func HandleApi(c *gin.Context) {
 	args := strings.Split(c.Query("command"), " ")
 
 	res, err := conn.RunCommand(context.Background(), args)
@@ -70,8 +75,8 @@ func main() {
 	r := gin.Default()
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
-	r.GET("/api", HandleApi)
-	rg := r.Group("/api")
+	rg := r.Group("/api", RequireBearerAuth())
+	rg.GET("/", HandleApi)
 	err = db.SetupRoutes(rg)
 	if err != nil {
 		log.Fatalln(err)
