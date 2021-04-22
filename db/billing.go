@@ -17,7 +17,7 @@ func handlePOSTBillingAccount(c *gin.Context) {
 		HNUserID string
 	}
 
-	err := c.Bind(&json)
+	err := c.BindJSON(&json)
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid JSON"})
 		return
@@ -36,7 +36,7 @@ func handlePOSTBillingAccount(c *gin.Context) {
 func handleGETBillingAccount(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID"})
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid billing account ID"})
 		return
 	}
 
@@ -52,7 +52,7 @@ func handleGETBillingAccount(c *gin.Context) {
 func handleDELETEBillingAccount(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID"})
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid billing account ID"})
 		return
 	}
 
