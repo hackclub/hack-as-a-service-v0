@@ -38,18 +38,11 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	if err != nil {
 		return err
 	}
-	err = _db.AutoMigrate(&db.User{})
+	err = _db.AutoMigrate(&db.User{}, &db.BillingAccount{}, db.App{})
 	if err != nil {
 		return err
 	}
-	err = _db.AutoMigrate(&db.BillingAccount{})
-	if err != nil {
-		return err
-	}
-	err = _db.AutoMigrate(&db.App{})
-	if err != nil {
-		return err
-	}
+
 	r.Use(func(c *gin.Context) {
 		c.Set("db", _db)
 	})
