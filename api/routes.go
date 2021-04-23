@@ -30,7 +30,7 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	teams_rg := r.Group("/teams")
 	teams.SetupRoutes(teams_rg)
 
-  apps_rg := r.Group("/apps")
+	apps_rg := r.Group("/apps")
 	apps.SetupRoutes(apps_rg)
 
 	return nil
