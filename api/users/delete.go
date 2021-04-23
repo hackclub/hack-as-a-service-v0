@@ -17,6 +17,13 @@ func handleDELETEUser(c *gin.Context) {
 	result := db.DB.Delete(&db.User{}, id)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+	}
+
+	// Delete the user's team on their behalf too
+	result = db.DB.Delete(&db.Team{}, "personal = TRUE AND id = ?", id)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+		return
 	} else {
 		c.JSON(200, gin.H{"status": "ok"})
 	}

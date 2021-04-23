@@ -22,6 +22,7 @@ func handlePOSTTeam(c *gin.Context) {
 	team := db.Team{
 		Name:      json.Name,
 		Automatic: json.Automatic,
+		Personal:  false,
 		HNUserID:  json.HNUserID,
 	}
 	result := db.DB.Create(&team)

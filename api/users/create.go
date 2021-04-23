@@ -28,6 +28,7 @@ func handlePOSTUser(c *gin.Context) {
 	team := db.Team{
 		Name:      "Personal team",
 		Automatic: false,
+		Personal:  true,
 		// FIXME: create new HN account on user's behalf
 		HNUserID: "haas_" + json.SlackUserID,
 		Users:    []db.User{user},
