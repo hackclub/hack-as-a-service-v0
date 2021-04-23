@@ -2,6 +2,8 @@
 
 Run your own backend applications for just 5hn/app/month!
 
+<font size="5"> \>> [Check out our progress reports here!](progress/README.md) << </font>
+
 ## Development
 
 Contributions to the project are welcome! Make sure to discuss changes with other contributors in a GitHub issue or on Slack before beginning development on new features or bugfixes.
