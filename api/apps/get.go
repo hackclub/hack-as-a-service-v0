@@ -5,11 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/db"
-	"gorm.io/gorm"
 )
 
 func handleGETApp(c *gin.Context) {
-	_db := c.MustGet("db").(*gorm.DB)
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -17,7 +15,7 @@ func handleGETApp(c *gin.Context) {
 	}
 
 	var app db.App
-	result := _db.First(&app, "id = ?", id)
+	result := db.DB.First(&app, "id = ?", id)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {

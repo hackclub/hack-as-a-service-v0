@@ -5,18 +5,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/db"
-	"gorm.io/gorm"
 )
 
 func handleDELETEBillingAccount(c *gin.Context) {
-	_db := c.MustGet("db").(*gorm.DB)
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid billing account ID"})
 		return
 	}
 
-	result := _db.Delete(&db.BillingAccount{}, id)
+	result := db.DB.Delete(&db.BillingAccount{}, id)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {

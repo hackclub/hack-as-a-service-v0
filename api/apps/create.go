@@ -7,7 +7,6 @@ import (
 )
 
 func handlePOSTApp(c *gin.Context) {
-	_db := c.MustGet("db").(*gorm.DB)
 	var json struct {
 		Name             string
 		BillingAccountID uint
@@ -21,7 +20,7 @@ func handlePOSTApp(c *gin.Context) {
 
 	// create in db
 	app := db.App{Name: json.Name, BillingAccount: db.BillingAccount{Model: gorm.Model{ID: json.BillingAccountID}}}
-	result := _db.Create(&app)
+	result := db.DB.Create(&app)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
