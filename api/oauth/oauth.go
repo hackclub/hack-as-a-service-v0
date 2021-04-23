@@ -120,7 +120,7 @@ func SetupRoutes(r *gin.RouterGroup) {
 		c.SetCookie("token", "", 0, "/", "", true, false)
 
 		// Revoke token
-		result := db.DB.Where("token = ?", token).Delete(&db.Token{})
+		result := db.DB.Delete(&db.Token{}, "token = ?", token)
 		if result.Error != nil {
 			log.Println(result.Error)
 		}

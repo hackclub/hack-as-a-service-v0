@@ -16,7 +16,7 @@ func EnsureAuthedUser(c *gin.Context) {
 	}
 
 	var db_token db.Token
-	result := db.DB.Where("token = ?", token).First(&db_token)
+	result := db.DB.First(&db_token, "token = ?", token)
 	if result.Error != nil {
 		c.AbortWithStatusJSON(401, gin.H{"status": "error", "message": "not_authed"})
 		return
