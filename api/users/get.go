@@ -4,16 +4,11 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/api/auth"
 	"github.com/hackclub/hack-as-a-service/db"
 )
 
 func handleGETAuthed(c *gin.Context) {
-	user, err := auth.GetAuthedUser(c)
-	if err != nil {
-		c.JSON(401, gin.H{"status": "error", "message": "Not authenticated"})
-		return
-	}
+	user := c.MustGet("user").(db.User)
 
 	c.JSON(200, gin.H{"status": "ok", "user": user})
 }

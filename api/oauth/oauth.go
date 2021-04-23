@@ -44,7 +44,7 @@ func generateAuthUrl() string {
 	return oauth_url.String()
 }
 
-func SetupRoutes(r *gin.Engine) {
+func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/login", func(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, generateAuthUrl())
 	})
@@ -59,8 +59,6 @@ func SetupRoutes(r *gin.Engine) {
 			c.String(500, err.Error())
 			return
 		}
-
-		// token := resp.AuthedUser.AccessToken
 
 		// Look for a user with that ID
 		var user *db.User
@@ -82,7 +80,10 @@ func SetupRoutes(r *gin.Engine) {
 				Avatar:      identity.User.Image512,
 			}
 
-			db.DB.Create(&user)
+			create_result := db.DB.Create(&user)
+			if create_result.Error != nil {
+				c.String(500, err.Error())
+			}
 		} else if result.Error != nil {
 			// Something went wrong
 			c.String(500, result.Error.Error())
@@ -94,7 +95,10 @@ func SetupRoutes(r *gin.Engine) {
 			UserID: user.ID,
 			Token:  generateToken(),
 		}
-		db.DB.Create(&token)
+		create_result := db.DB.Create(&token)
+		if create_result.Error != nil {
+			c.String(500, result.Error.Error())
+		}
 
 		c.SetCookie("token", token.Token, 2592000, "/", "", true, false)
 

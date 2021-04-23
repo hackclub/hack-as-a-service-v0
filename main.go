@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/api"
+	"github.com/hackclub/hack-as-a-service/api/auth"
 	"github.com/hackclub/hack-as-a-service/api/oauth"
 	"github.com/hackclub/hack-as-a-service/db"
 )
@@ -29,13 +30,13 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
 
-	rg := r.Group("/api")
+	rg := r.Group("/api", auth.EnsureAuthedUser)
 	err = api.SetupRoutes(rg)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	oauth.SetupRoutes(r)
+	oauth.SetupRoutes(&r.RouterGroup)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.File("./frontend/out/404.html")

@@ -6,7 +6,7 @@ import (
 
 func SetupRoutes(r *gin.RouterGroup) {
 	r.POST("/", handlePOSTUser)
-	r.GET("/", handleGETAuthed)
+	r.GET("/me", handleGETAuthed)
 	r.GET("/:id", handleGETUser)
 	r.DELETE("/:id", handleDELETEUser)
 	r.GET("/:id/apps", handleGETUserApps)
