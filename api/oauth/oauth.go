@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/db"
@@ -92,16 +94,35 @@ func SetupRoutes(r *gin.RouterGroup) {
 
 		// Generate a token
 		token := &db.Token{
-			UserID: user.ID,
-			Token:  generateToken(),
+			UserID:    user.ID,
+			Token:     generateToken(),
+			ExpiresAt: time.Now().Add(2592000 * time.Second),
 		}
 		create_result := db.DB.Create(&token)
 		if create_result.Error != nil {
 			c.String(500, result.Error.Error())
 		}
 
-		c.SetCookie("token", token.Token, 2592000, "/", "", true, false)
+		c.SetCookie("token", token.Token, 2592000, "/", "", true, true)
 
 		c.Redirect(http.StatusTemporaryRedirect, "/")
+	})
+
+	r.GET("/logout", func(c *gin.Context) {
+		defer c.Redirect(http.StatusTemporaryRedirect, "/")
+
+		token, err := c.Cookie("token")
+		if err != nil {
+			return
+		}
+
+		// Clear token cookie
+		c.SetCookie("token", "", 0, "/", "", true, false)
+
+		// Revoke token
+		result := db.DB.Where("token = ?", token).Delete(&db.Token{})
+		if result.Error != nil {
+			log.Println(result.Error)
+		}
 	})
 }
