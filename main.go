@@ -28,7 +28,8 @@ func main() {
 	r := gin.Default()
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
-	rg := r.Group("/api", api.RequireBearerAuth())
+
+	rg := r.Group("/api")
 	err = api.SetupRoutes(rg)
 	if err != nil {
 		log.Fatalln(err)

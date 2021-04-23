@@ -7,5 +7,5 @@ type User struct {
 	SlackUserID string `gorm:"unique"`
 	Name        string
 	Avatar      string
-	Tokens      []Token
+	Tokens      []Token `json:"-"`
 }

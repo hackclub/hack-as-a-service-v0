@@ -36,7 +36,7 @@ func generateAuthUrl() string {
 		Path:   "/oauth/v2/authorize",
 		RawQuery: url.Values{
 			"redirect_uri": {getRedirectUri()},
-			"user_scope":   {"identity.basic"},
+			"user_scope":   {"identity.basic,identity.avatar"},
 			"client_id":    {os.Getenv("SLACK_CLIENT_ID")},
 		}.Encode(),
 	}
