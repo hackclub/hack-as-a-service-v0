@@ -1,4 +1,4 @@
-package apps
+package teams
 
 import (
 	"strconv"
@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func handlePUTAppUsers(c *gin.Context) {
+func handlePUTTeamUsers(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -24,18 +24,18 @@ func handlePUTAppUsers(c *gin.Context) {
 		return
 	}
 
-	var app db.App
-	result := db.DB.First(&app, "id = ?", id)
+	var team db.Team
+	result := db.DB.First(&team, "id = ?", id)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 		return
 	}
-	app.Users = nil
+	team.Users = nil
 	for _, user := range json.Users {
-		app.Users = append(app.Users, db.User{Model: gorm.Model{ID: user}})
+		team.Users = append(team.Users, db.User{Model: gorm.Model{ID: user}})
 	}
 
-	result = db.DB.Save(&app)
+	result = db.DB.Save(&team)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
