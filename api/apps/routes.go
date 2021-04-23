@@ -6,5 +6,4 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.POST("/", handlePOSTApp)
 	r.GET("/:id", handleGETApp)
 	r.DELETE("/:id", handleDELETEApp)
-	r.PUT("/:id/users", handlePUTAppUsers)
 }

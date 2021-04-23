@@ -4,9 +4,8 @@ import "gorm.io/gorm"
 
 type App struct {
 	gorm.Model
-	Name             string
-	BillingAccountID int
-	BillingAccount   BillingAccount
-	Users            []User `gorm:"many2many:user_apps;"`
+	Name   string
+	TeamID uint
+	Team   Team
 	// TODO: add more fields
 }

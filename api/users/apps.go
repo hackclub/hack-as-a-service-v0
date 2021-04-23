@@ -15,7 +15,9 @@ func handleGETUserApps(c *gin.Context) {
 	}
 
 	var apps []db.App
-	result := db.DB.Joins("INNER JOIN user_apps ON user_apps.app_id = apps.id").Where("user_apps.user_id = ?", uint(id)).Find(&apps)
+	result := db.DB.
+		Joins("INNER JOIN team_users ON team_users.team_id = apps.team_id").
+		Where("team_users.user_id = ?", uint(id)).Find(&apps)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
