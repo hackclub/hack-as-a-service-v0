@@ -28,6 +28,6 @@ func handlePOSTTeam(c *gin.Context) {
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
-		c.JSON(200, gin.H{"status": "ok", "teamID": team.ID})
+		c.JSON(200, gin.H{"status": "ok", "team": team})
 	}
 }
