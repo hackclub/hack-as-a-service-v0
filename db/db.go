@@ -23,7 +23,7 @@ func Connect() error {
 	if err != nil {
 		return err
 	}
-	err = _db.AutoMigrate(&User{}, &BillingAccount{}, &App{})
+	err = _db.AutoMigrate(&User{}, &Team{}, &App{})
 	if err != nil {
 		return err
 	}
