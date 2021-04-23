@@ -1,4 +1,4 @@
-FROM golang:stretch AS builder
+FROM --platform=amd64 golang:stretch AS builder
 
 COPY . /code
 

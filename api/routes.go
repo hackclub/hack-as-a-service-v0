@@ -23,8 +23,10 @@ func SetupRoutes(r *gin.RouterGroup) error {
 
 	users_rg := r.Group("/users")
 	users.SetupRoutes(users_rg)
+
 	teams_rg := r.Group("/teams")
 	teams.SetupRoutes(teams_rg)
+
 	apps_rg := r.Group("/apps")
 	apps.SetupRoutes(apps_rg)
 
