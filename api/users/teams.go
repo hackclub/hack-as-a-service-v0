@@ -7,24 +7,20 @@ import (
 	"github.com/hackclub/hack-as-a-service/db"
 )
 
-func handleDELETEUser(c *gin.Context) {
+func handleGETUserTeams(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID"})
 		return
 	}
 
-	result := db.DB.Delete(&db.User{}, id)
+	var teams []db.Team
+	result := db.DB.
+		Joins("INNER JOIN team_users ON team_users.team_id = teams.id").
+		Where("team_users.user_id = ?", uint(id)).Find(&teams)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
-	}
-
-	// Delete the user's team on their behalf too
-	result = db.DB.Delete(&db.Team{}, "personal = TRUE AND id = ?", id)
-	if result.Error != nil {
-		c.JSON(500, gin.H{"status": "error", "message": result.Error})
-		return
 	} else {
-		c.JSON(200, gin.H{"status": "ok"})
+		c.JSON(200, gin.H{"status": "ok", "teams": teams})
 	}
 }
