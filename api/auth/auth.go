@@ -27,7 +27,11 @@ func EnsureAuthedUser(c *gin.Context) {
 		log.Println("Expiring token")
 
 		// it should expire
-		db.DB.Delete(&db_token)
+		result = db.DB.Delete(&db_token)
+		if result.Error != nil {
+			c.AbortWithStatusJSON(500, gin.H{"status": "error", "message": result.Error})
+			return
+		}
 		c.SetCookie("token", "", 0, "/", "", true, false)
 
 		c.AbortWithStatusJSON(401, gin.H{"status": "error", "message": "not_authed"})
