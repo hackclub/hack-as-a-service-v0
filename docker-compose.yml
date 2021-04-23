@@ -32,6 +32,8 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres-testing
       POSTGRES_DB: haas
+    volumes:
+      - "db_volume:/var/lib/postgresql/data"
   dokku:
     build:
       context: .
@@ -46,3 +48,5 @@ services:
       - "./dokku_data:/mnt/dokku"
       - "./dokkud_sock:/var/run/dokku-daemon"
       - "/var/run/docker.sock:/var/run/docker.sock"
+volumes:
+  db_volume:
