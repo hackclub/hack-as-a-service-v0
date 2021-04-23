@@ -19,7 +19,6 @@ func getGsn() string {
 }
 
 func Connect() error {
-
 	_db, err := gorm.Open(postgres.Open(getGsn()), &gorm.Config{})
 	if err != nil {
 		return err

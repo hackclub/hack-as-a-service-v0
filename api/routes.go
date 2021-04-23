@@ -2,8 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/api/apps"
@@ -11,14 +9,6 @@ import (
 	"github.com/hackclub/hack-as-a-service/api/users"
 	"github.com/hackclub/hack-as-a-service/dokku"
 )
-
-func getGsn() string {
-	if db_host := os.Getenv("DATABASE_URL"); db_host != "" {
-		return db_host
-	}
-	db_password := os.Getenv("POSTGRES_PASSWORD")
-	return fmt.Sprintf("host=db user=postgres password=%s dbname=haas port=5432 sslmode=disable", db_password)
-}
 
 func SetupRoutes(r *gin.RouterGroup) error {
 	conn, err := dokku.DokkuConnect(context.Background())
