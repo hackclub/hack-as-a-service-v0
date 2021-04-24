@@ -5,6 +5,13 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-image: linear-gradient(
+      217deg,
+      rgba(23, 23, 29, 0.9),
+      rgba(23, 23, 29, 0.9)
+    ),
+    url("https://hackclub.com/pattern.svg"),
+    linear-gradient(217deg, rgba(23, 23, 29, 1), rgba(23, 23, 29, 1));
 }
 
 .main {
