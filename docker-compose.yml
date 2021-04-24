@@ -16,6 +16,7 @@ services:
       SLACK_REDIRECT_URI: http://localhost:5000/oauth/code
       SLACK_CLIENT_ID: "2210535565.1990079909558"
       SLACK_CLIENT_SECRET: 1f2201a7312f9a00515b3f18b7009546
+      HAAS_DEV: "true"
     env_file: .env
     ports:
       - "5000:5000"
