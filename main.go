@@ -28,6 +28,14 @@ func main() {
 
 	r := gin.Default()
 
+	// Let frontend access cookies in dev
+	if dev := os.Getenv("HAAS_DEV"); dev != "" {
+		r.Use(func(c *gin.Context) {
+			c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+			c.Header("Access-Control-Allow-Credentials", "true")
+		})
+	}
+
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
 
 	rg := r.Group("/api", auth.EnsureAuthedUser)
