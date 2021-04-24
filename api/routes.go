@@ -19,8 +19,6 @@ func SetupRoutes(r *gin.RouterGroup) error {
 		c.Set("dokkuconn", conn)
 	})
 
-	r.GET("/", handleApiCommand)
-
 	users_rg := r.Group("/users")
 	users.SetupRoutes(users_rg)
 
