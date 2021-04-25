@@ -1,21 +1,24 @@
 #!/bin/bash
 
-# Clean up from previous builds
-rm -rf subcommands/
-rm commands
+# # Clean up from previous builds
+# rm -rf subcommands/
+# rm commands
 
-cd dokku_plugin/
+# cd dokku_plugin/
 
-# Build commands
-go build -o ../commands command/command.go
+# # Build commands
+# go build -o ../commands command/command.go
 
-# Build subcommands
-mkdir -p ../subcommands/
+# # Build subcommands
+# mkdir -p ../subcommands/
 
-for i in subcommands/**/*.go; do
-    output=$(basename $i | cut -f 1 -d '.')
+# for i in subcommands/**/*.go; do
+#     output=$(basename $i | cut -f 1 -d '.')
 
-    go build -o ../subcommands/$output $i
-done
+#     go build -o ../subcommands/$output $i
+# done
 
-echo "Installed!"
+# echo "Installed!"
+
+pwd
+env
