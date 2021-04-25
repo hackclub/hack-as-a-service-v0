@@ -2,7 +2,7 @@ package teams
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/db"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 )
 
 func handlePOSTTeam(c *gin.Context) {

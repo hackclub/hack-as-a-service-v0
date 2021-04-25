@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/api/apps"
-	"github.com/hackclub/hack-as-a-service/api/teams"
-	"github.com/hackclub/hack-as-a-service/api/users"
-	"github.com/hackclub/hack-as-a-service/dokku"
+	"github.com/hackclub/hack-as-a-service/pkg/api/apps"
+	"github.com/hackclub/hack-as-a-service/pkg/api/teams"
+	"github.com/hackclub/hack-as-a-service/pkg/api/users"
+	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
 
 func SetupRoutes(r *gin.RouterGroup) error {

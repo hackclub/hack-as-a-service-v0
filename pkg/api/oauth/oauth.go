@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/db"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/slack-go/slack"
 	"gorm.io/gorm"
 )
@@ -56,7 +56,13 @@ func SetupRoutes(r *gin.RouterGroup) {
 
 	r.GET("/oauth/code", func(c *gin.Context) {
 		code := c.Query("code")
-		resp, err := slack.GetOAuthV2Response(http.DefaultClient, os.Getenv("SLACK_CLIENT_ID"), os.Getenv("SLACK_CLIENT_SECRET"), code, getRedirectUri())
+		resp, err := slack.GetOAuthV2Response(
+			http.DefaultClient,
+			os.Getenv("SLACK_CLIENT_ID"),
+			os.Getenv("SLACK_CLIENT_SECRET"),
+			code,
+			getRedirectUri(),
+		)
 		if err != nil {
 			c.String(500, err.Error())
 			return
