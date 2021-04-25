@@ -20,5 +20,7 @@
 
 # echo "Installed!"
 
+cd $(dirname "$0")
+
 pwd
 env
