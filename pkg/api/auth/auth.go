@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/db"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 )
 
 func EnsureAuthedUser(c *gin.Context) {

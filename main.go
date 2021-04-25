@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/api"
-	"github.com/hackclub/hack-as-a-service/api/auth"
-	"github.com/hackclub/hack-as-a-service/api/oauth"
-	"github.com/hackclub/hack-as-a-service/db"
+	"github.com/hackclub/hack-as-a-service/pkg/api"
+	"github.com/hackclub/hack-as-a-service/pkg/api/auth"
+	"github.com/hackclub/hack-as-a-service/pkg/api/oauth"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 )
 
 func getPort() string {

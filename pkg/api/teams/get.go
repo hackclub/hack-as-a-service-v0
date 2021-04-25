@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/db"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 )
 
 func handleGETTeam(c *gin.Context) {
