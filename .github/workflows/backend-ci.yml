@@ -1,9 +1,8 @@
 name: Backend CI
 
 on:
-  push:
-    branches: [master]
-  pull_request:
+  - push
+  - pull_request
 
 jobs:
   ci:
