@@ -1,0 +1,4 @@
+[plugin]
+description = "Core plugin for HaaS"
+version = "1.0.0"
+[plugin.config]
