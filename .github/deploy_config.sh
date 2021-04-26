@@ -27,10 +27,12 @@ ssh root@$HAAS_IP /bin/bash << EOF
     cd \$REPO_DIR/dokkud
     go build .
 
+    service dokkud stop
+
     mkdir -p /opt/dokkud
     cp ./dokkud /opt/dokkud/dokkud
 
-    service dokkud restart
+    service dokkud start
 
     rm -rf \$REPO_DIR
 EOF
