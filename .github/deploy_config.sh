@@ -14,7 +14,7 @@ ssh root@$HAAS_IP service nginx restart
 # Deploy Dokku plugin
 echo "Deploying Dokku plugin..."
 ssh root@$HAAS_IP /bin/bash << EOF
-    dokku plugin:install git@github.com:hackclub/hack-as-a-service.git --committish config-deployment --name haas \
+    dokku plugin:install git@github.com:hackclub/hack-as-a-service.git --name haas \
     || dokku plugin:update haas
 EOF
 
