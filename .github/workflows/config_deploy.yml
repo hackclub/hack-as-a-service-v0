@@ -1,0 +1,14 @@
+name: Deploy config
+on:
+  push:
+    # branches:
+    #   - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: mkdir -p ~/.ssh && echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        name: Add SSH key
+      - run: ./.github/deploy_config.sh
+        name: Deploy config
