@@ -17,7 +17,7 @@ func handleGETApp(c *gin.Context) {
 	var app db.App
 	result := db.DB.Preload("Team").First(&app, "id = ?", id)
 	if result.Error != nil {
-		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 	} else {
 		c.JSON(200, gin.H{"status": "ok", "app": app})
 	}
