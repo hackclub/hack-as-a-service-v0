@@ -86,6 +86,15 @@ func SetupRoutes(r *gin.RouterGroup) {
 				SlackUserID: resp.AuthedUser.ID,
 				Name:        identity.User.Name,
 				Avatar:      identity.User.Image512,
+				Teams: []*db.Team{
+					{
+						Name:      "Personal team",
+						Automatic: false,
+						Personal:  true,
+						// FIXME: create new HN account on user's behalf
+						HNUserID: "haas_" + resp.AuthedUser.ID,
+					},
+				},
 			}
 
 			create_result := db.DB.Create(&user)
