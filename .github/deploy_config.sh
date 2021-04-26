@@ -5,7 +5,7 @@ HAAS_IP=45.55.45.5
 
 # Deploy config in `dokku_deploy/``
 echo "Deploying config..."
-rsync -r dokku_deploy/* root@$HAAS_IP:/
+rsync -e "ssh -i ~/.ssh/id_rsa" -r dokku_deploy/* root@$HAAS_IP:/
 
 # Restart nginx
 echo "Restarting nginx..."
