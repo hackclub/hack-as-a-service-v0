@@ -5,7 +5,6 @@ import (
 )
 
 func SetupRoutes(r *gin.RouterGroup) {
-	r.POST("/", handlePOSTUser)
 	r.GET("/me", handleGETAuthed)
 	r.GET("/me/apps", handleGETAuthedApps)
 	r.GET("/me/teams", handleGETAuthedTeams)

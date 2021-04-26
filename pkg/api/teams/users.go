@@ -32,7 +32,7 @@ func handlePUTTeamUsers(c *gin.Context) {
 	}
 	team.Users = nil
 	for _, user := range json.Users {
-		team.Users = append(team.Users, db.User{Model: gorm.Model{ID: user}})
+		team.Users = append(team.Users, &db.User{Model: gorm.Model{ID: user}})
 	}
 
 	result = db.DB.Save(&team)
