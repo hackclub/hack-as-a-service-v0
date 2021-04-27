@@ -17,7 +17,7 @@ import (
 )
 
 func sweepOldTokens() error {
-	result := db.DB.Delete(db.Token{}, "expires_at <= ?", time.Now())
+	result := db.DB.Unscoped().Delete(db.Token{}, "expires_at <= ?", time.Now())
 	if result.Error != nil {
 		return result.Error
 	}
