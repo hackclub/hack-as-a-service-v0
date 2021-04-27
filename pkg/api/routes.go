@@ -19,6 +19,18 @@ func SetupRoutes(r *gin.RouterGroup) error {
 		c.Set("dokkuconn", conn)
 	})
 
+	// uncomment for testing
+	// r.GET("/command", func(c *gin.Context) {
+	// 	conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+	// 	cmd := strings.Split(c.Request.URL.Query().Get("command"), " ")
+	// 	res, err := conn.RunCommand(c.Request.Context(), cmd)
+	// 	if err != nil {
+	// 		c.JSON(500, gin.H{"status": "error", "error": err})
+	// 	} else {
+	// 		c.JSON(200, gin.H{"status": "ok", "output": res})
+	// 	}
+	// })
+
 	users_rg := r.Group("/users")
 	users.SetupRoutes(users_rg)
 
