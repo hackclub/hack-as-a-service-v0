@@ -3,6 +3,7 @@ package apps
 import (
 	"io"
 	"strings"
+	"sync"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -75,6 +76,9 @@ func handleGETLogs(c *gin.Context) {
 	// Make a channel to hold the log stream
 	log_chan := make(chan []byte)
 
+	// A mutex to ensure stdout and stderr aren't written simultaneously
+	log_mutex := sync.Mutex{}
+
 	// Listen for new logs in 2 seperate goroutines for stdout and stderr
 	go func() {
 		for {
@@ -84,7 +88,9 @@ func handleGETLogs(c *gin.Context) {
 				return
 			}
 
+			log_mutex.Lock()
 			log_chan <- logs
+			log_mutex.Unlock()
 		}
 	}()
 
@@ -96,7 +102,9 @@ func handleGETLogs(c *gin.Context) {
 				return
 			}
 
+			log_mutex.Lock()
 			log_chan <- logs
+			log_mutex.Unlock()
 		}
 	}()
 
