@@ -73,7 +73,7 @@ func (conn *DokkuConn) reconnect(ctx context.Context) error {
 		conn.conn.Close()
 		<-conn.conn.Done()
 	}
-	stream, err := retriedNetworkFunc(func() (interface{}, error) { return net.Dial("unix", "/var/run/dokku-daemon/dokkud.sock") })
+	stream, err := retriedNetworkFunc(func() (interface{}, error) { return net.Dial("unix", conn.socketPath) })
 	if err != nil {
 		return err
 	}
