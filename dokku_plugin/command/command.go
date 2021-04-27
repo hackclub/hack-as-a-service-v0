@@ -12,6 +12,7 @@ Core plugin for HaaS
 
 Additional commands:
     haas:apps				List apps in JSON format
+    haas:cid <app name>			Get the container ID for an app
 `
 
 func main() {
@@ -20,9 +21,9 @@ func main() {
 	switch cmd {
 	case "help":
 		fmt.Println("    haas, Core plugin for HaaS")
-	case "haas:help":
-		fmt.Println(HelpText)
 	case "haas":
+		fallthrough
+	case "haas:help":
 		fmt.Println(HelpText)
 	default:
 		dokkuNotImplementExitCode, err := strconv.Atoi(os.Getenv("DOKKU_NOT_IMPLEMENTED_EXIT"))
@@ -31,6 +32,5 @@ func main() {
 			dokkuNotImplementExitCode = 10
 		}
 		os.Exit(dokkuNotImplementExitCode)
-		os.Exit(1)
 	}
 }
