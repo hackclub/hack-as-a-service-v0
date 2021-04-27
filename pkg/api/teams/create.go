@@ -6,6 +6,8 @@ import (
 )
 
 func handlePOSTTeam(c *gin.Context) {
+	user := c.MustGet("user").(db.User)
+
 	var json struct {
 		Name      string
 		Automatic bool
@@ -22,6 +24,7 @@ func handlePOSTTeam(c *gin.Context) {
 		Name:      json.Name,
 		Automatic: json.Automatic,
 		Personal:  false,
+		Users:     []*db.User{&user},
 	}
 	result := db.DB.Create(&team)
 	if result.Error != nil {
