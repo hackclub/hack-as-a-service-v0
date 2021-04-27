@@ -103,11 +103,11 @@ func handleGETLogs(c *gin.Context) {
 	// Close the log stream when done
 	defer log_stream.Close()
 
-	clientGone := c.Writer.CloseNotify()
+	client_gone := c.Writer.CloseNotify()
 
 	c.Stream(func(w io.Writer) bool {
 		select {
-		case <-clientGone:
+		case <-client_gone:
 			return false
 		case <-log_stream_closed:
 			return false
