@@ -1,7 +1,6 @@
 package apps
 
 import (
-	"context"
 	"errors"
 	"regexp"
 
@@ -52,7 +51,7 @@ func handlePOSTApp(c *gin.Context) {
 	}
 
 	// Create Dokku app
-	_, err = dokku_conn.RunCommand(context.Background(), []string{"apps:create", json.ShortName})
+	_, err = dokku_conn.RunCommand(c.Request.Context(), []string{"apps:create", json.ShortName})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": "Error provisioning app"})
 		return
