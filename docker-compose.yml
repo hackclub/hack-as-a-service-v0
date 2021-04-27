@@ -21,12 +21,8 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - type: bind
-        source: .
-        target: /code
-      - type: bind
-        source: ./dokku_data
-        target: /dokku
+      - ".:/code"
+      - "./dokku_data:/dokku"
       - "./dokkud_sock:/var/run/dokku-daemon"
     command: bash ./run_dev.sh
   db:

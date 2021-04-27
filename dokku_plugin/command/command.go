@@ -11,7 +11,7 @@ const HelpText = `Usage: dokku haas[:COMMAND]
 Core plugin for HaaS
 
 Additional commands:
-    haas:apps	List apps in JSON format
+    haas:apps				List apps in JSON format
 `
 
 func main() {

@@ -34,6 +34,8 @@ func main() {
 			c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
 			c.Header("Access-Control-Allow-Credentials", "true")
 		})
+	} else {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
