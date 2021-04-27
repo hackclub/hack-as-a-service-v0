@@ -1,7 +1,6 @@
 package apps
 
 import (
-	"context"
 	"io"
 	"strings"
 
@@ -30,7 +29,7 @@ func handleGETLogs(c *gin.Context) {
 	}
 
 	// Get the app's container ID
-	cid, err := dokku_conn.RunCommand(context.Background(), []string{"haas:cid", app.ShortName})
+	cid, err := dokku_conn.RunCommand(c.Request.Context(), []string{"haas:cid", app.ShortName})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return
@@ -46,7 +45,7 @@ func handleGETLogs(c *gin.Context) {
 	}
 
 	// Open a log stream via the Docker API
-	log_stream, err := cli.ContainerLogs(context.Background(), cid, types.ContainerLogsOptions{
+	log_stream, err := cli.ContainerLogs(c.Request.Context(), cid, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
 		Follow:     true,
