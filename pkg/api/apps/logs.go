@@ -1,6 +1,7 @@
 package apps
 
 import (
+	"bufio"
 	"io"
 	"strings"
 	"sync"
@@ -57,53 +58,42 @@ func handleGETLogs(c *gin.Context) {
 		return
 	}
 
-	// A channel to close the client stream when the Docker API disconnects
-	log_stream_closed := make(chan bool)
-
 	stdout_reader, stdout_writer := io.Pipe()
 	stderr_reader, stderr_writer := io.Pipe()
+
+	// Make a channel to hold the log stream
+	log_chan := make(chan []byte)
 
 	// Demultiplex stream in a goroutine
 	go func() {
 		defer stdout_reader.Close()
 		defer stderr_reader.Close()
 
-		defer func() { log_stream_closed <- true }()
+		defer close(log_chan)
 
 		stdcopy.StdCopy(stdout_writer, stderr_writer, log_stream)
 	}()
-
-	// Make a channel to hold the log stream
-	log_chan := make(chan []byte)
 
 	// A mutex to ensure stdout and stderr aren't written simultaneously
 	log_mutex := sync.Mutex{}
 
 	// Listen for new logs in 2 seperate goroutines for stdout and stderr
 	go func() {
-		for {
-			logs := make([]byte, 100)
-			_, err := stdout_reader.Read(logs)
-			if err != nil {
-				return
-			}
+		scanner := bufio.NewScanner(stdout_reader)
 
+		for scanner.Scan() {
 			log_mutex.Lock()
-			log_chan <- logs
+			log_chan <- append([]byte("[stdout] "), scanner.Bytes()...)
 			log_mutex.Unlock()
 		}
 	}()
 
 	go func() {
-		for {
-			logs := make([]byte, 100)
-			_, err := stderr_reader.Read(logs)
-			if err != nil {
-				return
-			}
+		scanner := bufio.NewScanner(stderr_reader)
 
+		for scanner.Scan() {
 			log_mutex.Lock()
-			log_chan <- logs
+			log_chan <- append([]byte("[stderr] "), scanner.Bytes()...)
 			log_mutex.Unlock()
 		}
 	}()
@@ -117,10 +107,13 @@ func handleGETLogs(c *gin.Context) {
 		select {
 		case <-client_gone:
 			return false
-		case <-log_stream_closed:
-			return false
-		case logs := <-log_chan:
-			w.Write(logs)
+		case logs, ok := <-log_chan:
+			if !ok {
+				// Channel is closed
+				return false
+			}
+
+			w.Write(append(logs, byte('\n')))
 		}
 		return true
 	})
