@@ -27,15 +27,12 @@ func handleGETLogs(c *gin.Context) {
 	}
 
 	var app db.App
-	result := db.DB.Raw(`SELECT apps.* FROM apps
-	JOIN teams ON teams.id = apps.team_id
-	JOIN team_users ON team_users.team_id = teams.id
-	WHERE apps.id = ? AND team_users.user_id = ?`, app_id, user.ID).Scan(&app)
+
+	result := db.DB.Joins("JOIN teams ON teams.id = apps.team_id").
+		Joins("JOIN team_users ON team_users.team_id = teams.id").
+		First(&app, "apps.id = ? AND team_users.user_id = ?", app_id, user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
-		return
-	} else if result.RowsAffected < 1 {
-		c.JSON(400, gin.H{"status": "error", "message": "App not found"})
 		return
 	}
 
