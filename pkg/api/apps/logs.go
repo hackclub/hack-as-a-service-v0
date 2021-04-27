@@ -35,7 +35,7 @@ func handleGETLogs(c *gin.Context) {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	} else if result.RowsAffected < 1 {
-		c.JSON(404, gin.H{"status": "error", "message": "App not found"})
+		c.JSON(400, gin.H{"status": "error", "message": "App not found"})
 		return
 	}
 
