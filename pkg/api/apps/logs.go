@@ -14,7 +14,7 @@ import (
 )
 
 func handleGETLogs(c *gin.Context) {
-	dokku_conn := c.MustGet("dokkuconn").(dokku.DokkuConn)
+	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
 	_ = c.MustGet("user").(db.User)
 
 	app_id := c.Param("id")
@@ -50,7 +50,7 @@ func handleGETLogs(c *gin.Context) {
 		ShowStdout: true,
 		ShowStderr: true,
 		Follow:     true,
-		Tail:       "10",
+		Tail:       "30",
 	})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})

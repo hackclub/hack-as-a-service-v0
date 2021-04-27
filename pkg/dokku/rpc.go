@@ -64,6 +64,8 @@ func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, e
 				return "", err
 			}
 			return conn.RunCommand(ctx, args)
+		} else {
+			return "", err
 		}
 	}
 
