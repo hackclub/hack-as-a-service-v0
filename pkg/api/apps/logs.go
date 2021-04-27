@@ -25,7 +25,10 @@ func handleGETLogs(c *gin.Context) {
 	JOIN teams ON teams.id = apps.team_id
 	JOIN team_users ON team_users.team_id = teams.id
 	WHERE apps.id = ? AND team_users.user_id = ?`, app_id, user.ID).Scan(&app)
-	if result.RowsAffected < 1 {
+	if result.Error != nil {
+		c.JSON(404, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	} else if result.RowsAffected < 1 {
 		c.JSON(404, gin.H{"status": "error", "message": "App not found"})
 		return
 	}
