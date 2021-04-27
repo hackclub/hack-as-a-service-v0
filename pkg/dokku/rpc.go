@@ -37,10 +37,13 @@ func retriedNetworkFunc(f func() (interface{}, error)) (interface{}, error) {
 		time.Sleep(time.Duration(currentBackoff) * time.Second)
 		currentBackoffCounter++
 		if currentBackoffCounter == 2 {
+			if currentBackoff == maxBackoff {
+				break
+			}
 			currentBackoffCounter = 0
 			currentBackoff *= 2
 			if currentBackoff > maxBackoff {
-				break
+				currentBackoff = maxBackoff
 			}
 		}
 		res, err = f()
