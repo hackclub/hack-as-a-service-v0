@@ -16,6 +16,15 @@ import (
 	"gorm.io/gorm"
 )
 
+func sweepOldTokens() error {
+	result := db.DB.Unscoped().Delete(db.Token{}, "expires_at <= ?", time.Now())
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
 func getRedirectUri() string {
 	redirect_uri := os.Getenv("SLACK_REDIRECT_URI")
 	if redirect_uri == "" {
@@ -119,6 +128,8 @@ func SetupRoutes(r *gin.RouterGroup) {
 		c.SetCookie("token", token.Token, 2592000, "/", "", true, true)
 
 		c.Redirect(http.StatusTemporaryRedirect, "/")
+
+		go sweepOldTokens()
 	})
 
 	r.GET("/logout", func(c *gin.Context) {
@@ -137,5 +148,7 @@ func SetupRoutes(r *gin.RouterGroup) {
 		if result.Error != nil {
 			log.Println(result.Error)
 		}
+
+		go sweepOldTokens()
 	})
 }
