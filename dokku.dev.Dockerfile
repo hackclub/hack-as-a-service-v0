@@ -6,14 +6,6 @@ WORKDIR /code/dokkud
 
 RUN go build .
 
-FROM --platform=amd64 golang:stretch AS plugin_builder
-
-WORKDIR /code
-
-COPY . .
-
-RUN ./install
-
 FROM dokku/dokku:latest
 
 COPY --from=plugin_builder /code /var/lib/dokku/plugins/enabled/haas
