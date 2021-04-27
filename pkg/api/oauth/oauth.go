@@ -91,8 +91,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 						Name:      "Personal team",
 						Automatic: false,
 						Personal:  true,
-						// FIXME: create new HN account on user's behalf
-						HNUserID: "haas_" + resp.AuthedUser.ID,
 					},
 				},
 			}
