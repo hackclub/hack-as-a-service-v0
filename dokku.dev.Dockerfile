@@ -8,8 +8,6 @@ RUN go build .
 
 FROM dokku/dokku:latest
 
-COPY --from=plugin_builder /code /var/lib/dokku/plugins/enabled/haas
-
 COPY --from=builder /code/dokkud/dokkud /opt/dokkud
 COPY ./dokkud/20_dokkud_init /etc/my_init.d/
 RUN chmod +x /etc/my_init.d/20_dokkud_init

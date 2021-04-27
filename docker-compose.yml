@@ -24,7 +24,6 @@ services:
       - ".:/code"
       - "./dokku_data:/dokku"
       - "./dokkud_sock:/var/run/dokku-daemon"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     command: bash ./run_dev.sh
   db:
     image: "postgres:latest"
