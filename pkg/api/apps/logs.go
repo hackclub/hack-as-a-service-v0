@@ -3,6 +3,7 @@ package apps
 import (
 	"bufio"
 	"io"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -19,6 +20,11 @@ func handleGETLogs(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
 	app_id := c.Param("id")
+	tail, err := strconv.Atoi(c.DefaultQuery("tail", "30"))
+	if err != nil {
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid tail parameter"})
+		return
+	}
 
 	var app db.App
 	result := db.DB.Raw(`SELECT apps.* FROM apps
@@ -26,7 +32,7 @@ func handleGETLogs(c *gin.Context) {
 	JOIN team_users ON team_users.team_id = teams.id
 	WHERE apps.id = ? AND team_users.user_id = ?`, app_id, user.ID).Scan(&app)
 	if result.Error != nil {
-		c.JSON(404, gin.H{"status": "error", "message": result.Error.Error()})
+		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	} else if result.RowsAffected < 1 {
 		c.JSON(404, gin.H{"status": "error", "message": "App not found"})
@@ -54,7 +60,7 @@ func handleGETLogs(c *gin.Context) {
 		ShowStdout: true,
 		ShowStderr: true,
 		Follow:     true,
-		Tail:       "30",
+		Tail:       strconv.Itoa(tail),
 	})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
