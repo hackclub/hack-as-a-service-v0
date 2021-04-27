@@ -9,7 +9,6 @@ func handlePOSTTeam(c *gin.Context) {
 	var json struct {
 		Name      string
 		Automatic bool
-		HNUserID  string
 	}
 
 	err := c.BindJSON(&json)
@@ -23,7 +22,6 @@ func handlePOSTTeam(c *gin.Context) {
 		Name:      json.Name,
 		Automatic: json.Automatic,
 		Personal:  false,
-		HNUserID:  json.HNUserID,
 	}
 	result := db.DB.Create(&team)
 	if result.Error != nil {
