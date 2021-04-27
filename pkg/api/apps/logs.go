@@ -11,11 +11,14 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
 
 func handleGETLogs(c *gin.Context) {
+	upgrader := websocket.Upgrader{}
+
 	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
 	user := c.MustGet("user").(db.User)
 
@@ -64,6 +67,15 @@ func handleGETLogs(c *gin.Context) {
 		return
 	}
 
+	// Spin up a websocket connection
+	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	defer ws.Close()
+
 	stdout_reader, stdout_writer := io.Pipe()
 	stderr_reader, stderr_writer := io.Pipe()
 
@@ -104,23 +116,27 @@ func handleGETLogs(c *gin.Context) {
 		}
 	}()
 
+	// Listen for disconnections
+	go func() {
+		for {
+			_, _, err := ws.ReadMessage()
+			if err != nil {
+				log_stream.Close()
+				return
+			}
+		}
+	}()
+
 	// Close the log stream when done
 	defer log_stream.Close()
 
-	client_gone := c.Writer.CloseNotify()
-
-	c.Stream(func(w io.Writer) bool {
-		select {
-		case <-client_gone:
-			return false
-		case logs, ok := <-log_chan:
-			if !ok {
-				// Channel is closed
-				return false
-			}
-
-			w.Write(append(logs, byte('\n')))
+	for {
+		logs, ok := <-log_chan
+		if !ok {
+			// Channel is closed
+			break
 		}
-		return true
-	})
+
+		ws.WriteMessage(1, logs)
+	}
 }
