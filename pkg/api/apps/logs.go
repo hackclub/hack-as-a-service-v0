@@ -15,22 +15,22 @@ import (
 
 func handleGETLogs(c *gin.Context) {
 	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
-	_ = c.MustGet("user").(db.User)
+	user := c.MustGet("user").(db.User)
 
 	app_id := c.Param("id")
 
-	// var app db.App
-	// result := db.DB.Preload("Team").First(&app, "id = ?", app_id)
-	// if result.Error != nil {
-	// 	c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
-	// 	return
-	// }
-
-	// c.String(200, app.Team.Name)
-	// return
+	var app db.App
+	result := db.DB.Raw(`SELECT apps.* FROM apps
+	JOIN teams ON teams.id = apps.team_id
+	JOIN team_users ON team_users.team_id = teams.id
+	WHERE apps.id = ? AND team_users.user_id = ?`, app_id, user.ID).Scan(&app)
+	if result.RowsAffected < 1 {
+		c.JSON(404, gin.H{"status": "error", "message": "App not found"})
+		return
+	}
 
 	// Get the app's container ID
-	cid, err := dokku_conn.RunCommand(context.Background(), []string{"haas:cid", app_id})
+	cid, err := dokku_conn.RunCommand(context.Background(), []string{"haas:cid", app.ShortName})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return
@@ -76,7 +76,7 @@ func handleGETLogs(c *gin.Context) {
 	// Make a channel to hold the log stream
 	log_chan := make(chan []byte)
 
-	// Listen for new logs in a goroutine
+	// Listen for new logs in 2 seperate goroutines for stdout and stderr
 	go func() {
 		for {
 			logs := make([]byte, 100)
