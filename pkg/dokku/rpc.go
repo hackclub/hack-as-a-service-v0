@@ -2,6 +2,7 @@ package dokku
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net"
 	"strings"
@@ -72,6 +73,28 @@ func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, e
 	return res, nil
 }
 
+func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (struct{ execId int }, error) {
+	var res struct {
+		execId int
+	}
+	_, err := conn.conn.Call(ctx, "streamingCommand", args, &res)
+	if err != nil {
+		// fmt.Printf("Error: %+v\n", err)
+		// FIXME: seems to reconnect every 2nd call
+		if strings.Contains(err.Error(), "use of closed network connection") {
+			err = conn.reconnect(ctx)
+			if err != nil {
+				return struct{ execId int }{}, err
+			}
+			return conn.RunStreamingCommand(ctx, args)
+		} else {
+			return struct{ execId int }{}, err
+		}
+	}
+
+	return res, nil
+}
+
 // Reconnects a dokku connection
 func (conn *DokkuConn) reconnect(ctx context.Context) error {
 	if conn.conn != nil {
@@ -84,7 +107,12 @@ func (conn *DokkuConn) reconnect(ctx context.Context) error {
 	}
 	stream2 := jsonrpc2.NewStream(stream.(net.Conn))
 	jconn := jsonrpc2.NewConn(stream2)
-	jconn.Go(ctx, jsonrpc2.MethodNotFoundHandler)
+	jconn.Go(ctx, func(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+		var out map[string]interface{}
+		json.Unmarshal(req.Params(), &out)
+		log.Printf("Request method=%s params=%+v\n", req.Method(), out)
+		return nil
+	})
 	conn.conn = jconn
 	return nil
 }
