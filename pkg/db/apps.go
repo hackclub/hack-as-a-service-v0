@@ -8,6 +8,5 @@ type App struct {
 	// The app's Dokku name
 	ShortName string
 	TeamID    uint
-	Team      Team
 	// TODO: add more fields
 }
