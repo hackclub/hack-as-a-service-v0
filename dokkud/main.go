@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 
 	"go.lsp.dev/jsonrpc2"
 )
@@ -21,48 +22,26 @@ func simpleCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2.Re
 
 	log.Printf("Request to execute command %s %s", "dokku", args)
 
-	cmd := NewCmdExec(ctx, "dokku", args)
+	cmd := exec.Command("dokku", args...)
 
-	err = cmd.Start()
+	stdout, err := cmd.Output()
+
 	if err != nil {
-		reply(ctx, nil, err)
-		return nil
-	}
-
-	log.Println("Started cmd")
-
-	stdout := ""
-	stderr := ""
-	status := 0
-
-loop:
-	for {
-		select {
-		case line, ok := <-cmd.Stdout():
-			if !ok {
-				continue
-			}
-			// log.Printf("Recv from stream[stdout]: %+v\n", line)
-			stdout += line + "\n"
-		case line, ok := <-cmd.Stderr():
-			if !ok {
-				continue
-			}
-			// log.Printf("Recv from stream[stderr]: %+v\n", line)
-			stderr += line + "\n"
-		case status = <-cmd.Done():
-			log.Printf("Recv from stream[status]: %+v\n", status)
-			break loop
+		switch v := err.(type) {
+		case *exec.ExitError:
+			log.Printf("Error while running command: %s", v.Stderr)
+			reply(ctx, nil, errors.New(string(v.Stderr)))
+			return nil
+		default:
+			log.Println(err.Error())
+			reply(ctx, "", nil)
+			return nil
 		}
 	}
 
-	if status != 0 {
-		log.Printf("Error while running command: %s", stderr)
-		reply(ctx, nil, errors.New(string(stderr)))
-		return nil
-	}
+	output := string(stdout)
 
-	err = reply(ctx, stdout, nil)
+	err = reply(ctx, output, nil)
 	if err != nil {
 		return err
 	}
