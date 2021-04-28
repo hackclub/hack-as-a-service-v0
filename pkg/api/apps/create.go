@@ -23,7 +23,8 @@ func IsValidAppName(appName string) error {
 }
 
 func handlePOSTApp(c *gin.Context) {
-	dokku_conn := c.MustGet("dokkuconn").(dokku.DokkuConn)
+	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+	user := c.MustGet("user").(db.User)
 
 	var json struct {
 		Name      string
@@ -44,7 +45,7 @@ func handlePOSTApp(c *gin.Context) {
 	}
 
 	// Check that the given team ID exists
-	result := db.DB.First(&db.Team{}, "id = ?", json.TeamID)
+	result := db.DB.Joins("JOIN team_users ON team_users.team_id = teams.id").First(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", json.TeamID, user.ID)
 	if result.Error != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid team ID"})
 		return
