@@ -21,15 +21,9 @@ function App({ name, shortName }: { name: string; shortName: string }) {
 export default function Dashboard() {
   const router = useRouter();
 
-  const { data: user, error: userError } = useSWR("/users/me", fetchApi);
+  const { data: user } = useSWR("/users/me", fetchApi);
   const { data: teams } = useSWR("/users/me/teams", fetchApi);
   const { data: apps } = useSWR("/users/me/apps", fetchApi);
-
-  useEffect(() => {
-    if (userError) {
-      router.push("/");
-    }
-  }, [userError]);
 
   const personalTeam = teams
     ? teams.teams.find((team: any) => team.Personal)

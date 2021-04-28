@@ -1,4 +1,5 @@
 import Icon from "@hackclub/icons";
+import { useRouter } from "next/router";
 import { PropsWithChildren, useEffect } from "react";
 import useSWR from "swr";
 import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
@@ -89,7 +90,14 @@ export default function DashboardLayout({
   sidebarSections,
   children,
 }: PropsWithChildren<{ title: string; sidebarSections: SidebarSection[] }>) {
-  const { data: user } = useSWR("/users/me", fetchApi);
+  const router = useRouter();
+  const { data: user, error: userError } = useSWR("/users/me", fetchApi);
+
+  useEffect(() => {
+    if (userError) {
+      router.push("/");
+    }
+  }, [userError]);
 
   return (
     <Flex sx={{ minHeight: "100vh" }}>
