@@ -45,6 +45,7 @@ services:
       - "3080:80"
       - "3443:443"
     volumes:
+      - ".:/code"
       - "./dokku_data:/mnt/dokku"
       - "./dokkud_sock:/var/run/dokku-daemon"
       - "/var/run/docker.sock:/var/run/docker.sock"
