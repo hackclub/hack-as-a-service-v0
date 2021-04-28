@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import useSWR from "swr";
 import { Button, Text, Box, Flex, Heading } from "theme-ui";
 import DashboardLayout, { SidebarSection } from "../layouts/dashboard";
@@ -17,17 +19,26 @@ function App({ name, shortName }: { name: string; shortName: string }) {
 }
 
 export default function Dashboard() {
-  const { data: user } = useSWR("/users/me", fetchApi);
+  const router = useRouter();
+
+  const { data: user, error: userError } = useSWR("/users/me", fetchApi);
   const { data: teams } = useSWR("/users/me/teams", fetchApi);
   const { data: apps } = useSWR("/users/me/apps", fetchApi);
 
+  useEffect(() => {
+    if (userError) {
+      router.push("/");
+    }
+  }, [userError]);
+
+  const personalTeam = teams
+    ? teams.teams.find((team: any) => team.Personal)
+    : null;
+
   // Get personal apps
   const personalApps =
-    teams && apps
-      ? apps.apps.filter(
-          (app: any) =>
-            app.TeamID == teams.teams.find((team) => team.Personal).ID
-        )
+    personalTeam && apps
+      ? apps.apps.filter((app: any) => app.TeamID == personalTeam.ID)
       : null;
 
   const sidebarSections: SidebarSection[] = [
@@ -56,8 +67,8 @@ export default function Dashboard() {
   return (
     <DashboardLayout title="Personal Apps" sidebarSections={sidebarSections}>
       {personalApps &&
-        personalApps.map((v, i) => {
-          return <App name={v.Name} shortName={v.ShortName} key={i} />;
+        personalApps.map((app: any) => {
+          return <App name={app.Name} shortName={app.ShortName} key={app.ID} />;
         })}
     </DashboardLayout>
   );

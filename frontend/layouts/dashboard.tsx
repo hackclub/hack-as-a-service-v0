@@ -57,10 +57,10 @@ function SidebarSection({
   return (
     <Box mt={4}>
       {title && <Heading mb={3}>{title}</Heading>}
-      {items.map((v, i) => {
+      {items.map((item) => {
         return (
-          <SidebarItem key={i} icon={v.icon} image={v.image}>
-            {v.text}
+          <SidebarItem key={item.text} icon={item.icon} image={item.image}>
+            {item.text}
           </SidebarItem>
         );
       })}
@@ -92,28 +92,26 @@ export default function DashboardLayout({
   const { data: user } = useSWR("/users/me", fetchApi);
 
   return (
-    <>
-      <Flex sx={{ minHeight: "100vh" }}>
-        <Box
-          sx={{ flexBasis: 400, flexShrink: 0, flexGrow: 0 }}
-          px="50px"
-          py="30px"
-        >
-          <SidebarHeader avatar={user?.user.Avatar} />
-          <Box mt={50}>
-            {sidebarSections.map((v, i) => {
-              return <SidebarSection key={i} title={v.title} items={v.items} />;
-            })}
-          </Box>
+    <Flex sx={{ minHeight: "100vh" }}>
+      <Box
+        sx={{ flexBasis: 400, flexShrink: 0, flexGrow: 0 }}
+        px="50px"
+        py="30px"
+      >
+        <SidebarHeader avatar={user?.user.Avatar} />
+        <Box mt={50}>
+          {sidebarSections.map((v, i) => {
+            return <SidebarSection key={i} title={v.title} items={v.items} />;
+          })}
         </Box>
-        <Box sx={{ flex: "1 1 auto" }} px="50px" py="30px">
-          <Heading as="h1" mb={5}>
-            {title}
-          </Heading>
+      </Box>
+      <Box sx={{ flex: "1 1 auto" }} px="50px" py="30px">
+        <Heading as="h1" mb={5}>
+          {title}
+        </Heading>
 
-          {children}
-        </Box>
-      </Flex>
-    </>
+        {children}
+      </Box>
+    </Flex>
   );
 }
