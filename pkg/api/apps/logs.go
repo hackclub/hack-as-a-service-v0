@@ -80,7 +80,7 @@ func handleGETLogs(c *gin.Context) {
 	stderr_reader, stderr_writer := io.Pipe()
 
 	// Make a channel to hold the log stream
-	log_chan := make(chan map[string]interface{})
+	log_chan := make(chan gin.H)
 
 	// Demultiplex stream in a goroutine
 	go func() {
@@ -101,7 +101,7 @@ func handleGETLogs(c *gin.Context) {
 
 		for scanner.Scan() {
 			log_mutex.Lock()
-			log_chan <- map[string]interface{}{
+			log_chan <- gin.H{
 				"stream": "stdout",
 				"log":    scanner.Text(),
 			}
@@ -114,7 +114,7 @@ func handleGETLogs(c *gin.Context) {
 
 		for scanner.Scan() {
 			log_mutex.Lock()
-			log_chan <- map[string]interface{}{
+			log_chan <- gin.H{
 				"stream": "stderr",
 				"log":    scanner.Text(),
 			}
