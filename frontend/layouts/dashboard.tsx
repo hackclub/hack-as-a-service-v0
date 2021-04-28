@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
 import fetchApi from "../lib/fetch";
 
+import { Glyph } from "../types/glyph";
+
 function SidebarItem({
   image,
   icon,
@@ -27,7 +29,7 @@ function SidebarItem({
           mr={15}
           bg="sunken"
         >
-          <Icon glyph={icon} />
+          <Icon glyph={icon as Glyph} />
         </Flex>
       )}
       <Heading
