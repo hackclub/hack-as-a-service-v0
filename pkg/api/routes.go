@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/apps"
@@ -21,26 +20,26 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	})
 
 	// uncomment for testing
-	r.GET("/command", func(c *gin.Context) {
-		conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
-		cmd := strings.Split(c.Request.URL.Query().Get("command"), " ")
-		res, err := conn.RunCommand(c.Request.Context(), cmd)
-		if err != nil {
-			c.JSON(500, gin.H{"status": "error", "error": err})
-		} else {
-			c.JSON(200, gin.H{"status": "ok", "output": res})
-		}
-	})
-	r.GET("/streamCommand", func(c *gin.Context) {
-		conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
-		cmd := strings.Split(c.Request.URL.Query().Get("command"), " ")
-		res, err := conn.RunStreamingCommand(c.Request.Context(), cmd)
-		if err != nil {
-			c.JSON(500, gin.H{"status": "error", "error": err})
-		} else {
-			c.JSON(200, gin.H{"status": "ok", "output": res})
-		}
-	})
+	// r.GET("/command", func(c *gin.Context) {
+	// 	conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+	// 	cmd := strings.Split(c.Request.URL.Query().Get("command"), " ")
+	// 	res, err := conn.RunCommand(c.Request.Context(), cmd)
+	// 	if err != nil {
+	// 		c.JSON(500, gin.H{"status": "error", "error": err})
+	// 	} else {
+	// 		c.JSON(200, gin.H{"status": "ok", "output": res})
+	// 	}
+	// })
+	// r.GET("/streamCommand", func(c *gin.Context) {
+	// 	conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+	// 	cmd := strings.Split(c.Request.URL.Query().Get("command"), " ")
+	// 	res, err := conn.RunStreamingCommand(c.Request.Context(), cmd)
+	// 	if err != nil {
+	// 		c.JSON(500, gin.H{"status": "error", "error": err})
+	// 	} else {
+	// 		c.JSON(200, gin.H{"status": "ok", "output": res})
+	// 	}
+	// })
 
 	users_rg := r.Group("/users")
 	users.SetupRoutes(users_rg)

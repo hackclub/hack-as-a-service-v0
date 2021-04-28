@@ -20,7 +20,7 @@ func simpleCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2.Re
 		return nil
 	}
 
-	log.Printf("Request to execute command %s %s", "dokku", args)
+	log.Printf("Request to execute command %s %s\n", "dokku", args)
 
 	cmd := exec.Command("dokku", args...)
 
@@ -29,7 +29,7 @@ func simpleCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2.Re
 	if err != nil {
 		switch v := err.(type) {
 		case *exec.ExitError:
-			log.Printf("Error while running command: %s", v.Stderr)
+			log.Printf("Error while running command: %s\n", v.Stderr)
 			reply(ctx, nil, errors.New(string(v.Stderr)))
 			return nil
 		default:
@@ -56,7 +56,7 @@ func streamingCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2
 		return nil
 	}
 
-	log.Printf("Request to execute [streaming] command %s %s", "dokku", args)
+	log.Printf("Request to execute [streaming] command %s %s\n", "dokku", args)
 
 	cmd := NewCmdExec(ctx, "dokku", args)
 

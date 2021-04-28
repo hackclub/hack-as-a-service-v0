@@ -16,6 +16,13 @@ type DokkuConn struct {
 	conn       jsonrpc2.Conn
 }
 
+var runningCommands map[int]StreamingCommandResult
+
+func GetRunningCommand(execId int) (StreamingCommandResult, bool) {
+	thing, ok := runningCommands[execId]
+	return thing, ok
+}
+
 // Exponentially backoff network errors
 func retriedNetworkFunc(f func() (interface{}, error)) (interface{}, error) {
 	// maximum backoff
@@ -74,7 +81,10 @@ func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, e
 }
 
 type StreamingCommandResult struct {
-	ExecId int
+	ExecId     int
+	StdoutChan chan string
+	StderrChan chan string
+	StatusChan chan int
 }
 
 func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (StreamingCommandResult, error) {
@@ -97,6 +107,71 @@ func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (
 	return res, nil
 }
 
+type lineMessage struct {
+	ExecId int
+	Line   string
+}
+
+type statusMessage struct {
+	ExecId int
+	Status int
+}
+
+func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+	var msg lineMessage
+	err := json.Unmarshal(req.Params(), &msg)
+	if err != nil {
+		return err
+	}
+	log.Printf("[stdout][%d] %s", msg.ExecId, msg.Line)
+	if c, ok := runningCommands[msg.ExecId]; ok {
+		c.StdoutChan <- msg.Line
+	}
+	return nil
+}
+
+func stderrHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+	var msg lineMessage
+	err := json.Unmarshal(req.Params(), &msg)
+	if err != nil {
+		return err
+	}
+	log.Printf("[stderr][%d] %s", msg.ExecId, msg.Line)
+	if c, ok := runningCommands[msg.ExecId]; ok {
+		c.StderrChan <- msg.Line
+	}
+	return nil
+}
+
+func doneHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+	var msg statusMessage
+	err := json.Unmarshal(req.Params(), &msg)
+	if err != nil {
+		return err
+	}
+	log.Printf("[%d] exited with status %d\n", msg.ExecId, msg.Status)
+	if c, ok := runningCommands[msg.ExecId]; ok {
+		close(c.StdoutChan)
+		close(c.StderrChan)
+		c.StatusChan <- msg.Status
+		delete(runningCommands, msg.ExecId)
+	}
+	return nil
+}
+
+func notificationHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+	switch req.Method() {
+	case "commandStdout":
+		return stdoutHandler(ctx, reply, req)
+	case "commandStderr":
+		return stderrHandler(ctx, reply, req)
+	case "commandDone":
+		return doneHandler(ctx, reply, req)
+	default:
+		return nil
+	}
+}
+
 // Reconnects a dokku connection
 func (conn *DokkuConn) reconnect(ctx context.Context) error {
 	if conn.conn != nil {
@@ -109,12 +184,7 @@ func (conn *DokkuConn) reconnect(ctx context.Context) error {
 	}
 	stream2 := jsonrpc2.NewStream(stream.(net.Conn))
 	jconn := jsonrpc2.NewConn(stream2)
-	jconn.Go(ctx, func(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
-		var out map[string]interface{}
-		json.Unmarshal(req.Params(), &out)
-		log.Printf("Request method=%s params=%+v\n", req.Method(), out)
-		return nil
-	})
+	jconn.Go(ctx, notificationHandler)
 	conn.conn = jconn
 	return nil
 }
