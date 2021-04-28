@@ -73,10 +73,12 @@ func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, e
 	return res, nil
 }
 
-func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (struct{ execId int }, error) {
-	var res struct {
-		execId int
-	}
+type StreamingCommandResult struct {
+	ExecId int
+}
+
+func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (StreamingCommandResult, error) {
+	var res StreamingCommandResult
 	_, err := conn.conn.Call(ctx, "streamingCommand", args, &res)
 	if err != nil {
 		// fmt.Printf("Error: %+v\n", err)
@@ -84,11 +86,11 @@ func (conn *DokkuConn) RunStreamingCommand(ctx context.Context, args []string) (
 		if strings.Contains(err.Error(), "use of closed network connection") {
 			err = conn.reconnect(ctx)
 			if err != nil {
-				return struct{ execId int }{}, err
+				return StreamingCommandResult{}, err
 			}
 			return conn.RunStreamingCommand(ctx, args)
 		} else {
-			return struct{ execId int }{}, err
+			return StreamingCommandResult{}, err
 		}
 	}
 

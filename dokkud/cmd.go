@@ -11,15 +11,11 @@ var cmdExecId int = 0
 
 /// A (possibly long running) command execution
 type CmdExec struct {
-	id          int
-	cmd         *exec.Cmd
-	stdoutChan  chan string
-	stdoutStart chan bool
-	stdoutDone  chan bool
-	stderrChan  chan string
-	stderrDone  chan bool
-	stderrStart chan bool
-	done        chan int
+	id         int
+	cmd        *exec.Cmd
+	stdoutChan chan string
+	stderrChan chan string
+	done       chan int
 }
 
 func (c *CmdExec) Stdout() chan string {
@@ -39,27 +35,67 @@ func (c *CmdExec) Id() int {
 }
 
 func (c *CmdExec) Start() error {
-	err := c.cmd.Start()
-	c.stdoutStart <- true
-	c.stderrStart <- true
-	log.Printf("Started command, err = %+v\n", err)
+	errChan := make(chan error)
 
-	// Done writer
-	go (func() {
-		<-c.stdoutDone
-		<-c.stderrDone
-		err := c.cmd.Wait()
+	go func() {
+		stdout, err := c.cmd.StdoutPipe()
 		if err != nil {
-			switch err := err.(type) {
-			case *exec.ExitError:
-				c.done <- err.ProcessState.ExitCode()
-			default:
-				c.done <- 0
-				log.Printf("Error[status]: %+v\n", err)
-			}
+			errChan <- err
+			return
 		}
-		c.done <- 0
-	})()
+		stderr, err := c.cmd.StderrPipe()
+		if err != nil {
+			errChan <- err
+			return
+		}
+		err = c.cmd.Start()
+		errChan <- err
+		if err != nil {
+			return
+		}
+
+		stdoutDone := make(chan bool)
+		stderrDone := make(chan bool)
+
+		go func() {
+			defer func() {
+				close(c.stdoutChan)
+				stdoutDone <- true
+			}()
+			s := bufio.NewScanner(stdout)
+			for s.Scan() {
+				c.stdoutChan <- s.Text()
+			}
+		}()
+		go func() {
+			defer func() {
+				close(c.stderrChan)
+				stderrDone <- true
+			}()
+			s := bufio.NewScanner(stderr)
+			for s.Scan() {
+				c.stderrChan <- s.Text()
+			}
+		}()
+
+		<-stdoutDone
+		<-stderrDone
+		err = c.cmd.Wait()
+		if err == nil {
+			c.done <- 0
+			return
+		}
+		switch err := err.(type) {
+		case *exec.ExitError:
+			c.done <- err.ExitCode()
+		default:
+			log.Printf("Error: %+v\n", err)
+			c.done <- 0
+		}
+	}()
+
+	err := <-errChan
+	log.Printf("Started command, err = %+v\n", err)
 
 	if err != nil {
 		log.Printf("Error[start]: %+v\n", err)
@@ -78,60 +114,13 @@ func NewCmdExec(ctx context.Context, name string, args []string) CmdExec {
 	c := exec.CommandContext(ctx, name, args...)
 	id := nextId()
 	stdoutChan := make(chan string)
-	stdoutDone := make(chan bool)
-	stdoutStart := make(chan bool)
 	stderrChan := make(chan string)
-	stderrDone := make(chan bool)
-	stderrStart := make(chan bool)
 	doneChan := make(chan int)
-
-	// Stdout writer
-	go (func() {
-		defer close(stdoutChan)
-		defer func() { stdoutDone <- true }()
-		stdout, err := c.StdoutPipe()
-		if err != nil {
-			log.Printf("Error[stdout1]: %+v\n", err)
-			return
-		}
-		<-stdoutStart
-		log.Println("Started stdout reader")
-		r := bufio.NewScanner(stdout)
-		for r.Scan() {
-			line := r.Text()
-			log.Printf("Line from stdout goroutine: %s\n", line)
-			stdoutChan <- line
-		}
-		err = r.Err()
-		if err != nil {
-			log.Printf("Error[stdout2]: %+v\n", err)
-		}
-	})()
-
-	// Stderr writer
-	go (func() {
-		defer close(stderrChan)
-		defer func() { stderrDone <- true }()
-		stderr, err := c.StderrPipe()
-		if err != nil {
-			log.Printf("Error[stderr1]: %+v\n", err)
-			return
-		}
-		<-stderrStart
-		log.Println("Started stderr reader")
-		r := bufio.NewScanner(stderr)
-		for r.Scan() {
-			stderrChan <- r.Text()
-		}
-		if err != nil {
-			log.Printf("Error[stderr2]: %+v\n", err)
-		}
-	})()
 
 	return CmdExec{
 		id: id, cmd: c,
-		stdoutChan: stdoutChan, stdoutDone: stdoutDone, stdoutStart: stdoutStart,
-		stderrChan: stderrChan, stderrDone: stderrDone, stderrStart: stderrStart,
-		done: doneChan,
+		stdoutChan: stdoutChan,
+		stderrChan: stderrChan,
+		done:       doneChan,
 	}
 }
