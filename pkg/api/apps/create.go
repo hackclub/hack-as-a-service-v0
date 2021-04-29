@@ -11,7 +11,7 @@ import (
 
 func IsValidAppName(appName string) error {
 	if appName == "" {
-		return errors.New("Please specify an app to run the command on")
+		return errors.New("please specify an app to run the command on")
 	}
 
 	r, _ := regexp.Compile(`^[a-z0-9][^/:_A-Z\s]*$`)
@@ -19,7 +19,7 @@ func IsValidAppName(appName string) error {
 		return nil
 	}
 
-	return errors.New("App name must begin with lowercase alphanumeric character, and cannot include uppercase characters, colons, underscores, or whitespace")
+	return errors.New("app name must begin with lowercase alphanumeric character, and cannot include uppercase characters, colons, underscores, or whitespace")
 }
 
 func handlePOSTApp(c *gin.Context) {

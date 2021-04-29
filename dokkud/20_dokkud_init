@@ -1,4 +1,5 @@
 #!/bin/bash
 set -eo pipefail
 
-/opt/dokkud & disown
+cd /code/dokkud
+reflex --start-service -r '\.go$' -- go run . & disown
