@@ -3,7 +3,7 @@ info:
   description: |-
     This is the API documentation for Hack as a Service, the PaaS built for Hack Clubbers, by Hack Clubbers.
 
-    You can find out more about HaaS at https://haas.hackclub.com.
+    You can find out more about HaaS at <https://haas.hackclub.com>.
 
     The canonical version of the OpenAPI specification is available at
     <https://haas.hackclub.com/swagger.yaml>.
@@ -11,6 +11,9 @@ info:
   title: Hack as a Service (Haas)
 servers:
   - url: "https://haas.hackclub.com/api"
+    description: HaaS production
+  - url: "http://localhost:5000/api"
+    description: Local server
 tags:
   - name: users
     description: Information about HaaS users
