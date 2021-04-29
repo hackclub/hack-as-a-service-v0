@@ -11,95 +11,59 @@ import (
 
 /// A (possibly long running) command execution
 type CmdExec struct {
-	id         uuid.UUID
+	Id         uuid.UUID
 	cmd        *exec.Cmd
-	stdoutChan chan string
-	stderrChan chan string
-	done       chan int
-}
-
-func (c *CmdExec) Stdout() chan string {
-	return c.stdoutChan
-}
-
-func (c *CmdExec) Stderr() chan string {
-	return c.stderrChan
-}
-
-func (c *CmdExec) Done() chan int {
-	return c.done
-}
-
-func (c *CmdExec) Id() uuid.UUID {
-	return c.id
+	StdoutChan chan string
+	StderrChan chan string
+	Done       chan int
 }
 
 func (c *CmdExec) Start() error {
-	errChan := make(chan error)
+	stdout, err := c.cmd.StdoutPipe()
+	if err != nil {
+		log.Printf("Error[start]: %+v\n", err)
+		return err
+	}
+	stderr, err := c.cmd.StderrPipe()
+	if err != nil {
+		log.Printf("Error[start]: %+v\n", err)
+		return err
+	}
+	err = c.cmd.Start()
+	if err != nil {
+		log.Printf("Error[start]: %+v\n", err)
+		return err
+	}
 
 	go func() {
-		stdout, err := c.cmd.StdoutPipe()
-		if err != nil {
-			errChan <- err
-			return
-		}
-		stderr, err := c.cmd.StderrPipe()
-		if err != nil {
-			errChan <- err
-			return
-		}
-		err = c.cmd.Start()
-		errChan <- err
-		if err != nil {
-			return
-		}
-
-		stdoutDone := make(chan bool)
-		stderrDone := make(chan bool)
-
 		go func() {
-			defer func() {
-				close(c.stdoutChan)
-				stdoutDone <- true
-			}()
+			defer close(c.StdoutChan)
 			s := bufio.NewScanner(stdout)
 			for s.Scan() {
-				c.stdoutChan <- s.Text()
+				c.StdoutChan <- s.Text()
 			}
 		}()
 		go func() {
-			defer func() {
-				close(c.stderrChan)
-				stderrDone <- true
-			}()
+			defer close(c.StderrChan)
 			s := bufio.NewScanner(stderr)
 			for s.Scan() {
-				c.stderrChan <- s.Text()
+				c.StderrChan <- s.Text()
 			}
 		}()
 
-		<-stdoutDone
-		<-stderrDone
 		err = c.cmd.Wait()
 		if err == nil {
-			c.done <- 0
+			c.Done <- 0
 			return
 		}
 		switch err := err.(type) {
 		case *exec.ExitError:
-			c.done <- err.ExitCode()
+			c.Done <- err.ExitCode()
 		default:
 			log.Printf("Error: %+v\n", err)
-			c.done <- 0
+			c.Done <- 0
 		}
 	}()
-
-	err := <-errChan
-	log.Printf("Started command, err = %+v\n", err)
-
-	if err != nil {
-		log.Printf("Error[start]: %+v\n", err)
-	}
 
 	return err
 }
@@ -116,9 +80,9 @@ func NewCmdExec(ctx context.Context, name string, args []string) CmdExec {
 	doneChan := make(chan int)
 
 	return CmdExec{
-		id: id, cmd: c,
-		stdoutChan: stdoutChan,
-		stderrChan: stderrChan,
-		done:       doneChan,
+		Id: id, cmd: c,
+		StdoutChan: stdoutChan,
+		StderrChan: stderrChan,
+		Done:       doneChan,
 	}
 }

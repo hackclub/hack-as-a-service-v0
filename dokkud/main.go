@@ -66,37 +66,39 @@ func streamingCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2
 		return nil
 	}
 
-	// Stdout writer
-	go (func() {
-		for line := range cmd.Stdout() {
-			conn.Notify(ctx, "commandStdout", map[string]interface{}{
-				"execId": cmd.Id(),
-				"line":   line,
-			})
+	// Notifier
+	go func() {
+	loop:
+		for {
+			select {
+			case line, ok := <-cmd.StdoutChan:
+				if !ok {
+					continue
+				}
+				conn.Notify(ctx, "commandStdout", map[string]interface{}{
+					"execId": cmd.Id,
+					"line":   line,
+				})
+			case line, ok := <-cmd.StderrChan:
+				if !ok {
+					continue
+				}
+				conn.Notify(ctx, "commandStderr", map[string]interface{}{
+					"execId": cmd.Id,
+					"line":   line,
+				})
+			case status := <-cmd.Done:
+				conn.Notify(ctx, "commandDone", map[string]interface{}{
+					"execId": cmd.Id,
+					"status": status,
+				})
+				break loop
+			}
 		}
-	})()
-
-	// Stderr writer
-	go (func() {
-		for line := range cmd.Stderr() {
-			conn.Notify(ctx, "commandStderr", map[string]interface{}{
-				"execId": cmd.Id(),
-				"line":   line,
-			})
-		}
-	})()
-
-	// Done writer
-	go (func() {
-		status := <-cmd.Done()
-		conn.Notify(ctx, "commandDone", map[string]interface{}{
-			"execId": cmd.Id(),
-			"status": status,
-		})
-	})()
+	}()
 
 	err = reply(ctx, map[string]interface{}{
-		"execId": cmd.Id(),
+		"execId": cmd.Id,
 	}, nil)
 	if err != nil {
 		return err
