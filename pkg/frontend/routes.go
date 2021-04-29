@@ -14,6 +14,7 @@ func sendHTML(file string) gin.HandlerFunc {
 
 func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/", sendHTML("index.html"))
+	r.GET("/swagger", sendHTML("swagger.html"))
 	r.GET("/dashboard", sendHTML("dashboard.html"))
 	r.GET("/team/:id", sendHTML("team/[id].html"))
 	r.GET("/app/:id", sendHTML("app/[id].html"))
