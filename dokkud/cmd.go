@@ -5,13 +5,13 @@ import (
 	"context"
 	"log"
 	"os/exec"
-)
 
-var cmdExecId int = 0
+	"github.com/google/uuid"
+)
 
 /// A (possibly long running) command execution
 type CmdExec struct {
-	id         int
+	id         uuid.UUID
 	cmd        *exec.Cmd
 	stdoutChan chan string
 	stderrChan chan string
@@ -30,7 +30,7 @@ func (c *CmdExec) Done() chan int {
 	return c.done
 }
 
-func (c *CmdExec) Id() int {
+func (c *CmdExec) Id() uuid.UUID {
 	return c.id
 }
 
@@ -104,15 +104,13 @@ func (c *CmdExec) Start() error {
 	return err
 }
 
-func nextId() int {
-	id := cmdExecId
-	cmdExecId++
-	return id
-}
-
 func NewCmdExec(ctx context.Context, name string, args []string) CmdExec {
 	c := exec.CommandContext(ctx, name, args...)
-	id := nextId()
+	id, err := uuid.NewRandom()
+	if err != nil {
+		// should *not* happen
+		log.Fatalln(err)
+	}
 	stdoutChan := make(chan string)
 	stderrChan := make(chan string)
 	doneChan := make(chan int)

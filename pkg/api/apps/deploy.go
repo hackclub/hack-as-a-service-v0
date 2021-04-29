@@ -2,6 +2,7 @@ package apps
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
@@ -53,6 +54,21 @@ func handlePOSTDeploy(c *gin.Context) {
 		return
 	}
 
+	// Create build
+	build := db.Build{
+		ExecID:    cmd.ExecId,
+		AppID:     app.ID,
+		StartedAt: time.Now(),
+		Running:   true,
+		Stdout:    "",
+		Stderr:    "",
+	}
+	result = db.DB.Create(&build)
+	if result.Error != nil {
+		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
 	// Cannot provide WebSocket since this is a POST request
-	c.JSON(200, gin.H{"status": "ok", "execId": cmd.ExecId})
+	c.JSON(200, gin.H{"status": "ok", "build": build})
 }

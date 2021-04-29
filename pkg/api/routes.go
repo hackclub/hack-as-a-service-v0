@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/apps"
+	"github.com/hackclub/hack-as-a-service/pkg/api/builds"
 	"github.com/hackclub/hack-as-a-service/pkg/api/teams"
 	"github.com/hackclub/hack-as-a-service/pkg/api/users"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
@@ -49,6 +50,9 @@ func SetupRoutes(r *gin.RouterGroup) error {
 
 	apps_rg := r.Group("/apps")
 	apps.SetupRoutes(apps_rg)
+
+	builds_rg := r.Group("/builds")
+	builds.SetupRoutes(builds_rg)
 
 	return nil
 }

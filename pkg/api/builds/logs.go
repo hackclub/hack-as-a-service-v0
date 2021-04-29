@@ -1,4 +1,4 @@
-package apps
+package builds
 
 import (
 	"strconv"
@@ -6,25 +6,27 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
+	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
 
-func handleGETBuildLogs(c *gin.Context) {
-	_, err := strconv.Atoi(c.Params.ByName("id"))
-	if err != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
-		return
-	}
-
-	buildId, err := strconv.Atoi(c.Query("build_id"))
+func handleGETLogs(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid build ID"})
 		return
 	}
 
-	cmd, ok := dokku.GetRunningCommand(buildId)
-	if !ok {
+	var build db.Build
+	result := db.DB.First(&build, "id = ?", id)
+	if result.Error != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid build ID"})
+		return
+	}
+
+	cmd, err := dokku.CreateOutput(build.ExecID)
+	if err != nil {
+		c.JSON(400, gin.H{"status": "error", "message": err.Error()})
 	}
 
 	// WebSockets
@@ -34,7 +36,10 @@ func handleGETBuildLogs(c *gin.Context) {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 	}
 
-	defer ws.Close()
+	defer func() {
+		ws.Close()
+		dokku.RemoveCommandOutput(build.ExecID, cmd)
+	}()
 
 loop:
 	for {
