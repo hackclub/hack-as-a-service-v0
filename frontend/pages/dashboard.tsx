@@ -2,7 +2,10 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import useSWR from "swr";
 import { Button, Text, Box, Flex, Heading } from "theme-ui";
-import DashboardLayout, { SidebarSection } from "../layouts/dashboard";
+import DashboardLayout, {
+  ISidebarItem,
+  ISidebarSection,
+} from "../layouts/dashboard";
 import fetchApi from "../lib/fetch";
 
 function App({ name, shortName }: { name: string; shortName: string }) {
@@ -35,12 +38,12 @@ export default function Dashboard() {
       ? apps.apps.filter((app: any) => app.TeamID == personalTeam.ID)
       : null;
 
-  const sidebarSections: SidebarSection[] = [
+  const sidebarSections: ISidebarSection[] = [
     {
       items: [
         {
-          image: user?.user.Avatar,
-          icon: "person",
+          // image: user?.user.Avatar,
+          icon: "home",
           text: "Personal Apps",
         },
       ],
@@ -52,7 +55,9 @@ export default function Dashboard() {
             .filter((i: any) => !i.Personal)
             .map((i: any) => ({
               icon: "person",
+              image: i.Avatar || undefined,
               text: i.Name,
+              url: `/team/${i.ID}`,
             }))
         : [],
     },
