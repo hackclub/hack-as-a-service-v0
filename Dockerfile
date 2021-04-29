@@ -4,6 +4,7 @@ FROM node:14-alpine AS frontend
 WORKDIR /usr/src/app
 
 COPY frontend/ .
+COPY ./swagger.yaml ./swagger.yaml
 
 RUN yarn install
 
