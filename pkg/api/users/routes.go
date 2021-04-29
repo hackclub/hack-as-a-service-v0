@@ -13,4 +13,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.DELETE("/:id", handleDELETEUser)
 	r.GET("/:id/apps", handleGETUserApps)
 	r.GET("/:id/teams", handleGETUserTeams)
+
+	r.GET("/search", handleGETSearch)
 }

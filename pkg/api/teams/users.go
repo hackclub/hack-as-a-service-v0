@@ -5,18 +5,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
-	"gorm.io/gorm"
 )
 
-func handlePUTTeamUsers(c *gin.Context) {
+func handlePOSTTeamUsers(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
 		return
 	}
 
+	user := c.MustGet("user").(db.User)
+
 	var json struct {
-		Users []uint
+		User uint
 	}
 	err = c.BindJSON(&json)
 	if err != nil {
@@ -25,20 +26,25 @@ func handlePUTTeamUsers(c *gin.Context) {
 	}
 
 	var team db.Team
-	result := db.DB.First(&team, "id = ?", id)
+	result := db.DB.Joins("JOIN team_users ON teams.id = team_users.team_id").
+		First(&team, "teams.id = ? AND team_users.user_id = ? AND NOT teams.personal", id, user.ID)
 	if result.Error != nil {
-		c.JSON(500, gin.H{"status": "error", "message": result.Error})
+		c.JSON(400, gin.H{"status": "error", "message": "team not found"})
 		return
 	}
-	team.Users = nil
-	for _, user := range json.Users {
-		team.Users = append(team.Users, &db.User{Model: gorm.Model{ID: user}})
+
+	var invitedUser db.User
+	result = db.DB.First(&invitedUser, "id = ?", json.User)
+	if result.Error != nil {
+		c.JSON(400, gin.H{"status": "error", "message": "user not found"})
+		return
 	}
 
-	result = db.DB.Save(&team)
-	if result.Error != nil {
-		c.JSON(500, gin.H{"status": "error", "message": result.Error})
-	} else {
-		c.JSON(200, gin.H{"status": "ok"})
+	err = db.DB.Model(&team).Association("Users").Append(&invitedUser)
+	if err != nil {
+		c.JSON(500, gin.H{"status": "error", "message": err})
+		return
 	}
+
+	c.JSON(200, gin.H{"status": "ok"})
 }
