@@ -4,6 +4,9 @@ info:
     This is the API documentation for Hack as a Service, the PaaS built for Hack Clubbers, by Hack Clubbers.
 
     You can find out more about HaaS at https://haas.hackclub.com.
+
+    The canonical version of the OpenAPI specification is available at
+    <https://haas.hackclub.com/swagger.yaml>.
   version: "1.0.0"
   title: Hack as a Service (Haas)
 servers:
