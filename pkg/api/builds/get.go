@@ -17,7 +17,7 @@ func handleGETBuild(c *gin.Context) {
 	var build db.Build
 	result := db.DB.First(&build, "id = ?", id)
 	if result.Error != nil {
-		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid build ID"})
 	} else {
 		c.JSON(200, gin.H{"status": "ok", "build": build})
 	}
