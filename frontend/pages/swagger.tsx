@@ -5,7 +5,6 @@ import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 
 export default function Swagger({ spec }: { spec: any }) {
-  console.log("Spec = ", spec);
   return <SwaggerUI spec={spec} />;
 }
 
