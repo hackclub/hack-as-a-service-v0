@@ -10,6 +10,7 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/api/auth"
 	"github.com/hackclub/hack-as-a-service/pkg/api/oauth"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/frontend"
 )
 
 func getPort() string {
@@ -38,7 +39,9 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
+	frontend.SetupRoutes(&r.RouterGroup)
+
+	r.Use(static.ServeRoot("/", "./frontend/out"))
 
 	rg := r.Group("/api", auth.EnsureAuthedUser)
 	err = api.SetupRoutes(rg)
