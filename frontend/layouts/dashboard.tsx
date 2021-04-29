@@ -88,7 +88,13 @@ function SidebarHeader({ avatar }: { avatar?: string }) {
       <Avatar src={avatar} />
       <Box sx={{ flexGrow: 1 }} />
       <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
-      <Icon glyph="door-leave" size={32} style={{ margin: "0 10px" }} />
+      <Link href="/logout">
+        <Icon
+          glyph="door-leave"
+          size={32}
+          style={{ margin: "0 10px", cursor: "pointer" }}
+        />
+      </Link>
     </Flex>
   );
 }
