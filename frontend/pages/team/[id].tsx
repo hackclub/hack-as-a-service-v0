@@ -80,22 +80,31 @@ function InviteModal({
   team,
   visible,
   onSelect,
+  onClose,
 }: {
   team: any;
   visible: boolean;
-  onSelect: (string) => void;
+  onSelect: (id: string) => void;
+  onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetchApi(`/users/search?q=${query}`).then((res) => {
+    fetchApi(`/users/search?excludeSelf=true&q=${query}`).then((res) => {
       setUsers(res.users);
     });
   }, [query]);
 
   return (
-    <Modal title={`Invite someone to ${team.Name}`}>
+    <Modal
+      onClose={onClose}
+      title={`Invite someone to ${team.Name}`}
+      visible={visible}
+    >
+      <Heading as="h1" mb={4} sx={{ fontWeight: "normal" }}>
+        Invite someone to <Text sx={{ fontWeight: "bold" }}>{team.Name}</Text>
+      </Heading>
       <Box as="form">
         <Input
           onInput={(e) => setQuery((e.target as any).value)}
@@ -140,6 +149,8 @@ export default function TeamPage() {
   const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
   const { data: apps } = useSWR("/users/me/apps", fetchApi);
 
+  const [inviteModalVisible, setInviteModalVisible] = useState(false);
+
   const teamApps = apps
     ? apps.apps.filter((app: any) => app.TeamID == id)
     : null;
@@ -183,7 +194,14 @@ export default function TeamPage() {
         },
       ]}
     >
-      {team && <InviteModal team={team.team} visible onSelect={inviteUser} />}
+      {team && (
+        <InviteModal
+          team={team.team}
+          visible={inviteModalVisible}
+          onSelect={inviteUser}
+          onClose={() => setInviteModalVisible(false)}
+        />
+      )}
 
       <Flex>
         <Field
@@ -234,7 +252,11 @@ export default function TeamPage() {
         >
           <Flex>
             <Heading mr={3}>Team members</Heading>
-            <Icon style={{ cursor: "pointer" }} glyph="plus" />
+            <Icon
+              style={{ cursor: "pointer" }}
+              glyph="plus"
+              onClick={() => setInviteModalVisible(true)}
+            />
           </Flex>
 
           {team &&

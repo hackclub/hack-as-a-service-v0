@@ -1,10 +1,16 @@
-import { Box, Flex, Heading } from "@theme-ui/components";
+import { Box, Close, Flex, Heading } from "@theme-ui/components";
 import { PropsWithChildren } from "react";
 
 export default function Modal({
   children,
   title,
-}: PropsWithChildren<{ title: string }>) {
+  visible,
+  onClose,
+}: PropsWithChildren<{
+  title: string;
+  visible: boolean;
+  onClose: () => void;
+}>) {
   return (
     <Flex
       sx={{
@@ -15,18 +21,26 @@ export default function Modal({
         bottom: 0,
         alignItems: "center",
         justifyContent: "center",
+        display: visible ? "flex" : "none !important",
       }}
       bg="rgba(0, 0, 0, 0.5)"
     >
       <Flex
         bg="background"
-        sx={{ borderRadius: 10, flexDirection: "column", minWidth: 500 }}
+        sx={{
+          borderRadius: 10,
+          flexDirection: "column",
+          minWidth: 500,
+          position: "relative",
+        }}
         px={5}
         py={4}
       >
-        <Heading as="h1" mb={4}>
-          {title}
-        </Heading>
+        <Close
+          mr={2}
+          sx={{ position: "absolute", left: 10, top: 10, cursor: "pointer" }}
+          onClick={() => onClose()}
+        />
         <Box>{children}</Box>
       </Flex>
     </Flex>

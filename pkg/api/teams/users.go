@@ -25,6 +25,11 @@ func handlePOSTTeamUsers(c *gin.Context) {
 		return
 	}
 
+	if user.ID == json.User {
+		c.JSON(400, gin.H{"status": "error", "message": "you can't invite yourself"})
+		return
+	}
+
 	var team db.Team
 	result := db.DB.Joins("JOIN team_users ON teams.id = team_users.team_id").
 		First(&team, "teams.id = ? AND team_users.user_id = ? AND NOT teams.personal", id, user.ID)
