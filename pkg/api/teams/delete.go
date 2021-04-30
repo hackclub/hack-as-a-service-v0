@@ -16,8 +16,8 @@ func handleDELETETeam(c *gin.Context) {
 		return
 	}
 
-	result := db.DB.Raw("DELETE FROM teams"+
-		"INNER JOIN team_users ON team_users.team_id = teams.id"+
+	result := db.DB.Raw("DELETE FROM teams "+
+		"INNER JOIN team_users ON team_users.team_id = teams.id "+
 		"WHERE teams.id = ? AND team_users.user_id = ?", id, user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
