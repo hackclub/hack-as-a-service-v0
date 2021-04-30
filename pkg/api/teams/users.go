@@ -26,7 +26,7 @@ func handlePOSTTeamUsers(c *gin.Context) {
 	}
 
 	if user.ID == json.User {
-		c.JSON(400, gin.H{"status": "error", "message": "you can't invite yourself"})
+		c.JSON(400, gin.H{"status": "error", "message": "You can't invite yourself"})
 		return
 	}
 
@@ -34,20 +34,20 @@ func handlePOSTTeamUsers(c *gin.Context) {
 	result := db.DB.Joins("JOIN team_users ON teams.id = team_users.team_id").
 		First(&team, "teams.id = ? AND team_users.user_id = ? AND NOT teams.personal", id, user.ID)
 	if result.Error != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "team not found"})
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid team ID"})
 		return
 	}
 
 	var invitedUser db.User
 	result = db.DB.First(&invitedUser, "id = ?", json.User)
 	if result.Error != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "user not found"})
+		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID to invite"})
 		return
 	}
 
 	err = db.DB.Model(&team).Association("Users").Append(&invitedUser)
 	if err != nil {
-		c.JSON(500, gin.H{"status": "error", "message": err})
+		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 

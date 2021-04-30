@@ -12,7 +12,7 @@ func handleGETSearch(c *gin.Context) {
 
 	query := c.Query("q")
 	if query == "" {
-		c.JSON(200, gin.H{"status": "ok", "message": "missing `q` parameter", "users": []interface{}{}})
+		c.JSON(400, gin.H{"status": "error", "message": "Missing `q` parameter"})
 		return
 	}
 
