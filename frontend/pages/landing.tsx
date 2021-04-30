@@ -28,17 +28,20 @@ export default function Home() {
           </Button>
         </Link>
       </Flex>
-      <Box className={styles.container} sx={{}}>
+      <Box
+        className={styles.container}
+        sx={{
+          backgroundImage: "url(/landing-vector.svg)",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
         <Text
           as="h1"
           sx={{
             fontSize: "5.5rem",
             textAlign: "center",
-            px: "2",
             py: "6",
-            backgroundImage: "url(/landing-vector.svg)",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
           }}
         >
           A managed platform for makers.
