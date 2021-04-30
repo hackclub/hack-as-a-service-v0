@@ -211,37 +211,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
-    delete:
-      tags: [teams]
-      summary: Deletes a team
-      parameters:
-        - in: path
-          name: id
-          schema:
-            $ref: "#/components/schemas/ID"
-          required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    $ref: "#/components/schemas/Status"
-        "400":
-          description: Invalid team ID
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorStatus"
-        "500":
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorStatus"
     patch:
       tags: [teams]
       summary: Update a team
@@ -262,13 +231,11 @@ paths:
                 AddUsers:
                   type: array
                   items:
-                    schema:
-                      $ref: "#/components/schemas/ID"
+                    $ref: "#/components/schemas/ID"
                 RemoveUsers:
                   type: array
                   items:
-                    schema:
-                      $ref: "#/components/schemas/ID"
+                    $ref: "#/components/schemas/ID"
       responses:
         "200":
           description: OK
