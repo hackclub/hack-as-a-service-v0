@@ -7,7 +7,7 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 )
 
-func handlePOSTRename(c *gin.Context) {
+func handlePATCHApp(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
 	id, err := strconv.Atoi(c.Params.ByName("id"))
