@@ -24,6 +24,57 @@ tags:
   - name: builds
     description: Information about HaaS app builds
 paths:
+  /users/search:
+    get:
+      tags: [users]
+      summary: Search for HaaS users
+      parameters:
+        - name: q
+          in: query
+          description: Search query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Limit number of results
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: excludeSelf
+          in: query
+          description: Whether or not to exclude the authed user from the results
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
   /users/me:
     get:
       tags: [users]
@@ -193,7 +244,7 @@ paths:
                 $ref: "#/components/schemas/ErrorStatus"
     patch:
       tags: [teams]
-      summary: Renames a team
+      summary: Update a team
       parameters:
         - in: path
           name: id
@@ -208,50 +259,16 @@ paths:
               properties:
                 Name:
                   type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    $ref: "#/components/schemas/Status"
-                  team:
-                    $ref: "#/components/schemas/Team"
-        "400":
-          description: Invalid JSON
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorStatus"
-        "500":
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorStatus"
-  /teams/{id}/users:
-    put:
-      tags: [teams]
-      summary: Modifies the users of a team
-      parameters:
-        - in: path
-          name: id
-          schema:
-            $ref: "#/components/schemas/ID"
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                Users:
+                AddUsers:
                   type: array
                   items:
-                    $ref: "#/components/schemas/ID"
+                    schema:
+                      $ref: "#/components/schemas/ID"
+                RemoveUsers:
+                  type: array
+                  items:
+                    schema:
+                      $ref: "#/components/schemas/ID"
       responses:
         "200":
           description: OK
