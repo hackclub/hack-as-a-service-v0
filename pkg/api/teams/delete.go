@@ -8,13 +8,17 @@ import (
 )
 
 func handleDELETETeam(c *gin.Context) {
+	user := c.MustGet("user").(db.User)
+
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid billing account ID"})
 		return
 	}
 
-	result := db.DB.Delete(&db.Team{}, id)
+	result := db.DB.
+		Joins("INNER JOIN team_users ON team_users.team_id = teams.id").
+		Delete(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", id, user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
 	} else {
