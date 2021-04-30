@@ -1,54 +1,21 @@
-import { Box, Button, Flex, Image, Text } from "@theme-ui/components";
 import Head from "next/head";
-import Link from "next/link";
-import useSWR from "swr";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
   return (
-    <Box backgroundColor="white" color="#000000" sx={{ minHeight: "100vh" }}>
+    <div className={styles.container}>
       <Head>
         <title>Hack as a Service</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Flex
-        sx={{
-          alignItems: "center",
-          justifyContent: "space-between",
-          px: "4",
-          pt: "3",
-          position: "absolute",
-          width: "100%",
-        }}
-      >
-        <Image src="/nav-vector.svg" />
-        <Link href="/login">
-          <Button backgroundColor="#EC3750" px="4">
-            Login
-          </Button>
-        </Link>
-      </Flex>
-      <Box className={styles.container} sx={{}}>
-        <Text
-          as="h1"
-          sx={{
-            fontSize: "3.5rem",
-            textAlign: "center",
-            px: '2',
-            py: "6",
-            backgroundImage: "url(/landing-vector.svg)",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-          }}
-        >
-          A managed platform for makers.
-        </Text>
-        <Link href="/dashboard">
-          <Button backgroundColor="#EC3750" px="4">
-            Start Building
-          </Button>
-        </Link>
-      </Box>
-    </Box>
+
+      <main className={styles.main}>
+        <h1 className={styles.title}>Coming Soon</h1>
+        <h5 className={styles.subtitle}>
+          Hack as a Service | A <a href="https://hackclub.com">Hack Club</a>{" "}
+          project
+        </h5>
+      </main>
+    </div>
   );
 }
