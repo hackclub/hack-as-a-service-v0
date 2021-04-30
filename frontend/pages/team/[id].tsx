@@ -91,9 +91,13 @@ function InviteModal({
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetchApi(`/users/search?excludeSelf=true&q=${query}`).then((res) => {
-      setUsers(res.users);
-    });
+    if (query == "") {
+      setUsers([]);
+    } else {
+      fetchApi(`/users/search?excludeSelf=true&q=${query}`).then((res) => {
+        setUsers(res.users);
+      });
+    }
   }, [query]);
 
   return (
