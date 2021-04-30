@@ -82,5 +82,5 @@ func handlePATCHTeam(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"status": "ok"})
+	c.JSON(200, gin.H{"status": "ok", "team": team})
 }
