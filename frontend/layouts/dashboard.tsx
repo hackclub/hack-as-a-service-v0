@@ -133,7 +133,7 @@ export default function DashboardLayout({
   const { data: user, error: userError } = useSWR("/users/me", fetchApi);
 
   useEffect(() => {
-    if (userError) {
+    if (userError && process.env.NODE_ENV !== "development") {
       router.push("/");
     }
   }, [userError]);

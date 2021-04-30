@@ -1,5 +1,4 @@
 import Head from "next/head";
-import useSWR from "swr";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
