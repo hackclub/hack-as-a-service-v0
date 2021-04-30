@@ -191,8 +191,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
-  /teams/{id}/rename:
-    post:
+    patch:
       tags: [teams]
       summary: Renames a team
       parameters:
@@ -416,8 +415,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
-  /apps/{id}/rename:
-    post:
+    patch:
       tags: [apps]
       summary: Renames an app
       parameters:
