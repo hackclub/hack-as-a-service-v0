@@ -247,9 +247,7 @@ paths:
               type: object
               properties:
                 User:
-                  type: integer
-                  items:
-                    $ref: "#/components/schemas/ID"
+                  $ref: "#/components/schemas/ID"
       responses:
         "200":
           description: OK
