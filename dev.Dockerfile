@@ -4,6 +4,8 @@ COPY . /code
 
 WORKDIR /code
 
+RUN go get .
+
 RUN go get github.com/cespare/reflex
 
 CMD go run -v .

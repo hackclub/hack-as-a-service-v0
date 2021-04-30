@@ -8,4 +8,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/me", handleGETAuthed)
 	r.GET("/me/apps", handleGETAuthedApps)
 	r.GET("/me/teams", handleGETAuthedTeams)
+
+	r.GET("/search", handleGETSearch)
 }
