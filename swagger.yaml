@@ -257,6 +257,8 @@ paths:
             schema:
               type: object
               properties:
+                Name:
+                  type: string
                 AddUsers:
                   type: array
                   items:
@@ -420,6 +422,47 @@ paths:
                     $ref: "#/components/schemas/Status"
         "400":
           description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+    patch:
+      tags: [apps]
+      summary: Renames an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  app:
+                    $ref: "#/components/schemas/App"
+        "400":
+          description: Invalid JSON
           content:
             application/json:
               schema:

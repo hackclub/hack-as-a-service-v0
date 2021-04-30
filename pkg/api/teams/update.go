@@ -19,6 +19,7 @@ func handlePATCHTeam(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
 	var json struct {
+		Name        string
 		AddUsers    []uint
 		RemoveUsers []uint
 	}
@@ -71,6 +72,13 @@ func handlePATCHTeam(c *gin.Context) {
 	err = db.DB.Model(&team).Association("Users").Delete(removeUsers)
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	// will only update the field if Name != ""
+	result = db.DB.Model(&team).Updates(&db.Team{Name: json.Name})
+	if result.Error != nil {
+		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	}
 

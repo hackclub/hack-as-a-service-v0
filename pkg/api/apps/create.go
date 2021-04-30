@@ -45,7 +45,8 @@ func handlePOSTApp(c *gin.Context) {
 	}
 
 	// Check that the given team ID exists
-	result := db.DB.Joins("JOIN team_users ON team_users.team_id = teams.id").First(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", json.TeamID, user.ID)
+	result := db.DB.Joins("JOIN team_users ON team_users.team_id = teams.id").
+		First(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", json.TeamID, user.ID)
 	if result.Error != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid team ID"})
 		return
