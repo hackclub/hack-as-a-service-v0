@@ -4,11 +4,12 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"gorm.io/gorm"
 )
 
-func handlePATCHTeamUsers(c *gin.Context) {
+func handlePATCHTeam(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -26,6 +27,8 @@ func handlePATCHTeamUsers(c *gin.Context) {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid JSON"})
 		return
 	}
+
+	json.AddUsers, json.RemoveUsers = util.RemoveDuplicates(json.AddUsers, json.RemoveUsers)
 
 	var addUsers []db.User
 	var removeUsers []db.User

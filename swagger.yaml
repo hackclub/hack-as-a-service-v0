@@ -63,6 +63,18 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/User"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
   /users/me:
     get:
       tags: [users]
