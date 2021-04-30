@@ -16,8 +16,8 @@ func handleDELETEApp(c *gin.Context) {
 		return
 	}
 
-	result := db.DB.Raw("DELETE FROM apps"+
-		"INNER JOIN team_users ON team_users.team_id = apps.team_id"+
+	result := db.DB.Raw("DELETE FROM apps "+
+		"INNER JOIN team_users ON team_users.team_id = apps.team_id "+
 		"WHERE apps.id = ? AND team_users.user_id = ?", id, user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
