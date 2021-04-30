@@ -160,10 +160,10 @@ export default function TeamPage() {
     : null;
 
   const inviteUser = async (id: string) => {
-    await fetchApi(`/teams/${team.team.ID}/users`, {
-      method: "POST",
+    await fetchApi(`/teams/${team.team.ID}`, {
+      method: "PATCH",
       body: JSON.stringify({
-        User: id,
+        AddUsers: [id],
       }),
     });
 

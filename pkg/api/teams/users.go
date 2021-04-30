@@ -5,9 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"gorm.io/gorm"
 )
 
-func handlePOSTTeamUsers(c *gin.Context) {
+func handlePATCHTeamUsers(c *gin.Context) {
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -17,7 +18,8 @@ func handlePOSTTeamUsers(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
 	var json struct {
-		User uint
+		AddUsers    []uint
+		RemoveUsers []uint
 	}
 	err = c.BindJSON(&json)
 	if err != nil {
@@ -25,9 +27,28 @@ func handlePOSTTeamUsers(c *gin.Context) {
 		return
 	}
 
-	if user.ID == json.User {
-		c.JSON(400, gin.H{"status": "error", "message": "You can't invite yourself"})
-		return
+	var addUsers []db.User
+	var removeUsers []db.User
+
+	for _, u := range json.AddUsers {
+		if u == user.ID {
+			c.JSON(400, gin.H{"status": "error", "message": "You can't invite yourself"})
+			return
+		}
+
+		addUsers = append(addUsers, db.User{
+			Model: gorm.Model{
+				ID: u,
+			},
+		})
+	}
+
+	for _, u := range json.RemoveUsers {
+		removeUsers = append(removeUsers, db.User{
+			Model: gorm.Model{
+				ID: u,
+			},
+		})
 	}
 
 	var team db.Team
@@ -38,14 +59,13 @@ func handlePOSTTeamUsers(c *gin.Context) {
 		return
 	}
 
-	var invitedUser db.User
-	result = db.DB.First(&invitedUser, "id = ?", json.User)
-	if result.Error != nil {
-		c.JSON(400, gin.H{"status": "error", "message": "Invalid user ID to invite"})
+	err = db.DB.Model(&team).Association("Users").Append(addUsers)
+	if err != nil {
+		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
-	err = db.DB.Model(&team).Association("Users").Append(&invitedUser)
+	err = db.DB.Model(&team).Association("Users").Delete(removeUsers)
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return

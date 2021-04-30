@@ -230,10 +230,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
-  /teams/{id}/users:
-    post:
+    patch:
       tags: [teams]
-      summary: Adds a user to a team
+      summary: Update a team
       parameters:
         - in: path
           name: id
@@ -246,8 +245,16 @@ paths:
             schema:
               type: object
               properties:
-                User:
-                  $ref: "#/components/schemas/ID"
+                AddUsers:
+                  type: array
+                  items:
+                    schema:
+                      $ref: "#/components/schemas/ID"
+                RemoveUsers:
+                  type: array
+                  items:
+                    schema:
+                      $ref: "#/components/schemas/ID"
       responses:
         "200":
           description: OK
