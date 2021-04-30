@@ -5,8 +5,9 @@ import { PropsWithChildren, useEffect } from "react";
 import useSWR from "swr";
 import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
 import fetchApi from "../lib/fetch";
-
+import { useColorMode } from 'theme-ui'
 import { Glyph } from "../types/glyph";
+import ColorButton from "../components/ColorButton"
 
 function SidebarItem({
   image,
@@ -78,6 +79,7 @@ function SidebarSection({
 }
 
 function SidebarHeader({ avatar }: { avatar?: string }) {
+  const [mode, setMode] = useColorMode()
   return (
     <Flex
       sx={{ alignItems: "center", position: "sticky", top: 0 }}
@@ -87,6 +89,12 @@ function SidebarHeader({ avatar }: { avatar?: string }) {
     >
       <Avatar src={avatar} />
       <Box sx={{ flexGrow: 1 }} />
+      <ColorButton
+          onClick={(e) => {
+            const next = mode === 'dark' ? 'light' : 'dark'
+            setMode(next)
+          }}
+        />
       <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
       <Link href="/logout">
         <Icon
@@ -170,3 +178,4 @@ export default function DashboardLayout({
     </Flex>
   );
 }
+
