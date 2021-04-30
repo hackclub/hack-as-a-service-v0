@@ -39,6 +39,8 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	r.GET("/swagger.yaml", func(c *gin.Context) { c.File("swagger.yaml") })
+
 	frontend.SetupRoutes(&r.RouterGroup)
 
 	r.Use(static.ServeRoot("/", "./frontend/out"))
