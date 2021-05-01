@@ -31,7 +31,9 @@ func handleGETPersonalTeam(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
 	var team db.Team
-	result := db.DB.Preload("Apps").Joins("JOIN team_users ON team_users.team_id = teams.id").First(&team, "team_users.user_id = ? AND teams.personal", user.ID)
+	result := db.DB.Preload("Apps").
+		Joins("JOIN team_users ON team_users.team_id = teams.id").
+		First(&team, "team_users.user_id = ? AND teams.personal", user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 	} else {
