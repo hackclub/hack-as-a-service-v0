@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- Created with Vectornator for iOS (http://vectornator.io/) --><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="100%" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100%" xmlns:vectornator="http://vectornator.io" version="1.1" viewBox="0 0 256 256">
+<metadata>
+<vectornator:setting key="DisplayWhiteBackground" value="0"/>
+<vectornator:setting key="RulersVisible" value="0"/>
+<vectornator:setting key="Units" value="Points"/>
+<vectornator:setting key="DynamicGuides" value="1"/>
+<vectornator:setting key="GuidesVisible" value="1"/>
+<vectornator:setting key="CMYKEnabledKey" value="0"/>
+<vectornator:setting key="SnapToGuides" value="1"/>
+</metadata>
+<defs>
+<linearGradient y1="32.107" id="LinearGradient" x1="26.8256" y2="230.496" x2="219.188" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 1 0 0)">
+<stop stop-color="#ff8c37" offset="0"/>
+<stop stop-color="#ec3750" offset="1"/>
+</linearGradient>
+</defs>
+<g id="Untitled" vectornator:layerName="Untitled">
+<path d="M0+0L256+0L256+256L0+256L0+0Z" opacity="1" fill="url(#LinearGradient)"/>
+<g opacity="1">
+<path stroke="#ffffff" stroke-width="11.3352" d="M167.052+105.08L90.3574+60.0401" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"/>
+<path stroke="#ffffff" stroke-width="11.3352" d="M206.105+162.856L206.105+93.1444C206.098+86.9245+202.791+81.1794+197.426+78.0694L136.678+43.2138C131.308+40.1006+124.692+40.1006+119.322+43.2138L58.5737+78.0694C53.2091+81.1794+49.9018+86.9245+49.8954+93.1444L49.8954+162.856C49.9018+169.076+53.2091+174.821+58.5737+177.931L119.322+212.786C124.692+215.899+131.308+215.899+136.678+212.786L197.426+177.931C202.791+174.821+206.098+169.076+206.105+162.856Z" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"/>
+<path stroke="#ffffff" stroke-width="11.3352" d="M52.2386+83.9054L128+127.731L203.761+83.9054" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"/>
+<path stroke="#ffffff" stroke-width="11.3352" d="M128+215.121L128+127.644" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"/>
+</g>
+</g>
+</svg>
