@@ -5,16 +5,12 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Hack as a Service</title>
+        <title>Internal server error | HaaS</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Coming Soon</h1>
-        <h5 className={styles.subtitle}>
-          Hack as a Service | A <a href="https://hackclub.com">Hack Club</a>{" "}
-          project
-        </h5>
+        <h1 className={styles.title}>500 | Internal server error</h1>
       </main>
     </div>
   );
