@@ -16,6 +16,7 @@ function Error({ statusCode }) {
           Would you like to go <Link href="/">back home</Link>?
         </h5>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <img
           src="/assets/haas-logo-256-rounded.png"
           alt="HaaS logo"
@@ -33,16 +34,24 @@ Error.getInitialProps = ({ res, err }) => {
 export default Error;
 =======
         <img src="/assets/haas-logo-256-rounded.png" alt="HaaS logo"></img>
+=======
+        <img
+          src="http://localhost:5000/assets/haas-logo-256-rounded.png"
+          alt="HaaS logo"
+        ></img>
+>>>>>>> c0e6075 (Ran prettier on code.)
       </main>
     </div>
-  )
+  );
 }
 
 Error.getInitialProps = ({ res, err }) => {
-  const statusCode = res ? res.statusCode : err ? err.statusCode : 404
-  return { statusCode }
-}
+  const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
+  return { statusCode };
+};
 
-export default Error
-
+<<<<<<< HEAD
 >>>>>>> 0e8d1eb (Catch-all error page.)
+=======
+export default Error;
+>>>>>>> c0e6075 (Ran prettier on code.)
