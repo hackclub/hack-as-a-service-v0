@@ -7,7 +7,7 @@ import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
 import fetchApi from "../lib/fetch";
 import { useColorMode } from "theme-ui";
 import { Glyph } from "../types/glyph";
-import ColorButton from "../components/ColorButton";
+import ColorSwitcher from "../components/ColorButton";
 
 function SidebarItem({
   image,
@@ -79,7 +79,6 @@ function SidebarSection({
 }
 
 function SidebarHeader({ avatar }: { avatar?: string }) {
-  const [colorMode, setColorMode] = useColorMode();
   return (
     <Flex
       sx={{ alignItems: "center", position: "sticky", top: 0 }}
@@ -89,11 +88,7 @@ function SidebarHeader({ avatar }: { avatar?: string }) {
     >
       <Avatar src={avatar} />
       <Box sx={{ flexGrow: 1 }} />
-      <ColorButton
-        onClick={(e) => {
-          setColorMode(colorMode === "default" ? "dark" : "default");
-        }}
-      />
+      <ColorSwitcher />
       <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
       <Link href="/logout">
         <Icon
@@ -130,13 +125,13 @@ export default function DashboardLayout({
 }>) {
   const router = useRouter();
   const { data: user, error: userError } = useSWR("/users/me", fetchApi);
-  /*
+
   useEffect(() => {
     if (userError && process.env.NODE_ENV !== "development") {
       router.push("/");
     }
   }, [userError]);
-*/
+
   return (
     <Flex sx={{ minHeight: "100vh" }}>
       <Box
