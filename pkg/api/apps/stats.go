@@ -5,46 +5,14 @@ import (
 	"encoding/json"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/docker/docker/client"
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
+	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
-
-type Stats struct {
-	Read     time.Time `json:"read"`
-	CpuStats struct {
-		CpuUsage struct {
-			PercpuUsage []interface{} `json:"percpu_usage"`
-			TotalUsage  int64         `json:"total_usage"`
-		} `json:"cpu_usage"`
-		SystemCpuUsage int64
-		OnlineCpus     int64
-	} `json:"cpu_stats"`
-	PrecpuStats struct {
-		CpuUsage struct {
-			TotalUsage int64 `json:"total_usage"`
-		} `json:"cpu_usage"`
-		SystemCpuUsage int64 `json:"system_cpu_usage"`
-		OnlineCpus     int64 `json:"online_cpus"`
-	} `json:"precpu_stats"`
-	MemoryStats struct {
-		Stats struct {
-			Cache int64 `json:"cache"`
-		} `json:"stats"`
-		Usage int64 `json:"usage"`
-		Limit int64 `json:"limit"`
-	} `json:"memory_stats"`
-}
-
-type WsOutput struct {
-	Timestamp       time.Time
-	MemUsagePercent float64
-	CpuUsagePercent float64
-}
 
 func handleGETStats(c *gin.Context) {
 	upgrader := util.MakeWebsocketUpgrader()
@@ -105,25 +73,12 @@ func handleGETStats(c *gin.Context) {
 	for lines.Scan() {
 		line := lines.Text()
 		// log.Printf("Got line: %s\n", line)
-		var stat Stats
+		var stat biller.Stats
 		if err := json.Unmarshal([]byte(line), &stat); err != nil {
 			log.Printf("Error decoding json: %+v\n", err)
 			break
 		}
-		// log.Printf("Stat = %+v\n", stat)
-		// https://docs.docker.com/engine/api/v1.41/#operation/ContainerStats
-		mem_usage := (float64(stat.MemoryStats.Usage) - float64(stat.MemoryStats.Stats.Cache)) / float64(stat.MemoryStats.Limit) * 100.
-		cpu_usage := float64(stat.CpuStats.CpuUsage.TotalUsage) - float64(stat.PrecpuStats.CpuUsage.TotalUsage)
-		x := float64(stat.CpuStats.SystemCpuUsage) - float64(stat.PrecpuStats.SystemCpuUsage)
-		if x != 0 {
-			cpu_usage /= x
-		}
-		cpu_usage *= float64(len(stat.CpuStats.CpuUsage.PercpuUsage)) * 100.
-		output := WsOutput{
-			Timestamp:       stat.Read,
-			MemUsagePercent: mem_usage,
-			CpuUsagePercent: cpu_usage,
-		}
+		output := stat.Process()
 		// log.Printf("Output = %+v\n", output)
 		err := ws.WriteJSON(output)
 		if err != nil {
