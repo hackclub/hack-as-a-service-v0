@@ -10,7 +10,7 @@ Contributions to the project are welcome! Make sure to discuss changes with othe
 
 ### Local Development
 
-Make sure you have Docker and Docker Compose installed, then run `docker-compose up` to run a local instance of Dokku and the bot. Any edits you save should make the bot restart automatically.
+Before starting local development make sure you have docker and docker-compose installed as well as an empty `.env` file created at the top of the project. You can then run `docker-compose up` to run a local instance of Dokku and the bot. Any edits you save should make the bot restart automatically.
 
 To open a shell in a container, run `docker exec -it hack-as-a-service_bot_1 bash` or `docker exec -it hack-as-a-service_dokku_1 bash`
 

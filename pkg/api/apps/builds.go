@@ -8,6 +8,8 @@ import (
 )
 
 func handleGETBuilds(c *gin.Context) {
+	user := c.MustGet("user").(db.User)
+
 	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid app ID"})
@@ -23,7 +25,10 @@ func handleGETBuilds(c *gin.Context) {
 	}
 
 	var builds []db.Build
-	result := db.DB.Order("started_at DESC").Limit(limit).Find(&builds, "app_id = ?", id)
+	result := db.DB.Order("started_at DESC").Limit(limit).
+		Joins("INNER JOIN team_users ON team_users.team_id = apps.id").
+		Joins("INNER JOIN apps ON apps.id = builds.app_id").
+		Find(&builds, "builds.app_id = ? AND team_users.user_id = ?", id, user.ID)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return
