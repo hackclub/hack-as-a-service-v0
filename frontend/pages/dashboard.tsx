@@ -1,9 +1,7 @@
-import useSWR from "swr"
-import { Box, Flex, Heading, Text } from "theme-ui"
-import DashboardLayout, {
-  ISidebarSection
-} from "../layouts/dashboard"
-import fetchApi from "../lib/fetch"
+import useSWR from "swr";
+import { Box, Flex, Heading, Text } from "theme-ui";
+import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
+import fetchApi from "../lib/fetch";
 
 function App({ name, shortName }: { name: string; shortName: string }) {
   return (
