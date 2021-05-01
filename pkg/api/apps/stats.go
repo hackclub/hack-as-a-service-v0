@@ -19,24 +19,24 @@ type Stats struct {
 	CpuStats struct {
 		CpuUsage struct {
 			PercpuUsage []interface{} `json:"percpu_usage"`
-			TotalUsage  uint          `json:"total_usage"`
+			TotalUsage  int64         `json:"total_usage"`
 		} `json:"cpu_usage"`
-		SystemCpuUsage uint
-		OnlineCpus     uint
+		SystemCpuUsage int64
+		OnlineCpus     int64
 	} `json:"cpu_stats"`
 	PrecpuStats struct {
 		CpuUsage struct {
-			TotalUsage uint `json:"total_usage"`
+			TotalUsage int64 `json:"total_usage"`
 		} `json:"cpu_usage"`
-		SystemCpuUsage uint `json:"system_cpu_usage"`
-		OnlineCpus     uint `json:"online_cpus"`
+		SystemCpuUsage int64 `json:"system_cpu_usage"`
+		OnlineCpus     int64 `json:"online_cpus"`
 	} `json:"precpu_stats"`
 	MemoryStats struct {
 		Stats struct {
-			Cache uint `json:"cache"`
+			Cache int64 `json:"cache"`
 		} `json:"stats"`
-		Usage uint `json:"usage"`
-		Limit uint `json:"limit"`
+		Usage int64 `json:"usage"`
+		Limit int64 `json:"limit"`
 	} `json:"memory_stats"`
 }
 
