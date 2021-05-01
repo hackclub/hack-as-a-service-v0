@@ -1,11 +1,10 @@
 import Icon from "@hackclub/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Component, PropsWithChildren, ReactElement, useEffect } from "react";
+import { PropsWithChildren, ReactElement, useEffect } from "react";
 import useSWR from "swr";
-import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
+import { Avatar, Box, Flex, Heading, SxProp } from "theme-ui";
 import fetchApi from "../lib/fetch";
-
 import { Glyph } from "../types/glyph";
 
 function SidebarItem({
@@ -142,7 +141,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (userError && process.env.NODE_ENV !== "development") {
-      router.push("/");
+      router.push("/login");
     }
   }, [userError]);
 
