@@ -31,7 +31,7 @@ export default function Dashboard() {
       icon: "person",
       image: i.Avatar || undefined,
       text: i.Name,
-      url: `/team/${i.ID}`,
+      url: `/teams/${i.ID}`,
     }));
 
   const sidebarSections: ISidebarSection[] = [
