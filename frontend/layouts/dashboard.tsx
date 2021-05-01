@@ -79,7 +79,7 @@ function SidebarSection({
 }
 
 function SidebarHeader({ avatar }: { avatar?: string }) {
-  const [colorMode, setColorMode] = useColorMode()
+  const [colorMode, setColorMode] = useColorMode();
   return (
     <Flex
       sx={{ alignItems: "center", position: "sticky", top: 0 }}
@@ -90,14 +90,11 @@ function SidebarHeader({ avatar }: { avatar?: string }) {
       <Avatar src={avatar} />
       <Box sx={{ flexGrow: 1 }} />
       <ColorButton
-         onClick={(e) => {
-          setColorMode(colorMode === 'default' ? 'dark' : 'default') 
-        }} />
-      <Icon 
-      glyph="controls" 
-      size={32} 
-      style={{ margin: "0 10px" }} 
+        onClick={(e) => {
+          setColorMode(colorMode === "default" ? "dark" : "default");
+        }}
       />
+      <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
       <Link href="/logout">
         <Icon
           glyph="door-leave"
@@ -133,7 +130,7 @@ export default function DashboardLayout({
 }>) {
   const router = useRouter();
   const { data: user, error: userError } = useSWR("/users/me", fetchApi);
-/*
+  /*
   useEffect(() => {
     if (userError && process.env.NODE_ENV !== "development") {
       router.push("/");

@@ -3,17 +3,17 @@ import { Moon, Sun } from "react-feather";
 import { useColorMode } from "theme-ui";
 
 function changeToggleButton({ ...props }) {
-  const [colorMode] = useColorMode()
+  const [colorMode] = useColorMode();
 
- let icon;
- 
-  if(colorMode === 'dark') {
-    icon = <Sun />
+  let icon;
+
+  if (colorMode === "dark") {
+    icon = <Sun />;
   } else {
-    icon = <Moon />
+    icon = <Moon />;
   }
-    return (
-      <IconButton
+  return (
+    <IconButton
       as="button"
       {...props}
       sx={{
@@ -26,9 +26,7 @@ function changeToggleButton({ ...props }) {
     >
       {icon}
     </IconButton>
-    )
-  ;
+  );
 }
-
 
 export default changeToggleButton;
