@@ -5,13 +5,8 @@ import { useColorMode } from "theme-ui";
 function changeToggleButton({ ...props }) {
   const [colorMode] = useColorMode();
 
-  let icon;
+  const icon = colorMode === 'light' ? <Moon /> :<Sun />
 
-  if (colorMode === "dark") {
-    icon = <Sun />;
-  } else {
-    icon = <Moon />;
-  }
   return (
     <IconButton
       as="button"
