@@ -1,22 +1,34 @@
 import { IconButton } from "theme-ui";
-import { Moon } from "react-feather";
+import { Moon, Sun } from "react-feather";
+import { useColorMode } from "theme-ui";
 
-const ColorButton = ({ ...props }) => (
-  <IconButton
-    as="button"
-    {...props}
-    sx={{
-      backgroundColor: "transparent",
-      border: 0,
-      color: "inherit",
-      cursor: "pointer",
-      position: "absolute",
-      left: 200, // this is not very responsive css, we need to fix it later lmao
-      top: 26,
-    }}
-  >
-    <Moon size={26} />
-  </IconButton>
-);
+function changeToggleButton({ ...props }) {
+  const [colorMode] = useColorMode()
 
-export default ColorButton;
+ let icon;
+ 
+  if(colorMode === 'dark') {
+    icon = <Sun />
+  } else {
+    icon = <Moon />
+  }
+    return (
+      <IconButton
+      as="button"
+      {...props}
+      sx={{
+        backgroundColor: "transparent",
+        border: 0,
+        color: "inherit",
+        cursor: "pointer",
+        margin: "0 10px",
+      }}
+    >
+      {icon}
+    </IconButton>
+    )
+  ;
+}
+
+
+export default changeToggleButton;
