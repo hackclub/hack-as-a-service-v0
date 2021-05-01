@@ -1,7 +1,7 @@
 import Icon from "@hackclub/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect } from "react";
+import { Component, PropsWithChildren, ReactElement, useEffect } from "react";
 import useSWR from "swr";
 import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
 import fetchApi from "../lib/fetch";
@@ -15,26 +15,41 @@ function SidebarItem({
   url,
   sx,
 }: PropsWithChildren<ISidebarItem> & SxProp) {
+  let imageComponent: ReactElement;
+
+  if (image) {
+    imageComponent = (
+      <Avatar src={image} sx={{ borderRadius: 8 }} bg="sunken" mr={15} />
+    );
+  } else if (icon) {
+    imageComponent = (
+      <Flex
+        sx={{
+          height: 48,
+          width: 48,
+          borderRadius: 8,
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+        }}
+        mr={15}
+        bg="sunken"
+      >
+        <Icon glyph={icon as Glyph} />
+      </Flex>
+    );
+  }
+
   const item = (
-    <Flex sx={{ alignItems: "center", cursor: "pointer", ...sx }} my={10}>
-      {image ? (
-        <Avatar src={image} sx={{ borderRadius: 8 }} bg="sunken" mr={15} />
-      ) : (
-        <Flex
-          sx={{
-            height: 48,
-            width: 48,
-            borderRadius: 8,
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
-          }}
-          mr={15}
-          bg="sunken"
-        >
-          <Icon glyph={icon as Glyph} />
-        </Flex>
-      )}
+    <Flex
+      sx={{
+        alignItems: "center",
+        ...(url ? { cursor: "pointer" } : {}),
+        ...sx,
+      }}
+      my={10}
+    >
+      {(image || icon) && imageComponent}
       <Heading
         as="h3"
         sx={{

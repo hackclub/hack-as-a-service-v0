@@ -151,13 +151,9 @@ export default function TeamPage() {
   const { id } = router.query;
 
   const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
-  const { data: apps } = useSWR("/users/me/apps", fetchApi);
+  const { data: apps } = useSWR(`/teams/${id}/apps`, fetchApi);
 
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
-
-  const teamApps = apps
-    ? apps.apps.filter((app: any) => app.TeamID == id)
-    : null;
 
   const inviteUser = async (id: string) => {
     await fetchApi(`/teams/${team.team.ID}`, {
@@ -186,8 +182,8 @@ export default function TeamPage() {
         },
         {
           title: "Apps",
-          items: teamApps
-            ? teamApps.map(
+          items: apps
+            ? apps.apps.map(
                 (app: any): ISidebarItem => ({
                   text: app.Name,
                   icon: "code",
@@ -210,7 +206,7 @@ export default function TeamPage() {
       <Flex>
         <Field
           label="Apps"
-          description={teamApps?.length}
+          description={apps?.apps.length}
           sx={{ marginRight: "100px" }}
         />
         <Field
@@ -222,13 +218,13 @@ export default function TeamPage() {
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
-        {teamApps && teamApps.length > 0 ? (
+        {apps && apps.apps.length > 0 ? (
           <Grid
             columns="repeat(auto-fit, minmax(240px, 1fr))"
             sx={{ flex: "1 0 auto" }}
           >
-            {teamApps &&
-              teamApps.map((app: any) => {
+            {apps &&
+              apps.apps.map((app: any) => {
                 return (
                   <App
                     key={app.ID}
