@@ -151,7 +151,6 @@ export default function TeamPage() {
   const { id } = router.query;
 
   const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
-  const { data: apps } = useSWR(`/teams/${id}/apps`, fetchApi);
 
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
 
@@ -182,14 +181,16 @@ export default function TeamPage() {
         },
         {
           title: "Apps",
-          items: apps
-            ? apps.apps.map(
-                (app: any): ISidebarItem => ({
-                  text: app.Name,
-                  icon: "code",
-                  url: `/app/${app.ID}`,
-                })
-              )
+          items: team
+            ? team.team.Apps.length > 0
+              ? team.team.Apps.map(
+                  (app: any): ISidebarItem => ({
+                    text: app.Name,
+                    icon: "code",
+                    url: `/app/${app.ID}`,
+                  })
+                )
+              : [{ text: "This team doesn't have any apps yet 😢" }]
             : [],
         },
       ]}
@@ -206,7 +207,7 @@ export default function TeamPage() {
       <Flex>
         <Field
           label="Apps"
-          description={apps?.apps.length}
+          description={team?.team.Apps.length}
           sx={{ marginRight: "100px" }}
         />
         <Field
@@ -218,25 +219,24 @@ export default function TeamPage() {
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
-        {apps && apps.apps.length > 0 ? (
+        {team && team.team.Apps.length > 0 ? (
           <Grid
             columns="repeat(auto-fit, minmax(240px, 1fr))"
             sx={{ flex: "1 0 auto" }}
           >
-            {apps &&
-              apps.apps.map((app: any) => {
-                return (
-                  <App
-                    key={app.ID}
-                    name={app.Name}
-                    shortName={app.ShortName}
-                    url={`/app/${app.ID}`}
-                  />
-                );
-              })}
+            {team.team.Apps.map((app: any) => {
+              return (
+                <App
+                  key={app.ID}
+                  name={app.Name}
+                  shortName={app.ShortName}
+                  url={`/app/${app.ID}`}
+                />
+              );
+            })}
           </Grid>
         ) : (
-          <Box sx={{ flex: 1 }}>No apps yet :(</Box>
+          <Box sx={{ flex: 1 }}>This team doesn't have any apps yet 😢</Box>
         )}
 
         <Box

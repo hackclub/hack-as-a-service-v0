@@ -54,8 +54,9 @@ function SidebarItem({
         as="h3"
         sx={{
           fontWeight: "normal",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
+          ...(image || icon
+            ? { whiteSpace: "nowrap", overflow: "hidden" }
+            : {}),
           textOverflow: "ellipsis",
         }}
       >

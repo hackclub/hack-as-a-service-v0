@@ -23,17 +23,16 @@ function App({ name, shortName }: { name: string; shortName: string }) {
 
 export default function Dashboard() {
   const { data: teams } = useSWR("/users/me/teams", fetchApi);
-  const { data: apps } = useSWR("/users/me/apps", fetchApi);
+  const { data: personalTeam } = useSWR("/teams/me", fetchApi);
 
-  const personalTeam = teams
-    ? teams.teams.find((team: any) => team.Personal)
-    : null;
-
-  // Get personal apps
-  const personalApps =
-    personalTeam && apps
-      ? apps.apps.filter((app: any) => app.TeamID == personalTeam.ID)
-      : null;
+  const teamList = teams?.teams
+    .filter((i: any) => !i.Personal)
+    .map((i: any) => ({
+      icon: "person",
+      image: i.Avatar || undefined,
+      text: i.Name,
+      url: `/team/${i.ID}`,
+    }));
 
   const sidebarSections: ISidebarSection[] = [
     {
@@ -42,30 +41,34 @@ export default function Dashboard() {
           // image: user?.user.Avatar,
           icon: "home",
           text: "Personal Apps",
+          url: "/dashboard",
         },
       ],
     },
     {
       title: "Teams",
-      items: teams
-        ? teams.teams
-            .filter((i: any) => !i.Personal)
-            .map((i: any) => ({
-              icon: "person",
-              image: i.Avatar || undefined,
-              text: i.Name,
-              url: `/team/${i.ID}`,
-            }))
+      items: teamList
+        ? teamList.length > 0
+          ? teamList
+          : [{ text: "You're not a part of any teams." }]
         : [],
     },
   ];
 
   return (
     <DashboardLayout title="Personal Apps" sidebarSections={sidebarSections}>
-      {personalApps &&
-        personalApps.map((app: any) => {
-          return <App name={app.Name} shortName={app.ShortName} key={app.ID} />;
-        })}
+      {personalTeam &&
+        (personalTeam.team.Apps.length > 0 ? (
+          personalTeam.team.Apps.map((app: any) => {
+            return (
+              <App name={app.Name} shortName={app.ShortName} key={app.ID} />
+            );
+          })
+        ) : (
+          <Heading as="h3" sx={{ fontWeight: "normal" }} mt={3}>
+            You don't have any personal apps quite yet. 😢
+          </Heading>
+        ))}
     </DashboardLayout>
   );
 }
