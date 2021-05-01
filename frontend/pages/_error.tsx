@@ -16,7 +16,7 @@ function Error({ statusCode }) {
           Would you like to go <Link href="/">back home</Link>?
         </h5>
         <img
-          src="http://localhost:5000/assets/haas-logo-256-rounded.png"
+          src="/assets/haas-logo-256-rounded.png"
           alt="HaaS logo"
         ></img>
       </main>
