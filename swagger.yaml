@@ -603,11 +603,6 @@ components:
         UpdatedAt:
           type: string
           format: date-time
-        DeletedAtTime:
-          type: string
-          format: date-time
-        DeletedAtValid:
-          type: boolean
     Status:
       type: string
       enum: [ok]
