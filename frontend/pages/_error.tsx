@@ -36,7 +36,7 @@ export default Error;
         <img src="/assets/haas-logo-256-rounded.png" alt="HaaS logo"></img>
 =======
         <img
-          src="http://localhost:5000/assets/haas-logo-256-rounded.png"
+          src="/assets/haas-logo-256-rounded.png"
           alt="HaaS logo"
         ></img>
 >>>>>>> c0e6075 (Ran prettier on code.)
