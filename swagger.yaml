@@ -294,6 +294,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
+  /teams/me:
+    get:
+      tags: [teams]
+      summary: Returns the current user's personal team
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  team:
+                    $ref: "#/components/schemas/TeamWithUsers"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
   /apps:
     post:
       tags: [apps]
