@@ -4,8 +4,17 @@ import YAML from "yaml";
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 
+import Head from "next/head";
+
 export default function Swagger({ spec }: { spec: any }) {
-  return <SwaggerUI spec={spec} />;
+  return (
+    <>
+      <Head>
+        <title>HaaS API Reference</title>
+      </Head>
+      <SwaggerUI spec={spec} />
+    </>
+  );
 }
 
 export const getStaticProps: GetStaticProps = async (_) => {

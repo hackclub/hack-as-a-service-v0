@@ -8,7 +8,7 @@ info:
     The canonical version of the OpenAPI specification is available at
     <https://haas.hackclub.com/swagger.yaml>.
   version: "1.0.0"
-  title: Hack as a Service (Haas)
+  title: Hack as a Service (HaaS)
 servers:
   - url: "https://haas.hackclub.com/api"
     description: HaaS production
@@ -626,6 +626,11 @@ components:
             Avatar:
               type: string
               format: uri
+      example:
+        ID: 5
+        Name: Zach Latta
+        SlackUserID: U0266FRGP
+        Avatar: https://avatars.githubusercontent.com/u/992248?v=4
     # Uncomment when we return such a resource
     #
     # UserWithTeams:
@@ -651,6 +656,12 @@ components:
               type: boolean
             Personal:
               type: boolean
+      example:
+        ID: 5
+        Name: Hack Club HQ
+        Avatar: https://github.com/hackclub.png
+        Automatic: false
+        Personal: false
     TeamWithUsers:
       allOf:
         - $ref: "#/components/schemas/Team"
@@ -675,6 +686,11 @@ components:
               $ref: "#/components/schemas/AppShortName"
             TeamID:
               $ref: "#/components/schemas/ID"
+      example:
+        ID: 5
+        Name: Scrappy
+        ShortName: scrappy
+        TeamID: 5
     Build:
       type: object
       properties:
