@@ -1,5 +1,5 @@
 import AppLayout from "../../../layouts/app";
 
 export default function AppDashboardPage() {
-  return <AppLayout>App dashboard</AppLayout>;
+  return <AppLayout selected="Dashboard">App dashboard</AppLayout>;
 }

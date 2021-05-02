@@ -4,7 +4,12 @@ import useSWR from "swr";
 import fetchApi from "../lib/fetch";
 import DashboardLayout from "./dashboard";
 
-export default function AppLayout({ children }: PropsWithChildren<{}>) {
+import { Heading } from "theme-ui";
+
+export default function AppLayout({
+  children,
+  selected,
+}: PropsWithChildren<{ selected: string }>) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -34,16 +39,22 @@ export default function AppLayout({ children }: PropsWithChildren<{}>) {
               icon: "explore",
               text: "Dashboard",
               url: `/app/${id}`,
+              selected: selected == "Dashboard",
             },
             {
               icon: "search",
               text: "Logs",
               url: `/app/${id}/logs`,
+              selected: selected == "Logs",
             },
           ],
         },
       ]}
     >
+      <Heading as="h2" pb={4} pt={1}>
+        {selected}
+      </Heading>
+
       {children}
     </DashboardLayout>
   );

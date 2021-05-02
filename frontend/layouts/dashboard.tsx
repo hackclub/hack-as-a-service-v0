@@ -13,6 +13,7 @@ function SidebarItem({
   children,
   url,
   sx,
+  selected,
 }: PropsWithChildren<ISidebarItem> & SxProp) {
   let imageComponent: ReactElement;
 
@@ -30,11 +31,14 @@ function SidebarItem({
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+          backgroundImage: selected
+            ? "linear-gradient(-45deg, #ec3750, #ff8c37)"
+            : null,
         }}
         mr={15}
         bg="sunken"
       >
-        <Icon glyph={icon} />
+        <Icon glyph={icon} color={selected ? "white" : null} />
       </Flex>
     );
   }
@@ -124,6 +128,7 @@ export interface ISidebarItem {
   icon?: Glyph;
   text: string;
   url?: string;
+  selected?: boolean;
 }
 
 export default function DashboardLayout({
