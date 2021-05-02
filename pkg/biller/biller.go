@@ -85,17 +85,17 @@ func RemoveStatsOutput(appId uint, ch chan ProcessedOutput) {
 	}
 }
 
-func CreateBillerOutput(appId uint) chan decimal.Decimal {
+func CreateBillerOutput(teamId uint) chan decimal.Decimal {
 	ch := make(chan decimal.Decimal)
-	if _, ok := billerOutputs[appId]; !ok {
-		billerOutputs[appId] = make(map[chan decimal.Decimal]struct{})
+	if _, ok := billerOutputs[teamId]; !ok {
+		billerOutputs[teamId] = make(map[chan decimal.Decimal]struct{})
 	}
-	billerOutputs[appId][ch] = struct{}{}
+	billerOutputs[teamId][ch] = struct{}{}
 	return ch
 }
 
-func RemoveBillerOutput(appId uint, ch chan decimal.Decimal) {
-	if outputs, ok := billerOutputs[appId]; ok {
+func RemoveBillerOutput(teamId uint, ch chan decimal.Decimal) {
+	if outputs, ok := billerOutputs[teamId]; ok {
 		delete(outputs, ch)
 	}
 }
@@ -127,7 +127,7 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 			}
 		}
 		expense := output.price()
-		if outputs, ok := billerOutputs[app.ID]; ok {
+		if outputs, ok := billerOutputs[team.ID]; ok {
 			for ch := range outputs {
 				ch <- expense
 			}

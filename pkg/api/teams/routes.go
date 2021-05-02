@@ -9,5 +9,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/me", handleGETPersonalTeam)
 	r.GET("/:id", handleGETTeam)
 	r.PATCH("/:id", handlePATCHTeam)
+	r.GET("/:id/expenses", handleGETExpenses)
 	r.GET("/:id/apps", handleGETTeamApps)
 }
