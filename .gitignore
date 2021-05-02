@@ -10,3 +10,6 @@ dokku_prod.key.pub
 # Dokku plugin files
 /commands
 /subcommands
+
+# github app private key
+*.pem
