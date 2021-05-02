@@ -19,6 +19,7 @@ func handlePATCHTeam(c *gin.Context) {
 
 	var json struct {
 		Name        string
+		Avatar      string
 		AddUsers    []uint
 		RemoveUsers []uint
 	}
@@ -75,7 +76,7 @@ func handlePATCHTeam(c *gin.Context) {
 	}
 
 	// will only update the field if Name != ""
-	result = db.DB.Model(&team).Updates(&db.Team{Name: json.Name})
+	result = db.DB.Model(&team).Updates(&db.Team{Name: json.Name, Avatar: json.Avatar})
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return

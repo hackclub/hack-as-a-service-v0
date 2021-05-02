@@ -228,6 +228,8 @@ paths:
               properties:
                 Name:
                   type: string
+                Avatar:
+                  type: string
                 AddUsers:
                   type: array
                   items:
