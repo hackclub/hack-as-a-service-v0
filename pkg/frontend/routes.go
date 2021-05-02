@@ -2,7 +2,7 @@ package frontend
 
 import (
 	"path"
-	
+
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
