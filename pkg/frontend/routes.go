@@ -18,5 +18,7 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/landing", sendHTML("landing.html"))
 	r.GET("/dashboard", sendHTML("dashboard.html"))
 	r.GET("/teams/:id", sendHTML("teams/[id].html"))
+
 	r.GET("/apps/:id", sendHTML("apps/[id].html"))
+	r.GET("/apps/:id/logs", sendHTML("apps/[id]/logs.html"))
 }
