@@ -160,6 +160,7 @@ export default function TeamPage() {
   }, [team]);
 
   useEffect(() => {
+    if (!id) return;
     expensesWs.current = new WebSocket(
       `${process.env.NEXT_PUBLIC_API_BASE.replace(
         "http",
