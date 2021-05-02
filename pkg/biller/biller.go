@@ -69,6 +69,7 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 
 var billerOutputs map[uint]map[chan decimal.Decimal]struct{} = make(map[uint]map[chan decimal.Decimal]struct{})
 var statsOutputs map[uint]map[chan ProcessedOutput]struct{} = make(map[uint]map[chan ProcessedOutput]struct{})
+var deleteAppOutputs map[uint]struct{}
 
 func CreateStatsOutput(appId uint) chan ProcessedOutput {
 	ch := make(chan ProcessedOutput)
@@ -98,6 +99,10 @@ func RemoveBillerOutput(teamId uint, ch chan decimal.Decimal) {
 	if outputs, ok := billerOutputs[teamId]; ok {
 		delete(outputs, ch)
 	}
+}
+
+func StopBiller(appId uint) {
+	deleteAppOutputs[appId] = struct{}{}
 }
 
 func biller(app db.App, team db.Team, stream types.ContainerStats) {
@@ -137,6 +142,12 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 		result := db.DB.Model(&team).Update("expenses", gorm.Expr("expenses + ?::decimal", expense))
 		if result.Error != nil {
 			log.Printf("Error: %+v\n", result.Error)
+		}
+
+		if _, ok := deleteAppOutputs[app.ID]; ok {
+			// poof
+			delete(deleteAppOutputs, app.ID)
+			break
 		}
 	}
 }
