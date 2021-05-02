@@ -1,18 +1,34 @@
+import Link from "next/link";
 import useSWR from "swr";
 import { Box, Flex, Heading, Text } from "theme-ui";
 import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
 import fetchApi from "../lib/fetch";
 
-function App({ name, shortName }: { name: string; shortName: string }) {
+function App({
+  name,
+  shortName,
+  url,
+}: {
+  name: string;
+  shortName: string;
+  url: string;
+}) {
   return (
-    <Box bg="sunken" my={10} p={30} sx={{ borderRadius: 10 }}>
-      <Flex sx={{ alignItems: "center" }}>
-        <Heading as="h2" sx={{ fontWeight: "normal" }} mr={3}>
-          {name}
-        </Heading>
-        <Text color="muted">({shortName})</Text>
-      </Flex>
-    </Box>
+    <Link href={url}>
+      <Box
+        bg="sunken"
+        my={10}
+        p={30}
+        sx={{ borderRadius: 10, cursor: "pointer" }}
+      >
+        <Flex sx={{ alignItems: "center" }}>
+          <Heading as="h2" sx={{ fontWeight: "normal" }} mr={3}>
+            {name}
+          </Heading>
+          <Text color="muted">({shortName})</Text>
+        </Flex>
+      </Box>
+    </Link>
   );
 }
 
@@ -56,7 +72,12 @@ export default function Dashboard() {
         (personalTeam.team.Apps.length > 0 ? (
           personalTeam.team.Apps.map((app: any) => {
             return (
-              <App name={app.Name} shortName={app.ShortName} key={app.ID} />
+              <App
+                url={`/apps/${app.ID}`}
+                name={app.Name}
+                shortName={app.ShortName}
+                key={app.ID}
+              />
             );
           })
         ) : (

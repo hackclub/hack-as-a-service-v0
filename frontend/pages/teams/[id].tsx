@@ -217,7 +217,7 @@ export default function TeamPage() {
                   (app: any): ISidebarItem => ({
                     text: app.Name,
                     icon: "code",
-                    url: `/app/${app.ID}`,
+                    url: `/apps/${app.ID}`,
                   })
                 )
               : [{ text: "This team doesn't have any apps yet 😢" }]
@@ -260,7 +260,7 @@ export default function TeamPage() {
                   key={app.ID}
                   name={app.Name}
                   shortName={app.ShortName}
-                  url={`/app/${app.ID}`}
+                  url={`/apps/${app.ID}`}
                 />
               );
             })}
