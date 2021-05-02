@@ -25,6 +25,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/segmentio/encoding v0.2.17 // indirect
+	github.com/shopspring/decimal v0.0.0-20200227202807-02e2044944cc
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/slack-go/slack v0.9.0
 	github.com/ugorji/go v1.2.5 // indirect
