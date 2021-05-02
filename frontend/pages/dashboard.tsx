@@ -1,11 +1,6 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import useSWR from "swr";
-import { Button, Text, Box, Flex, Heading } from "theme-ui";
-import DashboardLayout, {
-  ISidebarItem,
-  ISidebarSection,
-} from "../layouts/dashboard";
+import { Box, Flex, Heading, Text } from "theme-ui";
+import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
 import fetchApi from "../lib/fetch";
 
 function App({ name, shortName }: { name: string; shortName: string }) {
@@ -31,7 +26,7 @@ export default function Dashboard() {
       icon: "person",
       image: i.Avatar || undefined,
       text: i.Name,
-      url: `/team/${i.ID}`,
+      url: `/teams/${i.ID}`,
     }));
 
   const sidebarSections: ISidebarSection[] = [
