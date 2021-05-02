@@ -11,6 +11,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -66,6 +67,33 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 	return nil
 }
 
+var billerOutputs map[uint]map[chan decimal.Decimal]struct{}
+var statsOutputs map[uint]map[chan ProcessedOutput]struct{}
+
+func CreateStatsOutput(appId uint) chan ProcessedOutput {
+	ch := make(chan ProcessedOutput)
+	statsOutputs[appId][ch] = struct{}{}
+	return ch
+}
+
+func RemoveStatsOutput(appId uint, ch chan ProcessedOutput) {
+	if outputs, ok := statsOutputs[appId]; ok {
+		delete(outputs, ch)
+	}
+}
+
+func CreateBillerOutput(appId uint) chan decimal.Decimal {
+	ch := make(chan decimal.Decimal)
+	billerOutputs[appId][ch] = struct{}{}
+	return ch
+}
+
+func RemoveBillerOutput(appId uint, ch chan decimal.Decimal) {
+	if outputs, ok := billerOutputs[appId]; ok {
+		delete(outputs, ch)
+	}
+}
+
 func biller(app db.App, team db.Team, stream types.ContainerStats) {
 	lines := bufio.NewScanner(stream.Body)
 
@@ -86,7 +114,14 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 		}
 
 		output := stat.Process()
+		// Notify listeners
+		for ch := range statsOutputs[app.ID] {
+			ch <- output
+		}
 		expense := output.price()
+		for ch := range billerOutputs[app.ID] {
+			ch <- expense
+		}
 
 		// Accrue this new cost to the team
 		result := db.DB.Model(&team).Update("expenses", gorm.Expr("expenses + ?::decimal", expense))

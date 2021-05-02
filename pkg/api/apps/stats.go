@@ -1,23 +1,17 @@
 package apps
 
 import (
-	"bufio"
-	"encoding/json"
 	"log"
-	"strings"
 
-	"github.com/docker/docker/client"
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
-	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
 
 func handleGETStats(c *gin.Context) {
 	upgrader := util.MakeWebsocketUpgrader()
 
-	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
 	user := c.MustGet("user").(db.User)
 
 	app_id := c.Param("id")
@@ -32,28 +26,7 @@ func handleGETStats(c *gin.Context) {
 		return
 	}
 
-	// Get the app's container ID
-	cid, err := dokku_conn.RunCommand(c.Request.Context(), []string{"haas:cid", app.ShortName})
-	if err != nil {
-		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
-		return
-	}
-
-	cid = strings.TrimSpace(cid)
-
-	// Initialize a Docker API client
-	cli, err := client.NewClientWithOpts(client.FromEnv)
-	if err != nil {
-		c.JSON(500, gin.H{"status": "error", "message": "Error creating Docker client"})
-		return
-	}
-
-	stats_stream, err := cli.ContainerStats(c.Request.Context(), cid, true)
-	if err != nil {
-		c.JSON(500, gin.H{"status": "error", "message": "Error getting container logs"})
-		return
-	}
-	lines := bufio.NewScanner(stats_stream.Body)
+	ch := biller.CreateStatsOutput(app.ID)
 
 	// Spin up a websocket connection
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -62,23 +35,11 @@ func handleGETStats(c *gin.Context) {
 		return
 	}
 
-	defer stats_stream.Body.Close()
+	defer biller.RemoveStatsOutput(app.ID, ch)
 	defer ws.Close()
 
-	// Drop the first line since it contains bad data
-	// FIXME: why?
-	if !lines.Scan() {
-		return
-	}
-	for lines.Scan() {
-		line := lines.Text()
-		// log.Printf("Got line: %s\n", line)
-		var stat biller.Stats
-		if err := json.Unmarshal([]byte(line), &stat); err != nil {
-			log.Printf("Error decoding json: %+v\n", err)
-			break
-		}
-		output := stat.Process()
+	for {
+		output := <-ch
 		// log.Printf("Output = %+v\n", output)
 		err := ws.WriteJSON(output)
 		if err != nil {
