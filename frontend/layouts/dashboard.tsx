@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { Avatar, Box, Flex, Heading, SxProp } from "theme-ui";
 import fetchApi from "../lib/fetch";
 import { Glyph } from "../types/glyph";
+import ColorSwitcher from "../components/ColorButton";
 
 function SidebarItem({
   image,
@@ -102,6 +103,7 @@ function SidebarHeader({ avatar }: { avatar?: string }) {
     >
       <Avatar src={avatar} />
       <Box sx={{ flexGrow: 1 }} />
+      <ColorSwitcher />
       <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
       <Link href="/logout">
         <Icon
