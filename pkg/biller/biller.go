@@ -121,12 +121,16 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 
 		output := stat.Process()
 		// Notify listeners
-		for ch := range statsOutputs[app.ID] {
-			ch <- output
+		if outputs, ok := statsOutputs[app.ID]; ok {
+			for ch := range outputs {
+				ch <- output
+			}
 		}
 		expense := output.price()
-		for ch := range billerOutputs[app.ID] {
-			ch <- expense
+		if outputs, ok := billerOutputs[app.ID]; ok {
+			for ch := range outputs {
+				ch <- expense
+			}
 		}
 
 		// Accrue this new cost to the team
