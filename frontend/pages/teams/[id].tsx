@@ -17,7 +17,7 @@ import Link from "next/link";
 
 import Icon from "@hackclub/icons";
 import Modal from "../../components/modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function Field({
   label,
@@ -151,6 +151,35 @@ export default function TeamPage() {
   const { id } = router.query;
 
   const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
+  const [expenses, setExpenses] = useState(0);
+  const expensesWs = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (!team) return;
+    setExpenses(parseFloat(team.team.Expenses));
+  }, [team]);
+
+  useEffect(() => {
+    expensesWs.current = new WebSocket(
+      `${process.env.NEXT_PUBLIC_API_BASE.replace(
+        "http",
+        "ws"
+      )}/teams/${id}/expenses`
+    );
+    expensesWs.current.onopen = () => {
+      console.log("[+] Expenses WebSocket is open");
+    };
+    expensesWs.current.onclose = () => {
+      console.log("[-] Expenses WebSocket is closed");
+    };
+    expensesWs.current.onmessage = (e) => {
+      const expense = parseFloat(JSON.parse(e.data));
+      // console.log(`Raw ${e.data}, parsed ${expense}`);
+      setExpenses((e) => e + expense);
+    };
+
+    return () => expensesWs.current?.close();
+  }, [id]);
 
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
 
@@ -215,7 +244,7 @@ export default function TeamPage() {
           description={team?.team.Users.length}
           sx={{ marginRight: "100px" }}
         />
-        <Field label="Balance" description="15 HN" />
+        <Field label="Expenses" description={`${expenses} HN`} />
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
