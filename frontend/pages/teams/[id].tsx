@@ -181,7 +181,6 @@ export default function TeamPage() {
 
     return () => expensesWs.current?.close();
   }, [id]);
-
   const [inviteModalVisible, setInviteModalVisible] = useState(false);
 
   const inviteUser = async (id: string) => {
