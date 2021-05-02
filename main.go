@@ -11,6 +11,7 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/api/oauth"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/frontend"
+	"github.com/hackclub/hack-as-a-service/pkg/gh"
 )
 
 func getPort() string {
@@ -51,6 +52,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	ghg := r.Group("/gh")
+	gh.SetupRoutes(ghg)
 
 	oauth.SetupRoutes(&r.RouterGroup)
 
