@@ -5,7 +5,7 @@ import { useColorMode } from "theme-ui";
 function ColorButton({ ...props }) {
   const [colorMode, setColorMode] = useColorMode();
 
-  const icon = colorMode === 'dark' ? <Sun />: <Moon />
+  const icon = colorMode === "dark" ? <Sun /> : <Moon />;
 
   return (
     <IconButton
@@ -18,7 +18,6 @@ function ColorButton({ ...props }) {
         cursor: "pointer",
         margin: "0 10px",
       }}
-
       onClick={(e) => {
         setColorMode(colorMode === "default" ? "dark" : "default");
       }}
