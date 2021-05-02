@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
-	"gorm.io/gorm"
 )
 
 func handlePATCHTeam(c *gin.Context) {
@@ -20,6 +19,7 @@ func handlePATCHTeam(c *gin.Context) {
 
 	var json struct {
 		Name        string
+		Avatar      string
 		AddUsers    []uint
 		RemoveUsers []uint
 	}
@@ -41,7 +41,7 @@ func handlePATCHTeam(c *gin.Context) {
 		}
 
 		addUsers = append(addUsers, db.User{
-			Model: gorm.Model{
+			Model: db.Model{
 				ID: u,
 			},
 		})
@@ -49,7 +49,7 @@ func handlePATCHTeam(c *gin.Context) {
 
 	for _, u := range json.RemoveUsers {
 		removeUsers = append(removeUsers, db.User{
-			Model: gorm.Model{
+			Model: db.Model{
 				ID: u,
 			},
 		})
@@ -76,7 +76,7 @@ func handlePATCHTeam(c *gin.Context) {
 	}
 
 	// will only update the field if Name != ""
-	result = db.DB.Model(&team).Updates(&db.Team{Name: json.Name})
+	result = db.DB.Model(&team).Updates(&db.Team{Name: json.Name, Avatar: json.Avatar})
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error.Error()})
 		return

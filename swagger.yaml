@@ -228,6 +228,8 @@ paths:
               properties:
                 Name:
                   type: string
+                Avatar:
+                  type: string
                 AddUsers:
                   type: array
                   items:
@@ -288,6 +290,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /teams/me:
+    get:
+      tags: [teams]
+      summary: Returns the current user's personal team
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  team:
+                    $ref: "#/components/schemas/TeamWithUsers"
         "500":
           description: Server error
           content:
@@ -581,11 +605,6 @@ components:
         UpdatedAt:
           type: string
           format: date-time
-        DeletedAtTime:
-          type: string
-          format: date-time
-        DeletedAtValid:
-          type: boolean
     Status:
       type: string
       enum: [ok]

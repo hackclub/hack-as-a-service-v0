@@ -1,9 +1,7 @@
 package db
 
-import "gorm.io/gorm"
-
 type App struct {
-	gorm.Model
+	Model
 	Name string
 	// The app's Dokku name
 	ShortName string
