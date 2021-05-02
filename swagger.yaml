@@ -8,7 +8,7 @@ info:
     The canonical version of the OpenAPI specification is available at
     <https://haas.hackclub.com/swagger.yaml>.
   version: "1.0.0"
-  title: Hack as a Service (Haas)
+  title: Hack as a Service (HaaS)
 servers:
   - url: "https://haas.hackclub.com/api"
     description: HaaS production
@@ -227,6 +227,8 @@ paths:
               type: object
               properties:
                 Name:
+                  type: string
+                Avatar:
                   type: string
                 AddUsers:
                   type: array
@@ -626,6 +628,11 @@ components:
             Avatar:
               type: string
               format: uri
+      example:
+        ID: 5
+        Name: Zach Latta
+        SlackUserID: U0266FRGP
+        Avatar: https://avatars.slack-edge.com/2021-03-16/1864480102915_6f3a18561c92ce478c3d_512.jpg
     # Uncomment when we return such a resource
     #
     # UserWithTeams:
@@ -651,6 +658,12 @@ components:
               type: boolean
             Personal:
               type: boolean
+      example:
+        ID: 9
+        Name: Hack Club HQ
+        Avatar: https://github.com/hackclub.png
+        Automatic: false
+        Personal: false
     TeamWithUsers:
       allOf:
         - $ref: "#/components/schemas/Team"
@@ -675,6 +688,11 @@ components:
               $ref: "#/components/schemas/AppShortName"
             TeamID:
               $ref: "#/components/schemas/ID"
+      example:
+        ID: 14
+        Name: Scrappy
+        ShortName: scrappy
+        TeamID: 9
     Build:
       type: object
       properties:
@@ -699,6 +717,16 @@ components:
           type: string
         Status:
           type: integer
+      example:
+        ID: 3
+        ExecID: 0c522073-5b5f-4f3f-958c-7ba461d80d20
+        AppID: 14
+        StartedAt: 2021-05-01T21:56:34.47995-04:00
+        EndedAt: null
+        Running: true
+        Stdout: Building the app...
+        Stderr: ""
+        Status: 0
   securitySchemes:
     cookieAuth:
       type: apiKey
