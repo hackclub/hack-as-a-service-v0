@@ -5,7 +5,7 @@ import { useColorMode } from "theme-ui";
 function ColorButton({ ...props }) {
   const [colorMode, setColorMode] = useColorMode();
 
-  const icon = colorMode === 'dark' ? <Moon /> :<Sun />
+  const icon = colorMode === 'dark' ? <Sun />: <Moon />
 
   return (
     <IconButton
