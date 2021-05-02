@@ -34,7 +34,7 @@ function SidebarItem({
         mr={15}
         bg="sunken"
       >
-        <Icon glyph={icon as Glyph} />
+        <Icon glyph={icon} />
       </Flex>
     );
   }
@@ -121,7 +121,7 @@ export interface ISidebarSection {
 
 export interface ISidebarItem {
   image?: string;
-  icon?: string;
+  icon?: Glyph;
   text: string;
   url?: string;
 }
