@@ -78,7 +78,7 @@ export default function Dashboard() {
           personalTeam.team.Apps.map((app: any) => {
             return (
               <App
-                url={`/app/${app.ID}`}
+                url={`/apps/${app.ID}`}
                 name={app.Name}
                 shortName={app.ShortName}
                 key={app.ID}

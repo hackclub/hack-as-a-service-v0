@@ -38,13 +38,13 @@ export default function AppLayout({
             {
               icon: "explore",
               text: "Dashboard",
-              url: `/app/${id}`,
+              url: `/apps/${id}`,
               selected: selected == "Dashboard",
             },
             {
               icon: "search",
               text: "Logs",
-              url: `/app/${id}/logs`,
+              url: `/apps/${id}/logs`,
               selected: selected == "Logs",
             },
           ],
