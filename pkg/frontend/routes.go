@@ -2,7 +2,8 @@ package frontend
 
 import (
 	"path"
-
+	
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,4 +20,5 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.GET("/dashboard", sendHTML("dashboard.html"))
 	r.GET("/teams/:id", sendHTML("teams/[id].html"))
 	r.GET("/app/:id", sendHTML("app/[id].html"))
+	r.Use(static.ServeRoot("../../assets", "./assets"))
 }

@@ -46,8 +46,6 @@ func main() {
 
 	r.Use(static.ServeRoot("/", "./frontend/out"))
 
-	r.Use(static.ServeRoot("/assets", "./assets"))
-
 	rg := r.Group("/api", auth.EnsureAuthedUser)
 	err = api.SetupRoutes(rg)
 	if err != nil {
