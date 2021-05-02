@@ -67,11 +67,14 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 	return nil
 }
 
-var billerOutputs map[uint]map[chan decimal.Decimal]struct{}
-var statsOutputs map[uint]map[chan ProcessedOutput]struct{}
+var billerOutputs map[uint]map[chan decimal.Decimal]struct{} = make(map[uint]map[chan decimal.Decimal]struct{})
+var statsOutputs map[uint]map[chan ProcessedOutput]struct{} = make(map[uint]map[chan ProcessedOutput]struct{})
 
 func CreateStatsOutput(appId uint) chan ProcessedOutput {
 	ch := make(chan ProcessedOutput)
+	if _, ok := statsOutputs[appId]; !ok {
+		statsOutputs[appId] = make(map[chan ProcessedOutput]struct{})
+	}
 	statsOutputs[appId][ch] = struct{}{}
 	return ch
 }
@@ -84,6 +87,9 @@ func RemoveStatsOutput(appId uint, ch chan ProcessedOutput) {
 
 func CreateBillerOutput(appId uint) chan decimal.Decimal {
 	ch := make(chan decimal.Decimal)
+	if _, ok := billerOutputs[appId]; !ok {
+		billerOutputs[appId] = make(map[chan decimal.Decimal]struct{})
+	}
 	billerOutputs[appId][ch] = struct{}{}
 	return ch
 }
