@@ -13,8 +13,8 @@ type Stats struct {
 			PercpuUsage []interface{} `json:"percpu_usage"`
 			TotalUsage  int64         `json:"total_usage"`
 		} `json:"cpu_usage"`
-		SystemCpuUsage int64
-		OnlineCpus     int64
+		SystemCpuUsage int64 `json:"system_cpu_usage"`
+		OnlineCpus     int64 `json:"online_cpus"`
 	} `json:"cpu_stats"`
 	PrecpuStats struct {
 		CpuUsage struct {
