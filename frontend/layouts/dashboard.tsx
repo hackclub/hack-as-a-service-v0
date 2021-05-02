@@ -5,7 +5,6 @@ import { PropsWithChildren, useEffect } from "react";
 import useSWR from "swr";
 import { Avatar, Box, Container, Flex, Heading, SxProp, Text } from "theme-ui";
 import fetchApi from "../lib/fetch";
-import { useColorMode } from "theme-ui";
 import { Glyph } from "../types/glyph";
 import ColorSwitcher from "../components/ColorButton";
 
