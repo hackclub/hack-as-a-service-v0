@@ -46,6 +46,12 @@ export default function AppLayout({
               url: `/apps/${id}/logs`,
               selected: selected == "Logs",
             },
+            {
+              icon: "share",
+              text: "Deploy",
+              url: `/apps/${id}/deploy`,
+              selected: selected == "Deploy",
+            },
           ],
         },
       ]}

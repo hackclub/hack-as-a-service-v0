@@ -13,7 +13,7 @@ import (
 func handleGETLogs(c *gin.Context) {
 	user := c.MustGet("user").(db.User)
 
-	id, err := strconv.Atoi(c.Query("id"))
+	id, err := strconv.Atoi(c.Params.ByName("id"))
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid build ID"})
 		return
@@ -53,7 +53,7 @@ loop:
 			if !ok {
 				continue
 			}
-			err := ws.WriteJSON(gin.H{"stdout": line})
+			err := ws.WriteJSON(gin.H{"Stream": "stdout", "Output": line})
 			switch err.(type) {
 			case *websocket.CloseError:
 				break loop
@@ -62,13 +62,13 @@ loop:
 			if !ok {
 				continue
 			}
-			err := ws.WriteJSON(gin.H{"stderr": line})
+			err := ws.WriteJSON(gin.H{"Stream": "stderr", "Output": line})
 			switch err.(type) {
 			case *websocket.CloseError:
 				break loop
 			}
 		case status := <-cmd.StatusChan:
-			ws.WriteJSON(gin.H{"status": status})
+			ws.WriteJSON(gin.H{"Stream": "status", "Output": strconv.Itoa(status)})
 			// no need to handle the error - we break anyways
 			break loop
 		}

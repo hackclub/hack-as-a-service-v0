@@ -29,7 +29,7 @@ export default function BuildPage() {
 
     const ws = new WebSocket(
       `${process.env.NEXT_PUBLIC_API_BASE.replace("http", "ws")}/builds/${
-        build.id
+        build.build.ID
       }/logs`
     );
 

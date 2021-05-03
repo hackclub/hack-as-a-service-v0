@@ -14,6 +14,7 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku/util"
 	"go.lsp.dev/jsonrpc2"
+	"gorm.io/gorm"
 )
 
 type DokkuConn struct {
@@ -147,8 +148,7 @@ func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if err != nil {
 			return
 		}
-		build.Events = append(build.Events, string(out))
-		db.DB.Save(&build)
+		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -177,8 +177,7 @@ func stderrHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if err != nil {
 			return
 		}
-		build.Events = append(build.Events, string(out))
-		db.DB.Save(&build)
+		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -211,7 +210,7 @@ func doneHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Reque
 		build.Status = msg.Status
 		build.Running = false
 		build.EndedAt = time.Now()
-		db.DB.Save(&build)
+		db.DB.Model(&build).Updates(&build)
 		log.Println("DB updated")
 	}()
 	return nil
