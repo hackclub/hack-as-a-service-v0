@@ -16,6 +16,24 @@ import (
 )
 
 func StartBilling(conn *dokku.DokkuConn) error {
+	// Setup the event channel
+	go func() {
+		ch := dokku.CreateEventChannel()
+		for {
+			ev := <-ch
+			if ev.Event == "post-deploy" {
+				// Switch container ID
+				var app db.App
+				result := db.DB.First(&app, "short_name = ?", ev.AppName)
+				if result.Error != nil {
+					log.Printf("Error while trying to rebill after post-deploy (%s): %+v\n", ev.AppName, result.Error)
+				} else {
+					StartBillingApp(conn, app)
+				}
+			}
+		}
+	}()
+
 	rows, err := db.DB.Model(&db.App{}).Rows()
 	if err != nil {
 		return err
@@ -56,7 +74,7 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 		return nil
 	}
 
-	return startBillerFromCID(app, team, cid)
+	return StartBillerFromCID(app, team, cid)
 }
 
 func startBillerFromCID(app db.App, team db.Team, cid string) error {
