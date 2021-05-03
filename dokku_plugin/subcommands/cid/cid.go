@@ -31,8 +31,8 @@ func main() {
 
 	contents, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println()
-		os.Exit(0)
+		fmt.Println("Error reading container file")
+		os.Exit(1)
 	}
 
 	fmt.Println(strings.TrimSpace(string(contents)))
