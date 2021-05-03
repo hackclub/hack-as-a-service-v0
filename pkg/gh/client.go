@@ -33,9 +33,8 @@ func genClient(installIDRaw string) *github.Client {
 	}
 
 	// Creating client
-	tr := http.DefaultTransport
 	itr, err := ghinstallation.NewKeyFromFile(
-		tr,
+		http.DefaultTransport,
 		int64(appID),
 		int64(installID),
 		"hack-as-a-service.private-key.pem",
