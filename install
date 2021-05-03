@@ -22,8 +22,10 @@ done
 # Build triggers
 go build -o ../triggers triggers/triggers.go
 
+cd ..
+
 for t in post-deploy; do
-    ln -sf triggers ../triggers/$t
+    ln -sf triggers $t
 done
 
 echo "Installed!"
