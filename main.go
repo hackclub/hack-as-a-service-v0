@@ -27,6 +27,11 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	if dev := os.Getenv("HAAS_DEV"); dev == "" {
+		// prod mode
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
 
 	// Let frontend access cookies in dev
@@ -36,8 +41,6 @@ func main() {
 			c.Header("Access-Control-Allow-Credentials", "true")
 			c.Header("Access-Control-Allow-Methods", "GET, POST, PATCH")
 		})
-	} else {
-		gin.SetMode(gin.ReleaseMode)
 	}
 
 	r.GET("/swagger.yaml", func(c *gin.Context) { c.File("swagger.yaml") })
