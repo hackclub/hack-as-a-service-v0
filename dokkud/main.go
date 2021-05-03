@@ -159,5 +159,9 @@ func main() {
 				return mainHandler(c, ctx, reply, req)
 			},
 		))
+		go func() {
+			<-c.Done()
+			delete(conns, c)
+		}()
 	}
 }
