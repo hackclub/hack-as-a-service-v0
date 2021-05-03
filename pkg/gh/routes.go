@@ -1,21 +1,18 @@
 package gh
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v35/github"
 )
 
 func HandleWebhook(c *gin.Context) {
-	// Verifying the webhook
-	// shaHeader := c.GetHeader("X-Hub-Signature-256")
-	// log.Println("Header:", shaHeader)
-	// if os.Getenv("GITHUB_WEBHOOK_SECRET_SHA") != shaHeader {
-	// 	c.JSON(403, gin.H{"status": "error", "message": "Invalid sha256 header"})
-	// 	return
-	// }
-
-	// Get raw data
-	payload, err := c.GetRawData()
+	// Verify the payload and unload it
+	payload, err := github.ValidatePayload(
+		c.Request,
+		[]byte(os.Getenv("GITHUB_WEBHOOK_SECRET")),
+	)
 	if err != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid payload"})
 		return
