@@ -244,7 +244,7 @@ export default function TeamPage() {
           description={team?.team.Users.length}
           sx={{ marginRight: "100px" }}
         />
-        <Field label="Expenses" description={`${expenses} HN`} />
+        <Field label="Expenses" description={`${expenses.toFixed(5)} HN`} />
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
