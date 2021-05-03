@@ -21,8 +21,8 @@ func handleGETLogs(c *gin.Context) {
 
 	var build db.Build
 	result := db.DB.
-		Joins("INNER JOIN team_users ON team_users.team_id = apps.team_id").
 		Joins("INNER JOIN apps ON apps.id = builds.app_id").
+		Joins("INNER JOIN team_users ON team_users.team_id = apps.team_id").
 		First(&build, "builds.id = ? AND team_users.user_id = ?", id, user.ID)
 	if result.Error != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid build ID"})
