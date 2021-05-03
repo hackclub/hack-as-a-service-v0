@@ -55,10 +55,11 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	builds_rg := r.Group("/builds")
 	builds.SetupRoutes(builds_rg)
 
-	err = biller.StartBilling(conn)
-	if err != nil {
-		return err
-	}
+	// FIXME: revert this
+	_ = biller.StartBilling(conn)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
