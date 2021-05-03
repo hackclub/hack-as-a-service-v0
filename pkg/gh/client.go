@@ -1,6 +1,7 @@
 package gh
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -11,25 +12,23 @@ import (
 )
 
 // Generate a github client to make requests against their REST API with
-func genClient(installIDRaw string) *github.Client {
+func genClient(installIDRaw string) (*github.Client, error) {
 	// Getting app id
 	appIDRaw, found := os.LookupEnv("GITHUB_APP_ID")
 	if !found {
-		log.Fatalln("Failed to load app id for github bot. Is it stored?")
+		return nil, errors.New("Failed to find github app ID env var")
 	}
 
 	// Parsing app ID to int
 	appID, err := strconv.Atoi(appIDRaw)
 	if err != nil {
-		log.Println(err)
-		log.Fatalf("Failed to convert %q to int for github bot app id.\n", appIDRaw)
+		return nil, err
 	}
 
 	// Parsing install ID to int
 	installID, err := strconv.Atoi(installIDRaw)
 	if err != nil {
-		log.Printf("Failed to convert %q to int for github bot installation id.\n", installIDRaw)
-		log.Println(err)
+		return nil, err
 	}
 
 	// Creating client
@@ -43,5 +42,5 @@ func genClient(installIDRaw string) *github.Client {
 		log.Printf("Failed to create github client key from ")
 	}
 
-	return github.NewClient(&http.Client{Transport: itr})
+	return github.NewClient(&http.Client{Transport: itr}), nil
 }
