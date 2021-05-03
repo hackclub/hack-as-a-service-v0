@@ -106,7 +106,7 @@ func streamingCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2
 	return nil
 }
 
-var conns map[jsonrpc2.Conn]struct{}
+var conns map[jsonrpc2.Conn]struct{} = make(map[jsonrpc2.Conn]struct{})
 
 type EventArgs struct {
 	Event   string
