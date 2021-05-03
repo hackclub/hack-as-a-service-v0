@@ -106,12 +106,30 @@ func streamingCmdHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2
 	return nil
 }
 
+var conns map[jsonrpc2.Conn]struct{}
+
+type EventArgs struct {
+	Event   string
+	AppName string
+}
+
 func mainHandler(conn jsonrpc2.Conn, ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 	switch req.Method() {
 	case "command":
 		return simpleCmdHandler(conn, ctx, reply, req)
 	case "streamingCommand":
 		return streamingCmdHandler(conn, ctx, reply, req)
+	case "event":
+		// Do it here, very simple and small
+		var args EventArgs
+		err := json.Unmarshal(req.Params(), &args)
+		if err != nil {
+			return err
+		}
+		for conn := range conns {
+			conn.Notify(ctx, "event", args)
+		}
+		return nil
 	default:
 		return jsonrpc2.MethodNotFoundHandler(ctx, reply, req)
 	}
@@ -135,10 +153,15 @@ func main() {
 		}
 		s := jsonrpc2.NewStream(c2)
 		c := jsonrpc2.NewConn(s)
+		conns[c] = struct{}{}
 		c.Go(context.Background(), jsonrpc2.AsyncHandler(
 			func(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 				return mainHandler(c, ctx, reply, req)
 			},
 		))
+		go func() {
+			<-c.Done()
+			delete(conns, c)
+		}()
 	}
 }

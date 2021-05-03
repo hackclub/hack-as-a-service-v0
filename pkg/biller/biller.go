@@ -16,6 +16,24 @@ import (
 )
 
 func StartBilling(conn *dokku.DokkuConn) error {
+	// Setup the event channel
+	go func() {
+		ch := dokku.CreateEventChannel()
+		for {
+			ev := <-ch
+			if ev.Event == "post-deploy" {
+				// Switch container ID
+				var app db.App
+				result := db.DB.First(&app, "short_name = ?", ev.AppName)
+				if result.Error != nil {
+					log.Printf("Error while trying to rebill after post-deploy (%s): %+v\n", ev.AppName, result.Error)
+				} else {
+					StartBillingApp(conn, app)
+				}
+			}
+		}
+	}()
+
 	rows, err := db.DB.Model(&db.App{}).Rows()
 	if err != nil {
 		return err
@@ -51,6 +69,15 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 
 	cid = strings.TrimSpace(cid)
 
+	// No container to bill
+	if cid == "" {
+		return nil
+	}
+
+	return StartBillerFromCID(app, team, cid)
+}
+
+func startBillerFromCID(app db.App, team db.Team, cid string) error {
 	// Initialize a Docker API client
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
@@ -67,9 +94,23 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 	return nil
 }
 
+func StartBillerFromCID(app db.App, team db.Team, cid string) error {
+	if ch, ok := billerEventsChannels[app.ID]; ok {
+		ch <- BillerEvent{NewContainerId: cid}
+		return nil
+	}
+
+	return startBillerFromCID(app, team, cid)
+}
+
+type BillerEvent struct {
+	NewContainerId string
+	Delete         bool
+}
+
 var billerOutputs map[uint]map[chan decimal.Decimal]struct{} = make(map[uint]map[chan decimal.Decimal]struct{})
 var statsOutputs map[uint]map[chan ProcessedOutput]struct{} = make(map[uint]map[chan ProcessedOutput]struct{})
-var deleteAppOutputs map[uint]struct{}
+var billerEventsChannels map[uint]chan BillerEvent
 
 func CreateStatsOutput(appId uint) chan ProcessedOutput {
 	ch := make(chan ProcessedOutput)
@@ -102,11 +143,15 @@ func RemoveBillerOutput(teamId uint, ch chan decimal.Decimal) {
 }
 
 func StopBiller(appId uint) {
-	deleteAppOutputs[appId] = struct{}{}
+	if ch, ok := billerEventsChannels[appId]; ok {
+		ch <- BillerEvent{Delete: true}
+	}
 }
 
 func biller(app db.App, team db.Team, stream types.ContainerStats) {
 	lines := bufio.NewScanner(stream.Body)
+	eventsCh := make(chan BillerEvent)
+	billerEventsChannels[app.ID] = eventsCh
 
 	defer stream.Body.Close()
 
@@ -115,6 +160,7 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 	if !lines.Scan() {
 		return
 	}
+loop:
 	for lines.Scan() {
 		line := lines.Text()
 		// log.Printf("Got line: %s\n", line)
@@ -144,10 +190,24 @@ func biller(app db.App, team db.Team, stream types.ContainerStats) {
 			log.Printf("Error: %+v\n", result.Error)
 		}
 
-		if _, ok := deleteAppOutputs[app.ID]; ok {
-			// poof
-			delete(deleteAppOutputs, app.ID)
-			break
+		select {
+		case ev := <-eventsCh:
+			if ev.Delete {
+				log.Printf("[biller][%s] Requested delete, bye\n", app.ShortName)
+				break loop
+			}
+			if ev.NewContainerId != "" {
+				err := startBillerFromCID(app, team, ev.NewContainerId)
+				if err != nil {
+					log.Printf("[biller][%s] Error while trying to migrate to new container ID %s, continuing with old one\n", app.ShortName, ev.NewContainerId)
+					break
+				}
+				log.Printf("[biller][%s] Migrated to new container ID %s\n", app.ShortName, ev.NewContainerId)
+				return
+			}
+		default:
 		}
 	}
+
+	delete(billerEventsChannels, app.ID)
 }

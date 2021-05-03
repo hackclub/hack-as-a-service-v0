@@ -5,7 +5,6 @@ import (
 	"regexp"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
@@ -65,12 +64,6 @@ func handlePOSTApp(c *gin.Context) {
 	result = db.DB.Create(&app)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"status": "error", "message": result.Error})
-		return
-	}
-
-	err = biller.StartBillingApp(dokku_conn, app)
-	if err != nil {
-		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
