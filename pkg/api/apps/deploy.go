@@ -60,8 +60,6 @@ func handlePOSTDeploy(c *gin.Context) {
 		AppID:     app.ID,
 		StartedAt: time.Now(),
 		Running:   true,
-		Stdout:    "",
-		Stderr:    "",
 	}
 	result = db.DB.Create(&build)
 	if result.Error != nil {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -111,6 +112,11 @@ type statusMessage struct {
 	Status int
 }
 
+type eventLine struct {
+	Stream string
+	Output string
+}
+
 type EventArgs struct {
 	Event   string
 	AppName string
@@ -136,7 +142,12 @@ func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if result.Error != nil {
 			return
 		}
-		build.Stdout += msg.Line + "\n"
+		line := eventLine{Stream: "stdout", Output: msg.Line}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		build.Events = append(build.Events, string(out))
 		db.DB.Save(&build)
 		log.Println("DB updated")
 	}()
@@ -161,7 +172,12 @@ func stderrHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if result.Error != nil {
 			return
 		}
-		build.Stderr += msg.Line + "\n"
+		line := eventLine{Stream: "stderr", Output: msg.Line}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		build.Events = append(build.Events, string(out))
 		db.DB.Save(&build)
 		log.Println("DB updated")
 	}()
@@ -186,6 +202,12 @@ func doneHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Reque
 		if result.Error != nil {
 			return
 		}
+		line := eventLine{Stream: "status", Output: strconv.Itoa(msg.Status)}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		build.Events = append(build.Events, string(out))
 		build.Status = msg.Status
 		build.Running = false
 		build.EndedAt = time.Now()

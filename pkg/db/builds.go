@@ -13,7 +13,6 @@ type Build struct {
 	StartedAt time.Time
 	EndedAt   time.Time
 	Running   bool
-	Stdout    string
-	Stderr    string
+	Events    []string
 	Status    int
 }
