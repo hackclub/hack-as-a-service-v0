@@ -51,6 +51,11 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 
 	cid = strings.TrimSpace(cid)
 
+	// No container to bill
+	if cid == "" {
+		return nil
+	}
+
 	// Initialize a Docker API client
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {

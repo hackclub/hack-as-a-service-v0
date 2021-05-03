@@ -25,14 +25,14 @@ func main() {
 
 	file, err := os.Open(path.Join(os.Getenv("DOKKU_ROOT"), app_name, "CONTAINER.web.1"))
 	if err != nil {
-		fmt.Println("Container not found for app")
-		os.Exit(1)
+		fmt.Println()
+		os.Exit(0)
 	}
 
 	contents, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println("Error reading container file")
-		os.Exit(1)
+		fmt.Println()
+		os.Exit(0)
 	}
 
 	fmt.Println(strings.TrimSpace(string(contents)))
