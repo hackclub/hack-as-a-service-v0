@@ -27,7 +27,7 @@ export default function AppLayout({
               text: "Back",
               url:
                 team?.team.Personal === false
-                  ? `/team/${app.app.TeamID}`
+                  ? `/teams/${app.app.TeamID}`
                   : "/dashboard",
             },
           ],
