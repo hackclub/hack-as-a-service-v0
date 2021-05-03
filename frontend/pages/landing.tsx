@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Image, Text } from "@theme-ui/components";
 import Head from "next/head";
 import Link from "next/link";
-import useSWR from "swr";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
