@@ -5,11 +5,7 @@ import (
 	"github.com/google/go-github/v35/github"
 )
 
-func SetupRoutes(r *gin.RouterGroup) {
-	r.POST("/webhook", handleWebhook)
-}
-
-func handleWebhook(c *gin.Context) {
+func HandleWebhook(c *gin.Context) {
 	// Verifying the webhook
 	// shaHeader := c.GetHeader("X-Hub-Signature-256")
 	// log.Println("Header:", shaHeader)

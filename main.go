@@ -53,8 +53,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	ghg := r.Group("/gh")
-	gh.SetupRoutes(ghg)
+	r.POST("/gh/webhook", gh.HandleWebhook)
 
 	oauth.SetupRoutes(&r.RouterGroup)
 
