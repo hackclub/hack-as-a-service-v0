@@ -150,7 +150,7 @@ export default function TeamPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
+  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`);
   const [expenses, setExpenses] = useState(0);
   const expensesWs = useRef<WebSocket | null>(null);
 
