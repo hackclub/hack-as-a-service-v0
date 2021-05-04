@@ -80,7 +80,7 @@ export default function Dashboard() {
             );
           })
         ) : (
-          <Heading as="h3" sx={{ fontWeight: "normal" }} mt={3}>
+          <Heading as="h3" size="sm" fontWeight="normal" mt={3}>
             You don't have any personal apps quite yet. 😢
           </Heading>
         ))}

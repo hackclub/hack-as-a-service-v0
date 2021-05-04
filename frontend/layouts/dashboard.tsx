@@ -31,17 +31,15 @@ function SidebarItem({
   } else if (icon) {
     imageComponent = (
       <Flex
-        sx={{
-          height: "48px",
-          width: "48px",
-          borderRadius: 8,
-          alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
-          backgroundImage: selected
-            ? "linear-gradient(-45deg, #ec3750, #ff8c37)"
-            : null,
-        }}
+        width="48px"
+        height="48px"
+        borderRadius={8}
+        alignItems="center"
+        justifyContent="center"
+        boxShadow="0 4px 12px 0 rgba(0,0,0,.1)"
+        backgroundImage={
+          selected ? "linear-gradient(-45deg, #ec3750, #ff8c37)" : null
+        }
         mr={15}
         bg="sunken"
       >
@@ -52,16 +50,18 @@ function SidebarItem({
 
   const item = (
     <Flex
+      alignItems="center"
       sx={{
         alignItems: "center",
         ...(url ? { cursor: "pointer" } : {}),
         ...sx,
       }}
-      my={10}
+      my="10px"
     >
       {(image || icon) && imageComponent}
       <Heading
         as="h3"
+        size="md"
         sx={{
           fontWeight: "normal",
           ...(image || icon
@@ -91,7 +91,11 @@ function SidebarSection({
 }) {
   return (
     <Box mt={4}>
-      {title && <Heading mb={3}>{title}</Heading>}
+      {title && (
+        <Heading size="md" mb={3} mt={6}>
+          {title}
+        </Heading>
+      )}
       {items.map((item) => {
         return (
           <SidebarItem key={item.text} {...item}>
