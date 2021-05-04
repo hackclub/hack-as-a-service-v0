@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import AppLayout from "../../../layouts/app";
-import { Box, Heading, Spinner, Text } from "theme-ui";
+import { Box, Heading, Spinner, Text } from "@chakra-ui/react";
 
 interface ILog {
   stream: "stdout" | "stderr";

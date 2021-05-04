@@ -1,4 +1,4 @@
-import { Box, Button, Input, Label, Text } from "@theme-ui/components";
+import { Box, Button, Input, FormLabel, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { FormEvent, useRef } from "react";
 import AppLayout from "../../../layouts/app";
@@ -25,13 +25,13 @@ export default function AppDeployPage() {
   return (
     <AppLayout selected="Deploy">
       <Box as="form" onSubmit={onSubmit}>
-        <Label htmlFor="repoUrl">
+        <FormLabel htmlFor="repoUrl">
           Git repository URL
           <br />
           <Text color="grey" sx={{ fontSize: 1 }}>
             Must be a public repository
           </Text>
-        </Label>
+        </FormLabel>
         <Input name="repoUrl" type="url" required ref={repoUrlRef} />
         <Button variant="ctaLg" sx={{ mt: 3 }}>
           Deploy
