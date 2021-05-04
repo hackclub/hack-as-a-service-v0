@@ -1,6 +1,6 @@
 import Link from "next/link";
 import useSWR from "swr";
-import { Box, Flex, Heading, Text } from "theme-ui";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
 
 function App({

@@ -3,7 +3,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { PropsWithChildren, ReactElement, useEffect } from "react";
 import useSWR from "swr";
-import { Avatar, Box, Flex, Heading, SxProp } from "theme-ui";
+import {
+  Avatar,
+  Box,
+  Flex,
+  Heading,
+  SystemStyleObject,
+} from "@chakra-ui/react";
 import { Glyph } from "../types/glyph";
 import ColorSwitcher from "../components/ColorButton";
 
@@ -14,7 +20,7 @@ function SidebarItem({
   url,
   sx,
   selected,
-}: PropsWithChildren<ISidebarItem> & SxProp) {
+}: PropsWithChildren<ISidebarItem> & { sx?: SystemStyleObject }) {
   let imageComponent: ReactElement;
 
   if (image) {
@@ -25,8 +31,8 @@ function SidebarItem({
     imageComponent = (
       <Flex
         sx={{
-          height: 48,
-          width: 48,
+          height: "48px",
+          width: "48px",
           borderRadius: 8,
           alignItems: "center",
           justifyContent: "center",
@@ -173,7 +179,7 @@ export default function DashboardLayout({
         >
           {image && (
             <Avatar
-              size={64}
+              size="md"
               src={image}
               sx={{ borderRadius: 8 }}
               bg="sunken"
