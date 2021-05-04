@@ -37,3 +37,23 @@ export interface IBuild {
   Events: string[];
   Status: number;
 }
+
+export type KVConfig = {
+  [id: string]: {
+    key: string;
+    keyEditable: boolean;
+    valueEditable: boolean;
+    obscureValue: boolean;
+    value: string;
+  };
+};
+
+export interface IAddon {
+  name: string;
+  activated: boolean;
+  description: string;
+  img: string;
+  id: string;
+  config: KVConfig;
+  storage: string;
+}
