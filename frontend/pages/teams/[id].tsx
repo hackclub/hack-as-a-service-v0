@@ -306,7 +306,7 @@ export default function TeamPage() {
           p={4}
         >
           <Flex alignItems="center">
-            <Heading mr={3}>Team members</Heading>
+            <Heading mr="4.5">Team members</Heading>
             <IconButton
               onClick={onOpen}
               aria-label="Invite users"
