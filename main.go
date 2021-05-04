@@ -4,13 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api"
 	"github.com/hackclub/hack-as-a-service/pkg/api/auth"
 	"github.com/hackclub/hack-as-a-service/pkg/api/oauth"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
-	"github.com/hackclub/hack-as-a-service/pkg/frontend"
 )
 
 func getPort() string {
@@ -43,12 +41,6 @@ func main() {
 		})
 	}
 
-	r.GET("/swagger.yaml", func(c *gin.Context) { c.File("swagger.yaml") })
-
-	frontend.SetupRoutes(&r.RouterGroup)
-
-	r.Use(static.ServeRoot("/", "./frontend/out"))
-
 	rg := r.Group("/api", auth.EnsureAuthedUser)
 	err = api.SetupRoutes(rg)
 	if err != nil {
@@ -56,10 +48,6 @@ func main() {
 	}
 
 	oauth.SetupRoutes(&r.RouterGroup)
-
-	r.NoRoute(func(c *gin.Context) {
-		c.File("./frontend/out/404.html")
-	})
 
 	r.Run("0.0.0.0:" + getPort())
 }
