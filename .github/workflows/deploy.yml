@@ -14,8 +14,8 @@ jobs:
         name: Add SSH key
       - run: ./.github/deploy_config.sh
         name: Deploy config
-  app:
-    name: Deploy App
+  backend:
+    name: Deploy Backend
     runs-on: ubuntu-latest
     needs: [config]
     steps:
@@ -26,4 +26,17 @@ jobs:
         with:
           git_push_flags: "--force"
           git_remote_url: "ssh://dokku@45.55.45.5/haas"
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+  frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: [backend]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: dokku/github-action@v1.0.2
+        with:
+          git_push_flags: "--force"
+          git_remote_url: "ssh://dokku@45.55.45.5/haas-frontend"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
