@@ -56,7 +56,7 @@ export default function AppLayout({
         },
       ]}
     >
-      <Heading as="h2" pb={4} pt={1}>
+      <Heading as="h2" pb={2} pt={1}>
         {selected}
       </Heading>
 

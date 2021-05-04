@@ -64,7 +64,7 @@ const fontSizes = (zip(
 ) as unknown) as Theme["fontSizes"];
 
 const space = (Object.fromEntries(
-  [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, x])
+  [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, `${x}px`])
 ) as unknown) as Theme["space"];
 
 const lightMode = {};
@@ -172,19 +172,26 @@ const theme = extendTheme({
   components: {
     Input: {
       parts: ["field"],
-      baseStyle: {
+      baseStyle: (props) => ({
         field: {
           background: "elevated",
-          color: "text",
+          color: mode("black", "white")(props),
           fontFamily: "inherit",
           borderRadius: "base",
           border: 0,
+          // paddingLeft: 1,
+          // paddingRight: 1,
+          // paddingStart: 1,
+          // paddingEnd: 1,
+          "padding-inline-start": "16px !important",
+          "padding-inline-end": "16px !important",
+          // boxSizing: "border-box",
           "::-webkit-input-placeholder": { color: "placeholder" },
           "::-moz-placeholder": { color: "placeholder" },
           ":-ms-input-placeholder": { color: "placeholder" },
           '&[type="search"]::-webkit-search-decoration': { display: "none" },
         },
-      },
+      }),
     },
     Text: {
       variants: {
@@ -294,7 +301,7 @@ const theme = extendTheme({
           boxShadow: "elevated",
           transform: "scale(1.0625)",
         },
-        svg: { ml: -1, mr: 2 },
+        // svg: { ml: "-1px", mr: "2px" },
       },
       variants: {
         lg: {

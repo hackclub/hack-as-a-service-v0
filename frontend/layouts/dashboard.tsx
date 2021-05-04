@@ -28,7 +28,7 @@ function SidebarItem({
 
   if (image) {
     imageComponent = (
-      <Avatar src={image} sx={{ borderRadius: 8 }} bg="sunken" mr={15} />
+      <Avatar src={image} borderRadius={8} bg="sunken" mr={1.5} />
     );
   } else if (icon) {
     imageComponent = (
@@ -46,7 +46,7 @@ function SidebarItem({
             ? "slate"
             : "sunken"
         }
-        mr={15}
+        mr={1.5}
       >
         <Icon glyph={icon} color={selected ? "white" : null} />
       </Flex>
@@ -95,12 +95,8 @@ function SidebarSection({
   items: ISidebarItem[];
 }) {
   return (
-    <Box mt={4}>
-      {title && (
-        <Heading size="md" mb={3} mt={6}>
-          {title}
-        </Heading>
-      )}
+    <Box mt={2}>
+      {title && <Heading size="md">{title}</Heading>}
       {items.map((item) => {
         return (
           <SidebarItem key={item.text} {...item}>
@@ -179,9 +175,9 @@ export default function DashboardLayout({
         </Box>
       </Box>
       <Box flex={"1 1 auto"} px="50px" py="35px">
-        <Flex alignItems="center" position="sticky" top={0} py={3}>
+        <Flex alignItems="center" position="sticky" top={0} py={1}>
           {image && (
-            <Avatar size="md" src={image} borderRadius={8} bg="sunken" mr={4} />
+            <Avatar size="md" src={image} borderRadius={8} bg="sunken" mr={2} />
           )}
 
           <Heading as="h1" fontSize={50}>
