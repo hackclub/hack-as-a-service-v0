@@ -1,3 +1,4 @@
+import { mode } from "@chakra-ui/theme-tools";
 import { Theme, extendTheme } from "@chakra-ui/react";
 import prism from "./prism";
 
@@ -66,6 +67,20 @@ const space = (Object.fromEntries(
   [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, x])
 ) as unknown) as Theme["space"];
 
+const lightMode = {};
+const darkMode = {
+  text: colors.white,
+  background: colors.dark,
+  elevated: colors.darkless,
+  sheet: colors.darkless,
+  sunken: colors.darker,
+  border: colors.darkless,
+  placeholder: colors.slate,
+  secondary: colors.muted,
+  muted: colors.muted,
+  accent: colors.cyan,
+};
+
 const theme = extendTheme({
   breakpoints: {
     base: "0em",
@@ -92,20 +107,6 @@ const theme = extendTheme({
     primary: colors.red,
     muted: colors.muted,
     accent: colors.blue,
-    modes: {
-      dark: {
-        text: colors.white,
-        background: colors.dark,
-        elevated: colors.darkless,
-        sheet: colors.darkless,
-        sunken: colors.darker,
-        border: colors.darkless,
-        placeholder: colors.slate,
-        secondary: colors.muted,
-        muted: colors.muted,
-        accent: colors.cyan,
-      },
-    },
   },
   fonts: {
     heading:
@@ -278,7 +279,6 @@ const theme = extendTheme({
     },
     Button: {
       baseStyle: {
-        color: "background",
         cursor: "pointer",
         fontFamily: "inherit",
         fontWeight: "bold",
@@ -321,15 +321,14 @@ const theme = extendTheme({
           py: 3,
         },
         cta: {
-          // variant: "buttons.primary",
+          color: "background",
           size: 2,
           backgroundImage: gx("orange", "red"),
         },
         ctaLg: {
-          // variant: "buttons.primary",
+          color: "background",
           lineHeight: "title",
           fontSize: "2xl",
-          // fontSize: 7,
           px: 8,
           py: 7,
           backgroundImage: gx("orange", "red"),
@@ -418,12 +417,12 @@ const theme = extendTheme({
   //   },
   // },
   styles: {
-    global: {
+    global: (props) => ({
       body: {
         fontFamily: "body",
         lineHeight: "body",
         fontWeight: "body",
-        color: "text",
+        color: mode("black", "white")(props),
         margin: 0,
         minHeight: "100vh",
         textRendering: "optimizeLegibility",
@@ -528,7 +527,7 @@ const theme = extendTheme({
         verticalAlign: "top",
         borderBottomWidth: "1px",
       },
-    },
+    }),
   },
 });
 

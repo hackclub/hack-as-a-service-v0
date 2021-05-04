@@ -10,6 +10,7 @@ import {
   Heading,
   IconButton,
   SystemStyleObject,
+  useColorMode,
 } from "@chakra-ui/react";
 import { Glyph } from "../types/glyph";
 import ColorSwitcher from "../components/ColorButton";
@@ -22,6 +23,7 @@ function SidebarItem({
   sx,
   selected,
 }: PropsWithChildren<ISidebarItem> & { sx?: SystemStyleObject }) {
+  const { colorMode } = useColorMode();
   let imageComponent: ReactElement;
 
   if (image) {
@@ -37,11 +39,14 @@ function SidebarItem({
         alignItems="center"
         justifyContent="center"
         boxShadow="0 4px 12px 0 rgba(0,0,0,.1)"
-        backgroundImage={
-          selected ? "linear-gradient(-45deg, #ec3750, #ff8c37)" : null
+        background={
+          selected
+            ? "linear-gradient(-45deg, #ec3750, #ff8c37)"
+            : colorMode === "dark"
+            ? "slate"
+            : "sunken"
         }
         mr={15}
-        bg="sunken"
       >
         <Icon glyph={icon} color={selected ? "white" : null} />
       </Flex>
