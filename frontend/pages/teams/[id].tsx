@@ -109,7 +109,7 @@ function InviteModal({
     if (query == "") {
       setUsers([]);
     } else {
-      fetchApi(`/users/search?excluseSelf=true&q=${query}`).then((res) => {
+      fetchApi(`/users/search?excludeSelf=true&q=${query}`).then((res) => {
         setUsers(res.users);
       });
     }
