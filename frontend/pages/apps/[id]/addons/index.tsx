@@ -26,7 +26,6 @@ export default function AppAddonOverview() {
   );
 }
 
-
 // TODO: Make component look good lol
 function Addon({ name, activated, description, id }: IAddon) {
   const router = useRouter();
