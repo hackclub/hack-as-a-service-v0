@@ -6,8 +6,10 @@ dokku_prod.key
 dokku_prod.key.pub
 /dokkud/dokkud
 *.env
+.vscode
 
 # Dokku plugin files
 /commands
 /subcommands
-.vscode/settings.json
+/post-deploy
+/triggers

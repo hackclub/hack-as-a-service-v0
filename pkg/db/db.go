@@ -3,10 +3,18 @@ package db
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+// Model is a clone of a gorm.Model, but without the `DeletedAt` field
+type Model struct {
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
 
 var DB *gorm.DB
 
@@ -24,7 +32,7 @@ func Connect() error {
 		return err
 	}
 
-	err = _db.AutoMigrate(&User{}, &Team{}, &App{}, &Token{})
+	err = _db.AutoMigrate(&User{}, &Team{}, &App{}, &Token{}, &Build{})
 
 	if err != nil {
 		return err

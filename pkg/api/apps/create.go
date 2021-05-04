@@ -11,7 +11,7 @@ import (
 
 func IsValidAppName(appName string) error {
 	if appName == "" {
-		return errors.New("Please specify an app to run the command on")
+		return errors.New("please specify an app to run the command on")
 	}
 
 	r, _ := regexp.Compile(`^[a-z0-9][^/:_A-Z\s]*$`)
@@ -19,7 +19,7 @@ func IsValidAppName(appName string) error {
 		return nil
 	}
 
-	return errors.New("App name must begin with lowercase alphanumeric character, and cannot include uppercase characters, colons, underscores, or whitespace")
+	return errors.New("app name must begin with lowercase alphanumeric character, and cannot include uppercase characters, colons, underscores, or whitespace")
 }
 
 func handlePOSTApp(c *gin.Context) {
@@ -45,7 +45,8 @@ func handlePOSTApp(c *gin.Context) {
 	}
 
 	// Check that the given team ID exists
-	result := db.DB.Joins("JOIN team_users ON team_users.team_id = teams.id").First(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", json.TeamID, user.ID)
+	result := db.DB.Joins("JOIN team_users ON team_users.team_id = teams.id").
+		First(&db.Team{}, "teams.id = ? AND team_users.user_id = ?", json.TeamID, user.ID)
 	if result.Error != nil {
 		c.JSON(400, gin.H{"status": "error", "message": "Invalid team ID"})
 		return

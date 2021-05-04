@@ -127,7 +127,7 @@ func SetupRoutes(r *gin.RouterGroup) {
 
 		c.SetCookie("token", token.Token, 2592000, "/", "", true, true)
 
-		c.Redirect(http.StatusTemporaryRedirect, "/")
+		c.Redirect(http.StatusTemporaryRedirect, "/dashboard")
 
 		go sweepOldTokens()
 	})

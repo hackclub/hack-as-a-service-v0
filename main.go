@@ -10,6 +10,7 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/api/auth"
 	"github.com/hackclub/hack-as-a-service/pkg/api/oauth"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/frontend"
 )
 
 func getPort() string {
@@ -26,6 +27,11 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	if dev := os.Getenv("HAAS_DEV"); dev == "" {
+		// prod mode
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
 
 	// Let frontend access cookies in dev
@@ -33,12 +39,15 @@ func main() {
 		r.Use(func(c *gin.Context) {
 			c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
 			c.Header("Access-Control-Allow-Credentials", "true")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PATCH")
 		})
-	} else {
-		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r.Use(static.Serve("/", static.LocalFile("./frontend/out", false)))
+	r.GET("/swagger.yaml", func(c *gin.Context) { c.File("swagger.yaml") })
+
+	frontend.SetupRoutes(&r.RouterGroup)
+
+	r.Use(static.ServeRoot("/", "./frontend/out"))
 
 	rg := r.Group("/api", auth.EnsureAuthedUser)
 	err = api.SetupRoutes(rg)

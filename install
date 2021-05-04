@@ -3,6 +3,7 @@
 # Clean up from previous builds
 rm -rf subcommands/
 rm commands
+rm triggers
 
 cd $(dirname "$0")/dokku_plugin
 
@@ -16,6 +17,15 @@ for i in subcommands/**/*.go; do
     output=$(basename $i | cut -f 1 -d '.')
 
     go build -o ../subcommands/$output $i
+done
+
+# Build triggers
+go build -o ../triggers triggers/triggers.go
+
+cd ..
+
+for t in post-deploy; do
+    ln -sf triggers $t
 done
 
 echo "Installed!"

@@ -1,0 +1,736 @@
+openapi: 3.0.0
+info:
+  description: |-
+    This is the API documentation for Hack as a Service, the PaaS built for Hack Clubbers, by Hack Clubbers.
+
+    You can find out more about HaaS at <https://haas.hackclub.com>.
+
+    The canonical version of the OpenAPI specification is available at
+    <https://haas.hackclub.com/swagger.yaml>.
+  version: "1.0.0"
+  title: Hack as a Service (HaaS)
+servers:
+  - url: "https://haas.hackclub.com/api"
+    description: HaaS production
+  - url: "http://localhost:5000/api"
+    description: Local server
+tags:
+  - name: users
+    description: Information about HaaS users
+  - name: teams
+    description: Information about HaaS teams
+  - name: apps
+    description: Information about HaaS apps
+  - name: builds
+    description: Information about HaaS app builds
+paths:
+  /users/search:
+    get:
+      tags: [users]
+      summary: Search for HaaS users
+      parameters:
+        - name: q
+          in: query
+          description: Search query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Limit number of results
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: excludeSelf
+          in: query
+          description: Whether or not to exclude the authed user from the results
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        "400":
+          description: Missing required parameter
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /users/me:
+    get:
+      tags: [users]
+      summary: Returns information about the current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  user:
+                    $ref: "#/components/schemas/User"
+  /users/me/apps:
+    get:
+      tags: [users]
+      summary: Returns apps accessible by the current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  apps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/App"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /users/me/teams:
+    get:
+      tags: [users]
+      summary: Returns teams the current user is part of
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  teams:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Team"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /teams:
+    post:
+      tags: [teams]
+      summary: Creates a team
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                Automatic:
+                  type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  team:
+                    $ref: "#/components/schemas/TeamWithUsers"
+        "400":
+          description: Invalid JSON
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /teams/{id}:
+    get:
+      tags: [teams]
+      summary: Returns information about a team
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  team:
+                    $ref: "#/components/schemas/TeamWithUsers"
+        "400":
+          description: Invalid team ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+    patch:
+      tags: [teams]
+      summary: Update a team
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                Avatar:
+                  type: string
+                AddUsers:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ID"
+                RemoveUsers:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ID"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+        "400":
+          description: Invalid team ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /teams/{id}/apps:
+    get:
+      tags: [teams]
+      summary: Returns the apps that belong to this team
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  apps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/App"
+        "400":
+          description: Invalid team ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /teams/me:
+    get:
+      tags: [teams]
+      summary: Returns the current user's personal team
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  team:
+                    $ref: "#/components/schemas/TeamWithUsers"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /apps:
+    post:
+      tags: [apps]
+      summary: Creates an app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                ShortName:
+                  $ref: "#/components/schemas/AppShortName"
+                TeamID:
+                  $ref: "#/components/schemas/ID"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  app:
+                    $ref: "#/components/schemas/App"
+        "400":
+          description: Invalid JSON
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}:
+    get:
+      tags: [apps]
+      summary: Returns information about an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  app:
+                    $ref: "#/components/schemas/App"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+    delete:
+      tags: [apps]
+      summary: Deletes an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+    patch:
+      tags: [apps]
+      summary: Renames an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  app:
+                    $ref: "#/components/schemas/App"
+        "400":
+          description: Invalid JSON
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}/builds:
+    get:
+      tags: [apps]
+      summary: Returns builds associated with an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  builds:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Build"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  # TODO: /apps/{id}/logs - WebSocket are not supported
+  # See https://github.com/OAI/OpenAPI-Specification/issues/55
+  /apps/{id}/deploy:
+    post:
+      tags: [apps]
+      summary: Deploys an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                GitRepository:
+                  type: string
+                  format: uri
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  build:
+                    $ref: "#/components/schemas/Build"
+        "400":
+          description: Invalid JSON or invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /builds/{id}:
+    get:
+      tags: [builds]
+      summary: Returns information about a build
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  build:
+                    $ref: "#/components/schemas/Build"
+        "400":
+          description: Invalid build ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  # TODO: /builds/{id}/logs - WebSocket are not supported
+  # See https://github.com/OAI/OpenAPI-Specification/issues/55
+externalDocs:
+  description: Find out more about HaaS
+  url: https://haas.hackclub.com/docs
+components:
+  schemas:
+    ID:
+      type: integer
+      minimum: 1
+    Model:
+      type: object
+      properties:
+        ID:
+          $ref: "#/components/schemas/ID"
+        CreatedAt:
+          type: string
+          format: date-time
+        UpdatedAt:
+          type: string
+          format: date-time
+    Status:
+      type: string
+      enum: [ok]
+    ErrorStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        error:
+          type: string
+    User:
+      allOf:
+        - $ref: "#/components/schemas/Model"
+        - type: object
+          properties:
+            SlackUserID:
+              type: string
+            Name:
+              type: string
+            Avatar:
+              type: string
+              format: uri
+      example:
+        ID: 5
+        Name: Zach Latta
+        SlackUserID: U0266FRGP
+        Avatar: https://avatars.slack-edge.com/2021-03-16/1864480102915_6f3a18561c92ce478c3d_512.jpg
+    # Uncomment when we return such a resource
+    #
+    # UserWithTeams:
+    #   allOf:
+    #   - $ref: "#/components/schemas/User"
+    #   - type: object
+    #     properties:
+    #       Teams:
+    #         type: array
+    #         items:
+    #           $ref: "#/components/schemas/Team"
+    Team:
+      allOf:
+        - $ref: "#/components/schemas/Model"
+        - type: object
+          properties:
+            Name:
+              type: string
+            Avatar:
+              type: string
+              format: uri
+            Automatic:
+              type: boolean
+            Personal:
+              type: boolean
+      example:
+        ID: 9
+        Name: Hack Club HQ
+        Avatar: https://github.com/hackclub.png
+        Automatic: false
+        Personal: false
+    TeamWithUsers:
+      allOf:
+        - $ref: "#/components/schemas/Team"
+        - type: object
+          properties:
+            Users:
+              type: array
+              items:
+                $ref: "#/components/schemas/User"
+    AppShortName:
+      type: string
+      pattern: "^[a-z0-9][^/:_A-Z\\s]*$"
+      description: The app's Dokku name
+    App:
+      allOf:
+        - $ref: "#/components/schemas/Model"
+        - type: object
+          properties:
+            Name:
+              type: string
+            ShortName:
+              $ref: "#/components/schemas/AppShortName"
+            TeamID:
+              $ref: "#/components/schemas/ID"
+      example:
+        ID: 14
+        Name: Scrappy
+        ShortName: scrappy
+        TeamID: 9
+    Build:
+      type: object
+      properties:
+        ID:
+          $ref: "#/components/schemas/ID"
+        ExecID:
+          type: string
+          format: uuid
+        AppID:
+          $ref: "#/components/schemas/ID"
+        StartedAt:
+          type: string
+          format: date-time
+        EndedAt:
+          type: string
+          format: date-time
+        Running:
+          type: boolean
+        Stdout:
+          type: string
+        Stderr:
+          type: string
+        Status:
+          type: integer
+      example:
+        ID: 3
+        ExecID: 0c522073-5b5f-4f3f-958c-7ba461d80d20
+        AppID: 14
+        StartedAt: 2021-05-01T21:56:34.47995-04:00
+        EndedAt: null
+        Running: true
+        Stdout: Building the app...
+        Stderr: ""
+        Status: 0
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+security:
+  - cookieAuth: []

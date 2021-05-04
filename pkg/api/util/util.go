@@ -1,6 +1,6 @@
-package api
+package util
 
-func removeDuplicates(a, b []uint) ([]uint, []uint) {
+func RemoveDuplicates(a, b []uint) ([]uint, []uint) {
 	ma := make(map[uint]bool)
 	mb := make(map[uint]bool)
 
