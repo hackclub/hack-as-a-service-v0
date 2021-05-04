@@ -2,6 +2,7 @@ import { ThemeProvider, Theme, merge } from "theme-ui";
 import theme from "@hackclub/theme";
 import { SWRConfig } from "swr";
 import fetchApi from "../lib/fetch";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@hackclub/theme/fonts/reg-bold.css";
 
 const haasTheme: Theme = merge(theme as Theme, {
@@ -21,7 +22,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <SWRConfig value={{ fetcher: fetchApi }}>
       <ThemeProvider theme={haasTheme}>
-        <Component {...pageProps} />
+        <ChakraProvider theme={extendTheme(haasTheme as any)}>
+          <Component {...pageProps} />
+        </ChakraProvider>
       </ThemeProvider>
     </SWRConfig>
   );
