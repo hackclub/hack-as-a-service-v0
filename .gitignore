@@ -10,3 +10,4 @@ dokku_prod.key.pub
 # Dokku plugin files
 /commands
 /subcommands
+.vscode/settings.json
