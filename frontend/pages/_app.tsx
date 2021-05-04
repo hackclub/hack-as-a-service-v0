@@ -1,9 +1,9 @@
-import theme from "@hackclub/theme";
+import theme from "../lib/theme";
 import { SWRConfig } from "swr";
 import fetchApi from "../lib/fetch";
-import { ChakraProvider, extendTheme, Theme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
-const haasTheme: Theme = extendTheme((theme as any) as Theme, {
+const haasTheme = extendTheme(theme, {
   forms: {
     input: {
       border: "2px solid grey",
