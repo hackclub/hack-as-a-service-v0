@@ -36,7 +36,37 @@ function zip<T extends string | number | symbol, U>(
   return Object.fromEntries(smaller.map((a, i) => [a, bigger[i]]));
 }
 
-const theme = {
+const cx = (c: string): string => colors[c] || c;
+
+const gx = (from: string, to: string): string => `radial-gradient(
+  ellipse farthest-corner at top left,
+  ${cx(from)},
+  ${cx(to)}
+)`;
+
+const fontSizes = (zip(
+  [
+    "xs",
+    "sm",
+    "md",
+    "lg",
+    "xl",
+    "2xl",
+    "3xl",
+    "4xl",
+    "5xl",
+    "6xl",
+    "7xl",
+    "8xl",
+  ],
+  [12, 16, 20, 24, 32, 48, 64, 96, 128, 160, 192]
+) as unknown) as Theme["fontSizes"];
+
+const space = (Object.fromEntries(
+  [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, x])
+) as unknown) as Theme["space"];
+
+const theme = extendTheme({
   breakpoints: {
     base: "0em",
     sm: "32em",
@@ -45,26 +75,8 @@ const theme = {
     xl: "96em",
     "2xl": "128em",
   },
-  space: (Object.fromEntries(
-    [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, x])
-  ) as unknown) as Theme["space"],
-  fontSizes: (zip(
-    [
-      "xs",
-      "sm",
-      "md",
-      "lg",
-      "xl",
-      "2xl",
-      "3xl",
-      "4xl",
-      "5xl",
-      "6xl",
-      "7xl",
-      "8xl",
-    ],
-    [12, 16, 20, 24, 32, 48, 64, 96, 128, 160, 192]
-  ) as unknown) as Theme["fontSizes"],
+  space,
+  fontSizes,
   initialColorModeName: "light",
   useColorSchemeMediaQuery: true,
   colors: {
@@ -147,6 +159,7 @@ const theme = {
     lg: "12px",
     xl: "16px",
     full: "99999px",
+    circle: "99999px",
   },
   shadows: {
     text: "0 1px 2px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.125)",
@@ -155,188 +168,206 @@ const theme = {
     elevated:
       "0 1px 2px rgba(0, 0, 0, 0.0625), 0 8px 12px rgba(0, 0, 0, 0.125)",
   },
-  text: {
-    heading: {
-      fontWeight: "bold",
-      lineHeight: "heading",
-      mt: 0,
-      mb: 0,
-    },
-    ultratitle: {
-      fontSize: [5, 6, 7],
-      lineHeight: "limit",
-      fontWeight: "bold",
-      letterSpacing: "title",
-    },
-    title: {
-      fontSize: [4, 5, 6],
-      fontWeight: "bold",
-      letterSpacing: "title",
-      lineHeight: "title",
-    },
-    subtitle: {
-      mt: 3,
-      fontSize: [2, 3],
-      fontWeight: "body",
-      letterSpacing: "headline",
-      lineHeight: "subheading",
-    },
-    headline: {
-      variant: "text.heading",
-      letterSpacing: "headline",
-      lineHeight: "heading",
-      fontSize: 4,
-      mt: 3,
-      mb: 3,
-    },
-    subheadline: {
-      variant: "text.heading",
-      letterSpacing: "headline",
-      fontSize: 2,
-      mt: 0,
-      mb: 3,
-    },
-    eyebrow: {
-      color: "muted",
-      fontSize: [3, 4],
-      fontWeight: "heading",
-      letterSpacing: "headline",
-      lineHeight: "subheading",
-      textTransform: "uppercase",
-      mt: 0,
-      mb: 2,
-    },
-    lead: {
-      fontSize: [2, 3],
-      my: [2, 3],
-    },
-    caption: {
-      color: "muted",
-      fontWeight: "medium",
-      letterSpacing: "headline",
-      lineHeight: "caption",
-    },
-  },
-  alerts: {
-    primary: {
-      borderRadius: "default",
-      bg: "orange",
-      color: "background",
-      fontWeight: "body",
-    },
-  },
-  badges: {
-    pill: {
-      borderRadius: "circle",
-      px: 3,
-      py: 1,
-      fontSize: 1,
-    },
-    outline: {
-      variant: "badges.pill",
-      bg: "transparent",
-      border: "1px solid",
-      borderColor: "currentColor",
-      fontWeight: "body",
-    },
-  },
-  buttons: {
-    primary: {
-      cursor: "pointer",
-      fontFamily: "inherit",
-      fontWeight: "bold",
-      borderRadius: "circle",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      boxShadow: "card",
-      letterSpacing: "headline",
-      WebkitTapHighlightColor: "transparent",
-      transition: "transform .125s ease-in-out, box-shadow .125s ease-in-out",
-      ":focus,:hover": {
-        boxShadow: "elevated",
-        transform: "scale(1.0625)",
-      },
-      svg: { ml: -1, mr: 2 },
-    },
-    lg: {
-      variant: "buttons.primary",
-      fontSize: 3,
-      lineHeight: "title",
-      px: 4,
-      py: 3,
-    },
-    outline: {
-      variant: "buttons.primary",
-      bg: "transparent",
-      color: "primary",
-      border: "2px solid currentColor",
-    },
-    outlineLg: {
-      variant: "buttons.primary",
-      bg: "transparent",
-      color: "primary",
-      border: "2px solid currentColor",
-      lineHeight: "title",
-      fontSize: 3,
-      px: 4,
-      py: 3,
-    },
-    cta: {
-      variant: "buttons.primary",
-      fontSize: 2,
-      backgroundImage: (t) => t.util.gx("orange", "red"),
-    },
-    ctaLg: {
-      variant: "buttons.primary",
-      lineHeight: "title",
-      fontSize: 3,
-      px: 4,
-      py: 3,
-      backgroundImage: (t) => t.util.gx("orange", "red"),
-    },
-  },
-  cards: {
-    primary: {
-      bg: "elevated",
-      color: "text",
-      p: [3, 4],
-      borderRadius: "extra",
-      boxShadow: "card",
-      overflow: "hidden",
-    },
-    sunken: {
-      bg: "sunken",
-      p: [3, 4],
-      borderRadius: "extra",
-    },
-    interactive: {
-      variant: "cards.primary",
-      textDecoration: "none",
-      WebkitTapHighlightColor: "transparent",
-      transition: "transform .125s ease-in-out, box-shadow .125s ease-in-out",
-      ":hover,:focus": {
-        transform: "scale(1.0625)",
-        boxShadow: "elevated",
+  components: {
+    Input: {
+      parts: ["field"],
+      baseStyle: {
+        field: {
+          background: "elevated",
+          color: "text",
+          fontFamily: "inherit",
+          borderRadius: "base",
+          border: 0,
+          "::-webkit-input-placeholder": { color: "placeholder" },
+          "::-moz-placeholder": { color: "placeholder" },
+          ":-ms-input-placeholder": { color: "placeholder" },
+          '&[type="search"]::-webkit-search-decoration': { display: "none" },
+        },
       },
     },
-    translucent: null,
-    translucentDark: null,
+    Text: {
+      variants: {
+        heading: {
+          fontWeight: "bold",
+          lineHeight: "heading",
+          mt: 0,
+          mb: 0,
+        },
+        ultratitle: {
+          fontSize: [5, 6, 7],
+          lineHeight: "limit",
+          fontWeight: "bold",
+          letterSpacing: "title",
+        },
+        title: {
+          fontSize: [4, 5, 6],
+          fontWeight: "bold",
+          letterSpacing: "title",
+          lineHeight: "title",
+        },
+        subtitle: {
+          mt: 3,
+          fontSize: [2, 3],
+          fontWeight: "body",
+          letterSpacing: "headline",
+          lineHeight: "subheading",
+        },
+        headline: {
+          variant: "text.heading",
+          letterSpacing: "headline",
+          lineHeight: "heading",
+          fontSize: 4,
+          mt: 3,
+          mb: 3,
+        },
+        subheadline: {
+          variant: "text.heading",
+          letterSpacing: "headline",
+          fontSize: 2,
+          mt: 0,
+          mb: 3,
+        },
+        eyebrow: {
+          color: "muted",
+          fontSize: [3, 4],
+          fontWeight: "heading",
+          letterSpacing: "headline",
+          lineHeight: "subheading",
+          textTransform: "uppercase",
+          mt: 0,
+          mb: 2,
+        },
+        lead: {
+          fontSize: [2, 3],
+          my: [2, 3],
+        },
+        caption: {
+          color: "muted",
+          fontWeight: "medium",
+          letterSpacing: "headline",
+          lineHeight: "caption",
+        },
+      },
+    },
+    Alert: {
+      variants: {
+        primary: {
+          borderRadius: "default",
+          bg: "orange",
+          color: "background",
+          fontWeight: "body",
+        },
+      },
+    },
+    Badge: {
+      variants: {
+        pill: {
+          br: "circle",
+          px: 3,
+          py: 1,
+          fontSize: 1,
+        },
+        outline: {
+          // variant: "badges.pill",
+          background: "transparent",
+          border: "1px solid",
+          borderColor: "currentColor",
+          fontWeight: "body",
+        },
+      },
+    },
+    Button: {
+      baseStyle: {
+        color: "background",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        fontWeight: "bold",
+        borderRadius: "circle",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow: "card",
+        letterSpacing: "headline",
+        WebkitTapHighlightColor: "transparent",
+        transition: "transform .125s ease-in-out, box-shadow .125s ease-in-out",
+        ":focus,:hover": {
+          boxShadow: "elevated",
+          transform: "scale(1.0625)",
+        },
+        svg: { ml: -1, mr: 2 },
+      },
+      variants: {
+        lg: {
+          // variant: "buttons.primary",
+          fontSize: 3,
+          lineHeight: "title",
+          px: 4,
+          py: 3,
+        },
+        outline: {
+          // variant: "buttons.primary",
+          bg: "transparent",
+          color: "primary",
+          border: "2px solid currentColor",
+        },
+        outlineLg: {
+          // variant: "buttons.primary",
+          bg: "transparent",
+          color: "primary",
+          border: "2px solid currentColor",
+          lineHeight: "title",
+          fontSize: 3,
+          px: 4,
+          py: 3,
+        },
+        cta: {
+          // variant: "buttons.primary",
+          size: 2,
+          backgroundImage: gx("orange", "red"),
+        },
+        ctaLg: {
+          // variant: "buttons.primary",
+          lineHeight: "title",
+          fontSize: "2xl",
+          // fontSize: 7,
+          px: 8,
+          py: 7,
+          backgroundImage: gx("orange", "red"),
+        },
+      },
+    },
+    Card: {
+      variants: {
+        primary: {
+          bg: "elevated",
+          color: "text",
+          p: [3, 4],
+          borderRadius: "extra",
+          boxShadow: "card",
+          overflow: "hidden",
+        },
+        sunken: {
+          bg: "sunken",
+          p: [3, 4],
+          borderRadius: "extra",
+        },
+        interactive: {
+          variant: "cards.primary",
+          textDecoration: "none",
+          WebkitTapHighlightColor: "transparent",
+          transition:
+            "transform .125s ease-in-out, box-shadow .125s ease-in-out",
+          ":hover,:focus": {
+            transform: "scale(1.0625)",
+            boxShadow: "elevated",
+          },
+        },
+      },
+    },
   },
   forms: {
-    input: {
-      bg: "elevated",
-      color: "text",
-      fontFamily: "inherit",
-      borderRadius: "base",
-      border: 0,
-      "::-webkit-input-placeholder": { color: "placeholder" },
-      "::-moz-placeholder": { color: "placeholder" },
-      ":-ms-input-placeholder": { color: "placeholder" },
-      '&[type="search"]::-webkit-search-decoration': { display: "none" },
-    },
-    textarea: { variant: "forms.input" },
-    select: { variant: "forms.input" },
+    textarea: { defaultProps: { variant: "forms.input" } },
+    select: { defaultProps: { variant: "forms.input" } },
     label: {
       color: "text",
       display: "flex",
@@ -366,139 +397,140 @@ const theme = {
       whiteSpace: "nowrap",
     },
   },
-  layout: {
-    container: {
-      maxWidth: ["layout", null, "layoutPlus"],
-      width: "100%",
-      mx: "auto",
-      px: 3,
-    },
-    wide: {
-      variant: "layout.container",
-      maxWidth: ["layout", null, "wide"],
-    },
-    copy: {
-      variant: "layout.container",
-      maxWidth: ["copy", null, "copyPlus"],
-    },
-    narrow: {
-      variant: "layout.container",
-      maxWidth: ["narrow", null, "narrowPlus"],
-    },
-  },
+  // layout: {
+  //   container: {
+  //     maxWidth: ["layout", null, "layoutPlus"],
+  //     width: "100%",
+  //     mx: "auto",
+  //     px: 3,
+  //   },
+  //   wide: {
+  //     variant: "layout.container",
+  //     maxWidth: ["layout", null, "wide"],
+  //   },
+  //   copy: {
+  //     variant: "layout.container",
+  //     maxWidth: ["copy", null, "copyPlus"],
+  //   },
+  //   narrow: {
+  //     variant: "layout.container",
+  //     maxWidth: ["narrow", null, "narrowPlus"],
+  //   },
+  // },
   styles: {
     global: {
-      fontFamily: "body",
-      lineHeight: "body",
-      fontWeight: "body",
-      color: "text",
-      margin: 0,
-      minHeight: "100vh",
-      textRendering: "optimizeLegibility",
-      WebkitFontSmoothing: "antialiased",
-      MozOsxFontSmoothing: "grayscale",
-      "p > code, li > code": {
-        color: "accent",
+      body: {
+        fontFamily: "body",
+        lineHeight: "body",
+        fontWeight: "body",
+        color: "text",
+        margin: 0,
+        minHeight: "100vh",
+        textRendering: "optimizeLegibility",
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
+        "p > code, li > code": {
+          color: "accent",
+          fontSize: 1,
+        },
+      },
+      h1: {
+        variant: "text.heading",
+        fontSize: 5,
+      },
+      h2: {
+        variant: "text.heading",
+        fontSize: 4,
+      },
+      h3: {
+        variant: "text.heading",
+        fontSize: 3,
+      },
+      h4: {
+        variant: "text.heading",
+        fontSize: 2,
+      },
+      h5: {
+        variant: "text.heading",
         fontSize: 1,
       },
-    },
-    h1: {
-      variant: "text.heading",
-      fontSize: 5,
-    },
-    h2: {
-      variant: "text.heading",
-      fontSize: 4,
-    },
-    h3: {
-      variant: "text.heading",
-      fontSize: 3,
-    },
-    h4: {
-      variant: "text.heading",
-      fontSize: 2,
-    },
-    h5: {
-      variant: "text.heading",
-      fontSize: 1,
-    },
-    h6: {
-      variant: "text.heading",
-      fontSize: 0,
-    },
-    p: {
-      color: "text",
-      fontWeight: "body",
-      lineHeight: "body",
-      my: 3,
-    },
-    img: {
-      maxWidth: "100%",
-    },
-    hr: {
-      border: 0,
-      borderBottom: "1px solid",
-      borderColor: "border",
-    },
-    a: {
-      color: "primary",
-      textDecoration: "underline",
-      textUnderlinePosition: "under",
-      ":focus,:hover": {
-        textDecorationStyle: "wavy",
+      h6: {
+        variant: "text.heading",
+        fontSize: 0,
       },
-    },
-    pre: {
-      fontFamily: "monospace",
-      fontSize: 1,
-      p: 3,
-      color: "text",
-      bg: "sunken",
-      overflow: "auto",
-      borderRadius: "default",
-      code: {
-        color: "inherit",
-        mx: 0,
-        ...prism,
+      p: {
+        color: "text",
+        fontWeight: "body",
+        lineHeight: "body",
+        my: 3,
       },
-    },
-    code: {
-      fontFamily: "monospace",
-      fontSize: "inherit",
-      color: "accent",
-      bg: "sunken",
-      borderRadius: "small",
-      mx: 1,
-      px: 1,
-    },
-    li: {
-      my: 2,
-    },
-    table: {
-      width: "100%",
-      my: 4,
-      borderCollapse: "separate",
-      borderSpacing: 0,
-      "th,td": {
-        textAlign: "left",
-        py: "4px",
-        pr: "4px",
-        pl: 0,
+      img: {
+        maxWidth: "100%",
+      },
+      hr: {
+        border: 0,
+        borderBottom: "1px solid",
         borderColor: "border",
-        borderBottomStyle: "solid",
       },
-    },
-    th: {
-      verticalAlign: "bottom",
-      borderBottomWidth: "2px",
-    },
-    td: {
-      verticalAlign: "top",
-      borderBottomWidth: "1px",
+      a: {
+        color: "primary",
+        textDecoration: "underline",
+        textUnderlinePosition: "under",
+        ":focus,:hover": {
+          textDecorationStyle: "wavy",
+        },
+      },
+      pre: {
+        fontFamily: "monospace",
+        fontSize: 1,
+        p: 3,
+        color: "text",
+        bg: "sunken",
+        overflow: "auto",
+        borderRadius: "default",
+        code: {
+          color: "inherit",
+          mx: 0,
+          ...prism,
+        },
+      },
+      code: {
+        fontFamily: "monospace",
+        fontSize: "inherit",
+        color: "accent",
+        bg: "sunken",
+        borderRadius: "small",
+        mx: 1,
+        px: 1,
+      },
+      li: {
+        my: 2,
+      },
+      table: {
+        width: "100%",
+        my: 4,
+        borderCollapse: "separate",
+        borderSpacing: 0,
+        "th,td": {
+          textAlign: "left",
+          py: "4px",
+          pr: "4px",
+          pl: 0,
+          borderColor: "border",
+          borderBottomStyle: "solid",
+        },
+      },
+      th: {
+        verticalAlign: "bottom",
+        borderBottomWidth: "2px",
+      },
+      td: {
+        verticalAlign: "top",
+        borderBottomWidth: "1px",
+      },
     },
   },
-  util: Object.create(null),
-};
+});
 
 // theme.util = {
 //   motion: "@media (prefers-reduced-motion: no-preference)",
@@ -511,12 +543,6 @@ const theme = {
 //   gx: null,
 //   gxText: null,
 // };
-// theme.util.cx = (c: string): string => theme.colors[c] || c;
-// theme.util.gx = (from: string, to: string): string => `radial-gradient(
-//   ellipse farthest-corner at top left,
-//   ${theme.util.cx(from)},
-//   ${theme.util.cx(to)}
-// )`;
 // theme.util.gxText = (from: string, to: string) => ({
 //   color: theme.util.cx(to),
 //   [theme.util.supportsClipText]: {

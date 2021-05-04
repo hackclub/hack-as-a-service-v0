@@ -6,13 +6,19 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 const haasTheme = extendTheme(theme as any, {
   components: {
     Input: {
+      parts: ["field"],
       baseStyle: {
-        border: "2px solid grey",
+        field: {
+          border: "2px solid grey",
+        },
       },
     },
     Avatar: {
+      parts: ["container"],
       baseStyle: {
-        boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+        container: {
+          boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+        },
       },
     },
   },
