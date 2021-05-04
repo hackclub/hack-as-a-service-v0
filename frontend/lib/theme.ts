@@ -46,7 +46,7 @@ const theme: Theme = extendTheme({
     "2xl": "128em",
   },
   space: (Object.fromEntries(
-    [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [x, i])
+    [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [x, i + 1])
   ) as unknown) as Theme["space"],
   fontSizes: (zip(
     [
