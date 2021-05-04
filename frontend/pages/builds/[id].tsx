@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import { Box, Text } from "theme-ui";
+import { Box, Text } from "@chakra-ui/react";
 import DashboardLayout from "../../layouts/dashboard";
 
 interface IBuildEvent {
