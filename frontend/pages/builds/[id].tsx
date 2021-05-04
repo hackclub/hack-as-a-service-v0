@@ -73,21 +73,32 @@ export default function BuildPage() {
       <Box
         bg="sunken"
         sx={{ borderRadius: 10, height: 500, overflow: "auto" }}
-        p={3}
+        p={1}
         ref={logsElement}
       >
         {logs.map((i) => (
-          <pre key={i.Output} style={{ margin: "5px 0" }}>
+          <pre
+            key={i.Output}
+            style={{ margin: "5px 0", padding: 0, fontSize: "inherit" }}
+          >
             {i.Stream != "status" ? (
               <>
-                <Text color={i.Stream == "stdout" ? "green" : "red"}>
+                <Text
+                  color={i.Stream == "stdout" ? "green" : "red"}
+                  my={0}
+                  as="span"
+                >
                   [{i.Stream}]
                 </Text>{" "}
-                <span>{i.Output}</span>
+                <Text my={0} as="span">
+                  {i.Output}
+                </Text>
               </>
             ) : (
               <>
-                <Text color="grey">[Build exited with status {i.Output}]</Text>
+                <Text color="grey" my={0} as="span">
+                  [Build exited with status {i.Output}]
+                </Text>
               </>
             )}
           </pre>

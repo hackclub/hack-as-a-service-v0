@@ -58,16 +58,27 @@ export default function AppDashboardPage() {
     <AppLayout selected="Logs">
       <Box
         bg="sunken"
-        sx={{ borderRadius: 10, height: 500, overflow: "auto" }}
-        p={3}
+        borderRadius="10px"
+        height="500px"
+        overflow="auto"
+        p={1}
         ref={logsElement}
       >
         {logs.map((i) => (
-          <pre key={i.log} style={{ margin: "5px 0" }}>
-            <Text color={i.stream == "stdout" ? "green" : "red"}>
+          <pre
+            key={i.log}
+            style={{ margin: "5px 0", padding: 0, fontSize: "inherit" }}
+          >
+            <Text
+              color={i.stream == "stdout" ? "green" : "red"}
+              my={0}
+              as="span"
+            >
               [{i.stream}]
             </Text>{" "}
-            <span>{i.log}</span>
+            <Text my={0} as="span">
+              {i.log}
+            </Text>
           </pre>
         ))}
       </Box>

@@ -34,9 +34,11 @@ function Field({
   sx,
 }: { label: string; description: string } & { sx?: SystemStyleObject }) {
   return (
-    <Flex sx={{ flexDirection: "column", ...sx }}>
-      <Text sx={{ fontSize: "20px" }}>{label}</Text>
-      <Heading sx={{ fontSize: "40px" }}>{description}</Heading>
+    <Flex flexDirection="column" sx={sx}>
+      <Text fontSize="20px" my={1}>
+        {label}
+      </Text>
+      <Heading fontSize="40px">{description}</Heading>
     </Flex>
   );
 }
@@ -65,7 +67,9 @@ function App({
           <Heading as="h2" sx={{ fontWeight: "normal" }}>
             {name}
           </Heading>
-          <Text color="muted">({shortName})</Text>
+          <Text color="muted" my={1}>
+            ({shortName})
+          </Text>
         </Flex>
       </LinkBox>
     </Link>
@@ -79,8 +83,10 @@ function TeamMember({
 }: { name: string; avatar: string } & { sx?: SystemStyleObject }) {
   return (
     <Flex sx={{ alignItems: "center", ...sx }}>
-      <Avatar src={avatar} mr={3} />
-      <Text sx={{ fontSize: 20 }}>{name}</Text>
+      <Avatar src={avatar} mr={1} />
+      <Text sx={{ fontSize: 20 }} my={1}>
+        {name}
+      </Text>
     </Flex>
   );
 }
@@ -118,16 +124,16 @@ function InviteModal({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <Heading as="h1" my={4} fontWeight="normal">
+        <ModalHeader py={1}>
+          <Heading as="h1" my={1} fontWeight="normal">
             Invite someone to{" "}
             <Text as="span" fontWeight="bold">
               {team.Name}
             </Text>
           </Heading>
         </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody p={6}>
+        <ModalCloseButton float="right" top={1.5} right={2} />
+        <ModalBody>
           <Box as="form">
             <Input
               onInput={(e) => setQuery((e.target as any).value)}
@@ -137,7 +143,7 @@ function InviteModal({
             />
           </Box>
           {users.length > 0 && (
-            <Box mt={4}>
+            <Box mt={2}>
               {users.map((user: any) => {
                 const isInTeam = team.Users.some((i) => i.ID == user.ID);
 
@@ -302,11 +308,13 @@ export default function TeamPage() {
               flexBasis: 400,
             },
           }}
-          ml={5}
-          p={4}
+          ml={1}
+          p={2}
         >
           <Flex alignItems="center">
-            <Heading mr="4.5">Team members</Heading>
+            <Heading mr={1} size="md">
+              Team members
+            </Heading>
             <IconButton
               onClick={onOpen}
               aria-label="Invite users"
