@@ -1,11 +1,10 @@
-import { ThemeProvider, Theme, merge } from "theme-ui";
 import theme from "@hackclub/theme";
 import { SWRConfig } from "swr";
 import fetchApi from "../lib/fetch";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, Theme } from "@chakra-ui/react";
 import "@hackclub/theme/fonts/reg-bold.css";
 
-const haasTheme: Theme = merge(theme as Theme, {
+const haasTheme: Theme = extendTheme((theme as any) as Theme, {
   forms: {
     input: {
       border: "2px solid grey",
@@ -21,11 +20,9 @@ const haasTheme: Theme = merge(theme as Theme, {
 function MyApp({ Component, pageProps }) {
   return (
     <SWRConfig value={{ fetcher: fetchApi }}>
-      <ThemeProvider theme={haasTheme}>
-        <ChakraProvider theme={extendTheme(haasTheme as any)}>
-          <Component {...pageProps} />
-        </ChakraProvider>
-      </ThemeProvider>
+      <ChakraProvider theme={haasTheme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
     </SWRConfig>
   );
 }
