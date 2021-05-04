@@ -60,6 +60,12 @@ export default function AppLayout({
               url: `/apps/${app?.ID}/environment`,
               selected: selected == "Environment",
             },
+            {
+              icon: "bolt",
+              text: "Addons",
+              url: `/apps/${app?.ID}/addons`,
+              selected: selected == "Addons",
+            },
           ],
         },
       ]}
