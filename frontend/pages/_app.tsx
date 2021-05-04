@@ -4,15 +4,17 @@ import fetchApi from "../lib/fetch";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@hackclub/theme/fonts/reg-bold.css";
 
-const haasTheme = extendTheme(theme, {
-  forms: {
-    input: {
-      border: "2px solid grey",
+const haasTheme = extendTheme(theme as any, {
+  components: {
+    Input: {
+      baseStyle: {
+        border: "2px solid grey",
+      },
     },
-  },
-  images: {
-    avatar: {
-      boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+    Avatar: {
+      baseStyle: {
+        boxShadow: "0 4px 12px 0 rgba(0,0,0,.1)",
+      },
     },
   },
 });

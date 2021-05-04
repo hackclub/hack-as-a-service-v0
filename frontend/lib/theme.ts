@@ -36,7 +36,7 @@ function zip<T extends string | number | symbol, U>(
   return Object.fromEntries(smaller.map((a, i) => [a, bigger[i]]));
 }
 
-const theme: Theme = extendTheme({
+const theme = {
   breakpoints: {
     base: "0em",
     sm: "32em",
@@ -46,7 +46,7 @@ const theme: Theme = extendTheme({
     "2xl": "128em",
   },
   space: (Object.fromEntries(
-    [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [x, i + 1])
+    [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, x])
   ) as unknown) as Theme["space"],
   fontSizes: (zip(
     [
@@ -498,7 +498,7 @@ const theme: Theme = extendTheme({
     },
   },
   util: Object.create(null),
-});
+};
 
 // theme.util = {
 //   motion: "@media (prefers-reduced-motion: no-preference)",
