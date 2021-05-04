@@ -8,6 +8,7 @@ import {
   Box,
   Flex,
   Heading,
+  IconButton,
   SystemStyleObject,
 } from "@chakra-ui/react";
 import { Glyph } from "../types/glyph";
@@ -104,23 +105,18 @@ function SidebarSection({
 
 function SidebarHeader({ avatar }: { avatar?: string }) {
   return (
-    <Flex
-      sx={{ alignItems: "center", position: "sticky", top: 0 }}
-      py="24px"
-      px="50px"
-      bg="background"
-    >
+    <Flex alignItems="center" position="sticky" top={0} py="24px" px="50px">
       <Avatar src={avatar} />
-      <Box sx={{ flexGrow: 1 }} />
+      <Box flexGrow={1} />
       <ColorSwitcher />
-      <Icon glyph="controls" size={32} style={{ margin: "0 10px" }} />
-      <Link href="/logout">
-        <Icon
-          glyph="door-leave"
-          size={32}
-          style={{ margin: "0 10px", cursor: "pointer" }}
-        />
-      </Link>
+      <IconButton mx="5px" aria-label="Controls" background="inherit">
+        <Icon glyph="controls" size={32} />
+      </IconButton>
+      <IconButton mx="5px" aria-label="Log out" background="inherit">
+        <Link href="/logout">
+          <Icon glyph="door-leave" size={32} />
+        </Link>
+      </IconButton>
     </Flex>
   );
 }
@@ -158,9 +154,11 @@ export default function DashboardLayout({
   }, [userError]);
 
   return (
-    <Flex sx={{ minHeight: "100vh" }}>
+    <Flex minHeight="100vh">
       <Box
-        sx={{ flexBasis: 400, flexShrink: 0, flexGrow: 0 }}
+        flexBasis={400}
+        flexShrink={0}
+        flexGrow={0}
         // px="50px"
         py="30px"
       >
@@ -171,23 +169,13 @@ export default function DashboardLayout({
           })}
         </Box>
       </Box>
-      <Box sx={{ flex: "1 1 auto" }} px="50px" py="35px">
-        <Flex
-          sx={{ alignItems: "center", position: "sticky", top: 0 }}
-          py={3}
-          bg="background"
-        >
+      <Box flex={"1 1 auto"} px="50px" py="35px">
+        <Flex alignItems="center" position="sticky" top={0} py={3}>
           {image && (
-            <Avatar
-              size="md"
-              src={image}
-              sx={{ borderRadius: 8 }}
-              bg="sunken"
-              mr={4}
-            />
+            <Avatar size="md" src={image} borderRadius={8} bg="sunken" mr={4} />
           )}
 
-          <Heading as="h1" sx={{ fontSize: 50 }}>
+          <Heading as="h1" fontSize={50}>
             {title}
           </Heading>
         </Flex>
