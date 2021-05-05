@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Text } from "@theme-ui/components";
+import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
