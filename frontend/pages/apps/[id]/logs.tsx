@@ -44,23 +44,11 @@ export default function AppDashboardPage() {
 
   const { colorMode } = useColorMode();
 
-  const logsElement = useRef(null);
-
   const { logs } = useLogs(id as string);
-
-  useEffect(() => {
-    if (logsElement.current) {
-      logsElement.current.scroll({
-        top: logsElement.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [logs]);
 
   return (
     <AppLayout selected="Logs">
       <Logs
-        ref={logsElement}
         logs={logs}
         keyer={(log) => log.log}
         render={(i) => (
