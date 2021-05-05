@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/util"
 )
 
 func handlePATCHTeam(c *gin.Context) {
