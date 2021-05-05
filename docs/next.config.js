@@ -21,7 +21,11 @@ function useEsbuildLoader(config, options) {
 
   if (jsLoader) {
     jsLoader.use.loader = 'esbuild-loader'
-    jsLoader.use.options = options
+    jsLoader.use.options = {
+      ...options,
+      // note: kind of have to do this because Next.js is weird with SSR
+      platform: 'node',
+    }
   }
 }
 
@@ -39,8 +43,6 @@ module.exports = {
       // Specify `tsx` if you're using TypeSCript
       loader: 'jsx',
       target: 'es2017',
-      // note: kind of have to do this because Next.js is weird with SSR
-      platform: 'node',
     })
 
     return config
