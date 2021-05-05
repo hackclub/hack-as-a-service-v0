@@ -4,8 +4,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/irs"
 )
 
 func handleDELETEApp(c *gin.Context) {
@@ -26,7 +26,7 @@ func handleDELETEApp(c *gin.Context) {
 		return
 	}
 
-	biller.StopBiller(app.ID)
+	irs.StopBiller(app.ID)
 
 	result = db.DB.Raw("DELETE FROM apps "+
 		"INNER JOIN team_users ON team_users.team_id = apps.team_id "+

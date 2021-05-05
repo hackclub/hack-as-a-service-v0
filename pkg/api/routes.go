@@ -8,8 +8,8 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/api/builds"
 	"github.com/hackclub/hack-as-a-service/pkg/api/teams"
 	"github.com/hackclub/hack-as-a-service/pkg/api/users"
-	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
+	"github.com/hackclub/hack-as-a-service/pkg/irs"
 )
 
 func SetupRoutes(r *gin.RouterGroup) error {
@@ -55,7 +55,7 @@ func SetupRoutes(r *gin.RouterGroup) error {
 	builds_rg := r.Group("/builds")
 	builds.SetupRoutes(builds_rg)
 
-	err = biller.StartBilling(conn)
+	err = irs.StartBilling(conn)
 	if err != nil {
 		return err
 	}

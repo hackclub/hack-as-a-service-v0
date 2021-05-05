@@ -1,4 +1,4 @@
-package biller
+package irs
 
 import "github.com/shopspring/decimal"
 

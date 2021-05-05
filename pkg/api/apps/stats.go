@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
-	"github.com/hackclub/hack-as-a-service/pkg/biller"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/irs"
 )
 
 func handleGETStats(c *gin.Context) {
@@ -26,7 +26,7 @@ func handleGETStats(c *gin.Context) {
 		return
 	}
 
-	ch := biller.CreateStatsOutput(app.ID)
+	ch := irs.CreateStatsOutput(app.ID)
 
 	// Spin up a websocket connection
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -35,7 +35,7 @@ func handleGETStats(c *gin.Context) {
 		return
 	}
 
-	defer biller.RemoveStatsOutput(app.ID, ch)
+	defer irs.RemoveStatsOutput(app.ID, ch)
 	defer ws.Close()
 
 	for {
