@@ -2,6 +2,7 @@ import { ThemeProvider, Theme, merge } from "theme-ui";
 import theme from "@hackclub/theme";
 import { SWRConfig } from "swr";
 import fetchApi from "../lib/fetch";
+import "@hackclub/theme/fonts/reg-bold.css";
 
 const haasTheme: Theme = merge(theme as Theme, {
   forms: {
