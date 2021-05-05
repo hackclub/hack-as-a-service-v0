@@ -1,3 +1,4 @@
+import App from "../../components/App";
 import DashboardLayout, { ISidebarItem } from "../../layouts/dashboard";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -15,16 +16,11 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   SystemStyleObject,
   useDisclosure,
-  LinkBox,
-  useColorMode,
 } from "@chakra-ui/react";
-
-import Link from "next/link";
 
 import Icon from "@hackclub/icons";
 import { useEffect, useRef, useState } from "react";
@@ -41,41 +37,6 @@ function Field({
       </Text>
       <Heading fontSize="40px">{description}</Heading>
     </Flex>
-  );
-}
-
-function App({
-  name,
-  shortName,
-  url,
-}: {
-  name: string;
-  shortName: string;
-  url: string;
-}) {
-  const { colorMode } = useColorMode();
-
-  return (
-    <Link href={url} passHref>
-      <LinkBox>
-        <Flex
-          alignItems="flex-start"
-          justifyContent="center"
-          flexDirection="column"
-          borderRadius="10px"
-          cursor="pointer"
-          bg={colorMode == "dark" ? "slate" : "sunken"}
-          p="30px"
-        >
-          <Heading as="h2" sx={{ fontWeight: "normal" }}>
-            {name}
-          </Heading>
-          <Text color={colorMode == "dark" ? "smoke" : "muted"} my={1}>
-            ({shortName})
-          </Text>
-        </Flex>
-      </LinkBox>
-    </Link>
   );
 }
 
