@@ -1,35 +1,7 @@
-import Link from "next/link";
 import useSWR from "swr";
-import { Box, Flex, Heading, Text } from "theme-ui";
+import { Heading } from "@chakra-ui/react";
+import App from "../components/App";
 import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
-
-function App({
-  name,
-  shortName,
-  url,
-}: {
-  name: string;
-  shortName: string;
-  url: string;
-}) {
-  return (
-    <Link href={url}>
-      <Box
-        bg="sunken"
-        my={10}
-        p={30}
-        sx={{ borderRadius: 10, cursor: "pointer" }}
-      >
-        <Flex sx={{ alignItems: "center" }}>
-          <Heading as="h2" sx={{ fontWeight: "normal" }} mr={3}>
-            {name}
-          </Heading>
-          <Text color="muted">({shortName})</Text>
-        </Flex>
-      </Box>
-    </Link>
-  );
-}
 
 export default function Dashboard() {
   const { data: teams } = useSWR("/users/me/teams");
@@ -80,7 +52,7 @@ export default function Dashboard() {
             );
           })
         ) : (
-          <Heading as="h3" sx={{ fontWeight: "normal" }} mt={3}>
+          <Heading as="h3" size="sm" fontWeight="normal" mt={1}>
             You don't have any personal apps quite yet. 😢
           </Heading>
         ))}

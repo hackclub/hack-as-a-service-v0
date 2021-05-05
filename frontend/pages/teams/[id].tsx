@@ -1,3 +1,4 @@
+import App from "../../components/App";
 import DashboardLayout, { ISidebarItem } from "../../layouts/dashboard";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -10,56 +11,32 @@ import {
   Box,
   Avatar,
   Input,
-} from "@theme-ui/components";
-import { SxProp } from "@theme-ui/core";
-
-import Link from "next/link";
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  SystemStyleObject,
+  useDisclosure,
+} from "@chakra-ui/react";
 
 import Icon from "@hackclub/icons";
-import Modal from "../../components/modal";
 import { useEffect, useRef, useState } from "react";
 
 function Field({
   label,
   description,
   sx,
-}: { label: string; description: string } & SxProp) {
+}: { label: string; description: string } & { sx?: SystemStyleObject }) {
   return (
-    <Flex sx={{ flexDirection: "column", ...sx }}>
-      <Text sx={{ fontSize: "20px" }}>{label}</Text>
-      <Heading sx={{ fontSize: "40px" }}>{description}</Heading>
+    <Flex flexDirection="column" sx={sx}>
+      <Text fontSize="20px" my={1}>
+        {label}
+      </Text>
+      <Heading fontSize="40px">{description}</Heading>
     </Flex>
-  );
-}
-
-function App({
-  name,
-  shortName,
-  url,
-}: {
-  name: string;
-  shortName: string;
-  url: string;
-}) {
-  return (
-    <Link href={url}>
-      <Flex
-        sx={{
-          alignItems: "flex-start",
-          justifyContent: "center",
-          flexDirection: "column",
-          borderRadius: 10,
-          cursor: "pointer",
-        }}
-        bg="sunken"
-        p={30}
-      >
-        <Heading as="h2" sx={{ fontWeight: "normal" }}>
-          {name}
-        </Heading>
-        <Text color="muted">({shortName})</Text>
-      </Flex>
-    </Link>
   );
 }
 
@@ -67,11 +44,13 @@ function TeamMember({
   name,
   avatar,
   sx,
-}: { name: string; avatar: string } & SxProp) {
+}: { name: string; avatar: string } & { sx?: SystemStyleObject }) {
   return (
     <Flex sx={{ alignItems: "center", ...sx }}>
-      <Avatar src={avatar} mr={3} />
-      <Text sx={{ fontSize: 20 }}>{name}</Text>
+      <Avatar src={avatar} mr={1} />
+      <Text sx={{ fontSize: 20 }} my={1}>
+        {name}
+      </Text>
     </Flex>
   );
 }
@@ -103,45 +82,61 @@ function InviteModal({
   return (
     <Modal
       onClose={onClose}
-      title={`Invite someone to ${team.Name}`}
-      visible={visible}
+      isOpen={visible}
+      // title={`Invite someone to ${team.Name}`}
+      // visible={visible}
     >
-      <Heading as="h1" mb={4} sx={{ fontWeight: "normal" }}>
-        Invite someone to <Text sx={{ fontWeight: "bold" }}>{team.Name}</Text>
-      </Heading>
-      <Box as="form">
-        <Input
-          onInput={(e) => setQuery((e.target as any).value)}
-          placeholder="Search for a user..."
-          autoFocus
-        />
-      </Box>
-      {users.length > 0 && (
-        <Box mt={4}>
-          {users.map((user: any) => {
-            const isInTeam = team.Users.some((i) => i.ID == user.ID);
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader py={1}>
+          <Heading as="h1" my={1} fontWeight="normal">
+            Invite someone to{" "}
+            <Text as="span" fontWeight="bold">
+              {team.Name}
+            </Text>
+          </Heading>
+        </ModalHeader>
+        <ModalCloseButton float="right" top={1.5} right={2} />
+        <ModalBody>
+          <Box as="form">
+            <Input
+              onInput={(e) => setQuery((e.target as any).value)}
+              placeholder="Search for a user..."
+              autoFocus
+              // px={2}
+            />
+          </Box>
+          {users.length > 0 && (
+            <Box mt={2}>
+              {users.map((user: any) => {
+                const isInTeam = team.Users.some((i) => i.ID == user.ID);
 
-            return (
-              <Flex
-                key={user.ID}
-                sx={{ justifyContent: "space-between", alignItems: "center" }}
-                mt="8px"
-              >
-                <TeamMember avatar={user.Avatar} name={user.Name} />
-                {!isInTeam ? (
-                  <Icon
-                    glyph="plus"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => onSelect(user.ID)}
-                  />
-                ) : (
-                  <Icon glyph="checkmark" color="green" />
-                )}
-              </Flex>
-            );
-          })}
-        </Box>
-      )}
+                return (
+                  <Flex
+                    key={user.ID}
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                    mt="8px"
+                  >
+                    <TeamMember avatar={user.Avatar} name={user.Name} />
+                    {!isInTeam ? (
+                      <Icon
+                        glyph="plus"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => onSelect(user.ID)}
+                      />
+                    ) : (
+                      <Icon glyph="checkmark" color="green" />
+                    )}
+                  </Flex>
+                );
+              })}
+            </Box>
+          )}
+        </ModalBody>
+      </ModalContent>
     </Modal>
   );
 }
@@ -181,7 +176,7 @@ export default function TeamPage() {
 
     return () => expensesWs.current?.close();
   }, [id]);
-  const [inviteModalVisible, setInviteModalVisible] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const inviteUser = async (id: string) => {
     await fetchApi(`/teams/${team.team.ID}`, {
@@ -227,9 +222,9 @@ export default function TeamPage() {
       {team && (
         <InviteModal
           team={team.team}
-          visible={inviteModalVisible}
+          visible={isOpen}
           onSelect={inviteUser}
-          onClose={() => setInviteModalVisible(false)}
+          onClose={onClose}
         />
       )}
 
@@ -250,8 +245,9 @@ export default function TeamPage() {
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
         {team && team.team.Apps.length > 0 ? (
           <Grid
-            columns="repeat(auto-fit, minmax(240px, 1fr))"
-            sx={{ flex: "1 0 auto" }}
+            gridTemplateColumns="repeat(auto-fit, minmax(240px, 1fr))"
+            gap={2}
+            flex="1 0 auto"
           >
             {team.team.Apps.map((app: any) => {
               return (
@@ -269,23 +265,28 @@ export default function TeamPage() {
         )}
 
         <Box
+          flexGrow={0}
+          flexShrink={0}
+          flexBasis="auto"
           sx={{
-            flexGrow: 0,
-            flexShrink: 0,
-            flexBasis: "auto",
             "@media screen and (min-width: 1300px)": {
               flexBasis: 400,
             },
           }}
-          p={4}
+          ml={1}
+          p={2}
         >
-          <Flex>
-            <Heading mr={3}>Team members</Heading>
-            <Icon
-              style={{ cursor: "pointer" }}
-              glyph="plus"
-              onClick={() => setInviteModalVisible(true)}
-            />
+          <Flex alignItems="center">
+            <Heading mr={1} size="md">
+              Team members
+            </Heading>
+            <IconButton
+              onClick={onOpen}
+              aria-label="Invite users"
+              background="inherit"
+            >
+              <Icon glyph="plus" />
+            </IconButton>
           </Flex>
 
           {team &&
