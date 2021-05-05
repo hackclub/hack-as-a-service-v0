@@ -12,6 +12,8 @@ export interface ITeam {
   Automatic: boolean;
   Personal: boolean;
   Apps: IApp[];
+  Expenses: string;
+  Users: IUser[];
 }
 
 export interface IApp {
