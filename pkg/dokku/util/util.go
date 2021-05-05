@@ -6,13 +6,11 @@ import (
 	"time"
 )
 
-// Exponentially backoff network errors
+// Linearly retry network errors forever
 func RetriedNetworkFunc(f func() (interface{}, error)) (interface{}, error) {
-	// maximum backoff
-	maxBackoff := 30
-	currentBackoff := 1
-	currentBackoffCounter := 0
 	res, err := f()
+	wait := time.Duration(2500) * time.Millisecond
+	attempt := 1
 	for {
 		if err == nil {
 			return res, err
@@ -24,21 +22,10 @@ func RetriedNetworkFunc(f func() (interface{}, error)) (interface{}, error) {
 			return res, err
 		}
 		// backoff
-		log.Printf("Network error, waiting %d seconds before trying again (attempt %d)\n", currentBackoff, currentBackoffCounter)
-		time.Sleep(time.Duration(currentBackoff) * time.Second)
-		currentBackoffCounter++
-		if currentBackoffCounter == 2 {
-			if currentBackoff == maxBackoff {
-				break
-			}
-			currentBackoffCounter = 0
-			currentBackoff *= 2
-			if currentBackoff > maxBackoff {
-				currentBackoff = maxBackoff
-			}
-		}
+		log.Printf("Network error, waiting 2.5s before trying again (attempt %d)\n", attempt)
+		time.Sleep(wait)
+		attempt++
 		res, err = f()
 	}
-	log.Printf("Network error, given up on retries (backoff time %d, attempt %d)\n", currentBackoff, currentBackoffCounter)
-	return res, err
+	// unreachable
 }
