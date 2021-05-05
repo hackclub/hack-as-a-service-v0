@@ -23,6 +23,7 @@ export default function App({
           cursor="pointer"
           bg={colorMode == "dark" ? "slate" : "sunken"}
           p="30px"
+          height="100%"
         >
           <Heading as="h2" sx={{ fontWeight: "normal" }}>
             {name}

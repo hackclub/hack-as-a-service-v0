@@ -159,7 +159,7 @@ export default function DashboardLayout({
   }, [userError]);
 
   return (
-    <Flex minHeight="100vh">
+    <Flex minHeight="100vh" flexGrow={0}>
       <Box
         flexBasis={400}
         flexShrink={0}
@@ -174,7 +174,7 @@ export default function DashboardLayout({
           })}
         </Box>
       </Box>
-      <Box flex={"1 1 auto"} px="50px" py="35px">
+      <Box flex={"1 1 auto"} px="50px" py="35px" overflowX="auto">
         <Flex alignItems="center" position="sticky" top={0} py={1}>
           {image && (
             <Avatar size="md" src={image} borderRadius={8} bg="sunken" mr={2} />

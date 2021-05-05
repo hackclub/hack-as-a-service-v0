@@ -246,7 +246,7 @@ export default function TeamPage() {
         {team && team.team.Apps.length > 0 ? (
           <Grid
             gridTemplateColumns="repeat(auto-fit, minmax(240px, 1fr))"
-            gridColumnGap={2}
+            gap={2}
             flex="1 0 auto"
           >
             {team.team.Apps.map((app: any) => {
