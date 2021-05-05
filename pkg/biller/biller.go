@@ -119,7 +119,6 @@ type BillerEvent struct {
 }
 
 var billerOutputs map[uint]map[chan decimal.Decimal]struct{} = make(map[uint]map[chan decimal.Decimal]struct{})
-
 var statsOutputs map[uint]map[chan ProcessedOutput]struct{} = make(map[uint]map[chan ProcessedOutput]struct{})
 var billerEventsChannels map[uint]chan BillerEvent = make(map[uint]chan BillerEvent)
 

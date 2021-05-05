@@ -149,8 +149,7 @@ func handleGETLogs(c *gin.Context) {
 
 		err = ws.WriteJSON(logs)
 		if err != nil {
-			c.JSON(500, gin.H{"status": "error", "message": "Failed to convert logs to JSON"})
-			return
+			log.Println(err)
 		}
 	}
 }
