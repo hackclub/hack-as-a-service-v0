@@ -36,7 +36,7 @@ module.exports = {
 
     useEsbuildLoader(config, {
       // Specify `tsx` if you're using TypeSCript
-      loader: "jsx",
+      loader: "tsx",
       target: "es2017",
     });
 
