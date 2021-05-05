@@ -18,7 +18,7 @@
     "react-feather": "^2.0.9",
     "swagger-ui-react": "^3.47.1",
     "swr": "^0.5.5",
-    "theme-ui": "^0.7.4",
+    "theme-ui": "^0.7.5",
     "yaml": "2.0.0-5"
   },
   "devDependencies": {
