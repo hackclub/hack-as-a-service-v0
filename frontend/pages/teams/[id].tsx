@@ -284,8 +284,9 @@ export default function TeamPage() {
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
         {team && team.team.Apps.length > 0 ? (
           <Grid
-            columns="repeat(auto-fit, minmax(240px, 1fr))"
-            sx={{ flex: "1 0 auto" }}
+            gridTemplateColumns="repeat(auto-fit, minmax(240px, 1fr))"
+            gridColumnGap={2}
+            flex="1 0 auto"
           >
             {team.team.Apps.map((app: any) => {
               return (
