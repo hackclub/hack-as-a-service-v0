@@ -166,8 +166,7 @@ export default function DashboardLayout({
         flexGrow={0}
         // px="50px"
         py="30px"
-        background={ colorMode === "dark"
-        ? 'darker' : 'snow'}
+        background={colorMode === "dark" ? "darker" : "snow"}
       >
         <SidebarHeader avatar={user?.user.Avatar} />
         <Box mt="40px" px="50px">
