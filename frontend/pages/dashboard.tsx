@@ -18,16 +18,6 @@ export default function Dashboard() {
 
   const sidebarSections: ISidebarSection[] = [
     {
-      items: [
-        {
-          // image: user?.user.Avatar,
-          icon: "home",
-          text: "Personal Apps",
-          url: "/dashboard",
-        },
-      ],
-    },
-    {
       title: "Teams",
       items: teamList
         ? teamList.length > 0

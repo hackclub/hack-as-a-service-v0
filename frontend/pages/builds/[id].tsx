@@ -16,8 +16,6 @@ export default function BuildPage() {
 
   const { colorMode } = useColorMode();
 
-  const logsElement = useRef(null);
-
   const { data: build } = useSWR(`/builds/${id}`);
   const { data: app } = useSWR(() => `/apps/${build?.build.AppID}`);
   const [logs, setLogs] = useState<IBuildEvent[]>([]);
@@ -45,15 +43,6 @@ export default function BuildPage() {
     };
   }, [build]);
 
-  useEffect(() => {
-    if (logsElement.current) {
-      logsElement.current.scroll({
-        top: logsElement.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [logs]);
-
   return (
     <DashboardLayout
       title={`Build ${build?.build.ID} for app ${app?.app.Name}`}
@@ -74,7 +63,6 @@ export default function BuildPage() {
       }
     >
       <Logs
-        ref={logsElement}
         logs={logs}
         keyer={(log) => log.Output}
         render={(i) =>
