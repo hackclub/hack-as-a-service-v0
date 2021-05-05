@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import AppLayout from "../../../layouts/app";
-import { Box, Heading, Spinner, Text } from "theme-ui";
+import { Text, useColorMode } from "@chakra-ui/react";
+import Logs from "../../../components/Logs";
 
 interface ILog {
   stream: "stdout" | "stderr";
@@ -41,6 +42,8 @@ export default function AppDashboardPage() {
   const router = useRouter();
   const { id } = router.query;
 
+  const { colorMode } = useColorMode();
+
   const logsElement = useRef(null);
 
   const { logs } = useLogs(id as string);
@@ -56,21 +59,29 @@ export default function AppDashboardPage() {
 
   return (
     <AppLayout selected="Logs">
-      <Box
-        bg="sunken"
-        sx={{ borderRadius: 10, height: 500, overflow: "auto" }}
-        p={3}
+      <Logs
         ref={logsElement}
-      >
-        {logs.map((i) => (
-          <pre key={i.log} style={{ margin: "5px 0" }}>
-            <Text color={i.stream == "stdout" ? "green" : "red"}>
+        logs={logs}
+        keyer={(log) => log.log}
+        render={(i) => (
+          <>
+            <Text
+              color={i.stream == "stdout" ? "green" : "red"}
+              my={0}
+              as="span"
+            >
               [{i.stream}]
             </Text>{" "}
-            <span>{i.log}</span>
-          </pre>
-        ))}
-      </Box>
+            <Text
+              my={0}
+              as="span"
+              color={colorMode == "dark" ? "background" : "text"}
+            >
+              {i.log}
+            </Text>
+          </>
+        )}
+      />
     </AppLayout>
   );
 }
