@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
+	"github.com/hackclub/hack-as-a-service/pkg/dokku/util"
 	"go.lsp.dev/jsonrpc2"
+	"gorm.io/gorm"
 )
 
 type DokkuConn struct {
@@ -47,43 +50,6 @@ func RemoveCommandOutput(execId uuid.UUID, output StreamingCommandOutput) {
 	if outputs, ok := commandOutputs[execId]; ok {
 		delete(outputs, output)
 	}
-}
-
-// Exponentially backoff network errors
-func retriedNetworkFunc(f func() (interface{}, error)) (interface{}, error) {
-	// maximum backoff
-	maxBackoff := 30
-	currentBackoff := 1
-	currentBackoffCounter := 0
-	res, err := f()
-	for {
-		if err == nil {
-			return res, err
-		}
-		switch err.(type) {
-		case net.Error:
-			// fallthrough to backoff
-		default:
-			return res, err
-		}
-		// backoff
-		log.Printf("Network error, waiting %d seconds before trying again (attempt %d)\n", currentBackoff, currentBackoffCounter)
-		time.Sleep(time.Duration(currentBackoff) * time.Second)
-		currentBackoffCounter++
-		if currentBackoffCounter == 2 {
-			if currentBackoff == maxBackoff {
-				break
-			}
-			currentBackoffCounter = 0
-			currentBackoff *= 2
-			if currentBackoff > maxBackoff {
-				currentBackoff = maxBackoff
-			}
-		}
-		res, err = f()
-	}
-	log.Printf("Network error, given up on retries (backoff time %d, attempt %d)\n", currentBackoff, currentBackoffCounter)
-	return res, err
 }
 
 func (conn *DokkuConn) RunCommand(ctx context.Context, args []string) (string, error) {
@@ -147,6 +113,18 @@ type statusMessage struct {
 	Status int
 }
 
+type eventLine struct {
+	Stream string
+	Output string
+}
+
+type EventArgs struct {
+	Event   string
+	AppName string
+}
+
+var eventChannels map[chan EventArgs]struct{} = make(map[chan EventArgs]struct{})
+
 func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 	var msg lineMessage
 	err := json.Unmarshal(req.Params(), &msg)
@@ -165,8 +143,12 @@ func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if result.Error != nil {
 			return
 		}
-		build.Stdout += msg.Line + "\n"
-		db.DB.Save(&build)
+		line := eventLine{Stream: "stdout", Output: msg.Line}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -190,8 +172,12 @@ func stderrHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 		if result.Error != nil {
 			return
 		}
-		build.Stderr += msg.Line + "\n"
-		db.DB.Save(&build)
+		line := eventLine{Stream: "stderr", Output: msg.Line}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -215,12 +201,42 @@ func doneHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Reque
 		if result.Error != nil {
 			return
 		}
+		line := eventLine{Stream: "status", Output: strconv.Itoa(msg.Status)}
+		out, err := json.Marshal(line)
+		if err != nil {
+			return
+		}
+		build.Events = append(build.Events, string(out))
 		build.Status = msg.Status
 		build.Running = false
 		build.EndedAt = time.Now()
-		db.DB.Save(&build)
+		db.DB.Model(&build).Updates(&build)
 		log.Println("DB updated")
 	}()
+	return nil
+}
+
+func CreateEventChannel() chan EventArgs {
+	ch := make(chan EventArgs)
+	eventChannels[ch] = struct{}{}
+	return ch
+}
+
+func DeleteEventChannel(ch chan EventArgs) {
+	delete(eventChannels, ch)
+}
+
+func eventHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
+	var args EventArgs
+	err := json.Unmarshal(req.Params(), &args)
+	if err != nil {
+		return err
+	}
+
+	for ch := range eventChannels {
+		ch <- args
+	}
+
 	return nil
 }
 
@@ -232,6 +248,8 @@ func notificationHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrp
 		return stderrHandler(ctx, reply, req)
 	case "commandDone":
 		return doneHandler(ctx, reply, req)
+	case "event":
+		return eventHandler(ctx, reply, req)
 	default:
 		return nil
 	}
@@ -243,7 +261,7 @@ func (conn *DokkuConn) reconnect(ctx context.Context) error {
 		conn.conn.Close()
 		<-conn.conn.Done()
 	}
-	stream, err := retriedNetworkFunc(func() (interface{}, error) { return net.Dial("unix", conn.socketPath) })
+	stream, err := util.RetriedNetworkFunc(func() (interface{}, error) { return net.Dial("unix", conn.socketPath) })
 	if err != nil {
 		return err
 	}

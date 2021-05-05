@@ -20,7 +20,7 @@ export default function Swagger({ spec }: { spec: any }) {
 export const getStaticProps: GetStaticProps = async (_) => {
   return {
     props: {
-      spec: YAML.parse(await fs.readFile("../swagger.yaml", "utf-8")),
+      spec: YAML.parse(await fs.readFile("public/swagger.yaml", "utf-8")),
     },
   };
 };

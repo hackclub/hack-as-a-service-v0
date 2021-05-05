@@ -6,6 +6,7 @@ dokku_prod.key
 dokku_prod.key.pub
 /dokkud/dokkud
 *.env
+.vscode
 
 # Dokku plugin files
 /commands
@@ -13,3 +14,6 @@ dokku_prod.key.pub
 
 # github app private key
 *.pem
+
+/post-deploy
+/triggers

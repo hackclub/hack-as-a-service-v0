@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { PropsWithChildren, ReactElement, useEffect } from "react";
 import useSWR from "swr";
 import { Avatar, Box, Flex, Heading, SxProp } from "theme-ui";
-import fetchApi from "../lib/fetch";
 import { Glyph } from "../types/glyph";
 import ColorSwitcher from "../components/ColorButton";
 
@@ -144,7 +143,7 @@ export default function DashboardLayout({
   sidebarSections: ISidebarSection[];
 }>) {
   const router = useRouter();
-  const { data: user, error: userError } = useSWR("/users/me", fetchApi);
+  const { data: user, error: userError } = useSWR("/users/me");
 
   useEffect(() => {
     if (userError && process.env.NODE_ENV !== "development") {

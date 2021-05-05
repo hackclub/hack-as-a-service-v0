@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
 import useSWR from "swr";
-import fetchApi from "../lib/fetch";
 import DashboardLayout from "./dashboard";
 
 import { Heading } from "theme-ui";
@@ -13,8 +12,8 @@ export default function AppLayout({
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: app } = useSWR(`/apps/${id}`, fetchApi);
-  const { data: team } = useSWR(() => `/teams/${app.app.TeamID}`, fetchApi);
+  const { data: app } = useSWR(`/apps/${id}`);
+  const { data: team } = useSWR(() => `/teams/${app.app.TeamID}`);
 
   return (
     <DashboardLayout
@@ -46,6 +45,12 @@ export default function AppLayout({
               text: "Logs",
               url: `/apps/${id}/logs`,
               selected: selected == "Logs",
+            },
+            {
+              icon: "share",
+              text: "Deploy",
+              url: `/apps/${id}/deploy`,
+              selected: selected == "Deploy",
             },
           ],
         },

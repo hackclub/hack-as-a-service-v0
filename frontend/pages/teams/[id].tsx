@@ -150,7 +150,7 @@ export default function TeamPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, fetchApi);
+  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`);
   const [expenses, setExpenses] = useState(0);
   const expensesWs = useRef<WebSocket | null>(null);
 
@@ -244,7 +244,7 @@ export default function TeamPage() {
           description={team?.team.Users.length}
           sx={{ marginRight: "100px" }}
         />
-        <Field label="Expenses" description={`${expenses} HN`} />
+        <Field label="Expenses" description={`${expenses.toFixed(5)} HN`} />
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>

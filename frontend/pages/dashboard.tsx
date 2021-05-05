@@ -2,7 +2,6 @@ import Link from "next/link";
 import useSWR from "swr";
 import { Box, Flex, Heading, Text } from "theme-ui";
 import DashboardLayout, { ISidebarSection } from "../layouts/dashboard";
-import fetchApi from "../lib/fetch";
 
 function App({
   name,
@@ -33,8 +32,8 @@ function App({
 }
 
 export default function Dashboard() {
-  const { data: teams } = useSWR("/users/me/teams", fetchApi);
-  const { data: personalTeam } = useSWR("/teams/me", fetchApi);
+  const { data: teams } = useSWR("/users/me/teams");
+  const { data: personalTeam } = useSWR("/teams/me");
 
   const teamList = teams?.teams
     .filter((i: any) => !i.Personal)

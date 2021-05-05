@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type Build struct {
@@ -13,7 +14,6 @@ type Build struct {
 	StartedAt time.Time
 	EndedAt   time.Time
 	Running   bool
-	Stdout    string
-	Stderr    string
+	Events    pq.StringArray `gorm:"type:text[]"`
 	Status    int
 }

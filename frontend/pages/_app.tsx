@@ -1,5 +1,8 @@
 import { ThemeProvider, Theme, merge } from "theme-ui";
 import theme from "@hackclub/theme";
+import { SWRConfig } from "swr";
+import fetchApi from "../lib/fetch";
+import "@hackclub/theme/fonts/reg-bold.css";
 
 const haasTheme: Theme = merge(theme as Theme, {
   forms: {
@@ -16,9 +19,11 @@ const haasTheme: Theme = merge(theme as Theme, {
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ThemeProvider theme={haasTheme}>
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <SWRConfig value={{ fetcher: fetchApi }}>
+      <ThemeProvider theme={haasTheme}>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </SWRConfig>
   );
 }
 
