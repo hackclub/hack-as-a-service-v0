@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -68,7 +69,10 @@ loop:
 				break loop
 			}
 		case status := <-cmd.StatusChan:
-			ws.WriteJSON(gin.H{"Stream": "status", "Output": strconv.Itoa(status)})
+			err = ws.WriteJSON(gin.H{"Stream": "status", "Output": strconv.Itoa(status)})
+			if err != nil {
+				log.Println(err)
+			}
 			// no need to handle the error - we break anyways
 			break loop
 		}

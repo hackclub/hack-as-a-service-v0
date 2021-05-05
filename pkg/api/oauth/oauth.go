@@ -16,13 +16,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func sweepOldTokens() error {
+func sweepOldTokens() {
 	result := db.DB.Unscoped().Delete(db.Token{}, "expires_at <= ?", time.Now())
 	if result.Error != nil {
-		return result.Error
+		log.Println(result.Error)
 	}
-
-	return nil
 }
 
 func getRedirectUri() string {
@@ -34,10 +32,13 @@ func getRedirectUri() string {
 	return redirect_uri
 }
 
-func generateToken() string {
+func generateToken() (string, error) {
 	b := make([]byte, 16)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", b), nil
 }
 
 func generateAuthUrl() string {
@@ -115,9 +116,14 @@ func SetupRoutes(r *gin.RouterGroup) {
 		}
 
 		// Generate a token
+		rawToken, err := generateToken()
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
 		token := &db.Token{
 			UserID:    user.ID,
-			Token:     generateToken(),
+			Token:     rawToken,
 			ExpiresAt: time.Now().Add(2592000 * time.Second),
 		}
 		create_result := db.DB.Create(&token)

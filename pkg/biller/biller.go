@@ -26,9 +26,16 @@ func StartBilling(conn *dokku.DokkuConn) error {
 				var app db.App
 				result := db.DB.First(&app, "short_name = ?", ev.AppName)
 				if result.Error != nil {
-					log.Printf("Error while trying to rebill after post-deploy (%s): %+v\n", ev.AppName, result.Error)
+					log.Printf(
+						"Error while trying to rebill after post-deploy (%s): %+v\n",
+						ev.AppName,
+						result.Error,
+					)
 				} else {
-					StartBillingApp(conn, app)
+					err := StartBillingApp(conn, app)
+					if err != nil {
+						log.Println(err)
+					}
 				}
 			}
 		}
@@ -42,7 +49,10 @@ func StartBilling(conn *dokku.DokkuConn) error {
 	defer rows.Close()
 	for rows.Next() {
 		var app db.App
-		db.DB.ScanRows(rows, &app)
+		err = db.DB.ScanRows(rows, &app)
+		if err != nil {
+			return err
+		}
 
 		err = StartBillingApp(conn, app)
 		if err != nil {
