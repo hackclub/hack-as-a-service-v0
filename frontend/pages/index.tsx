@@ -1,21 +1,29 @@
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>Hack as a Service</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>Coming Soon</h1>
-        <h5 className={styles.subtitle}>
+      <Flex
+        as="main"
+        height="100vh"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+      >
+        <Heading as="h1" fontSize="8rem" lineHeight="1.15">
+          Coming Soon
+        </Heading>
+        <Text my={1}>
           Hack as a Service | A <a href="https://hackclub.com">Hack Club</a>{" "}
           project
-        </h5>
-      </main>
-    </div>
+        </Text>
+      </Flex>
+    </>
   );
 }

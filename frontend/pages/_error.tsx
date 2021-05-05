@@ -1,23 +1,31 @@
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Link from "next/link";
-import styles from "../styles/Home.module.css";
 
 function Error({ statusCode }) {
   return (
-    <div className={styles.container}>
+    <>
       <Head>
         <title>Error {statusCode} | HaaS</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>Error {statusCode}</h1>
-        <h5 className={styles.subtitle}>
+      <Flex
+        as="main"
+        height="100vh"
+        justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
+      >
+        <Heading as="h1" fontSize="8rem" lineHeight="1.15">
+          Error {statusCode}
+        </Heading>
+        <Text my={1}>
           Would you like to go <Link href="/">back home</Link>?
-        </h5>
+        </Text>
         <img src="/assets/haas-logo-256-rounded.png" alt="HaaS logo"></img>
-      </main>
-    </div>
+      </Flex>
+    </>
   );
 }
 
