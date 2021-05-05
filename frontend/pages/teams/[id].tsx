@@ -21,6 +21,7 @@ import {
   SystemStyleObject,
   useDisclosure,
   LinkBox,
+  useColorMode,
 } from "@chakra-ui/react";
 
 import Link from "next/link";
@@ -52,6 +53,8 @@ function App({
   shortName: string;
   url: string;
 }) {
+  const { colorMode } = useColorMode();
+
   return (
     <Link href={url} passHref>
       <LinkBox>
@@ -61,13 +64,13 @@ function App({
           flexDirection="column"
           borderRadius="10px"
           cursor="pointer"
-          bg="sunken"
+          bg={colorMode == "dark" ? "slate" : "sunken"}
           p="30px"
         >
           <Heading as="h2" sx={{ fontWeight: "normal" }}>
             {name}
           </Heading>
-          <Text color="muted" my={1}>
+          <Text color={colorMode == "dark" ? "smoke" : "muted"} my={1}>
             ({shortName})
           </Text>
         </Flex>

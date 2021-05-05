@@ -465,7 +465,7 @@ const theme = extendTheme({
         fontSize: 0,
       },
       p: {
-        color: "text",
+        color: mode("text", "background")(props),
         fontWeight: "body",
         lineHeight: "body",
         my: 3,
