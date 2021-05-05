@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import { Box, Text } from "theme-ui";
+import { Text, useColorMode } from "@chakra-ui/react";
 import DashboardLayout from "../../layouts/dashboard";
+import Logs from "../../components/Logs";
 
 interface IBuildEvent {
   Stream: "stdout" | "stderr" | "status";
@@ -13,7 +14,7 @@ export default function BuildPage() {
   const router = useRouter();
   const { id } = router.query;
 
-  const logsElement = useRef(null);
+  const { colorMode } = useColorMode();
 
   const { data: build } = useSWR(`/builds/${id}`);
   const { data: app } = useSWR(() => `/apps/${build?.build.AppID}`);
@@ -42,15 +43,6 @@ export default function BuildPage() {
     };
   }, [build]);
 
-  useEffect(() => {
-    if (logsElement.current) {
-      logsElement.current.scroll({
-        top: logsElement.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [logs]);
-
   return (
     <DashboardLayout
       title={`Build ${build?.build.ID} for app ${app?.app.Name}`}
@@ -70,29 +62,40 @@ export default function BuildPage() {
           : []
       }
     >
-      <Box
-        bg="sunken"
-        sx={{ borderRadius: 10, height: 500, overflow: "auto" }}
-        p={3}
-        ref={logsElement}
-      >
-        {logs.map((i) => (
-          <pre key={i.Output} style={{ margin: "5px 0" }}>
-            {i.Stream != "status" ? (
-              <>
-                <Text color={i.Stream == "stdout" ? "green" : "red"}>
-                  [{i.Stream}]
-                </Text>{" "}
-                <span>{i.Output}</span>
-              </>
-            ) : (
-              <>
-                <Text color="grey">[Build exited with status {i.Output}]</Text>
-              </>
-            )}
-          </pre>
-        ))}
-      </Box>
+      <Logs
+        logs={logs}
+        keyer={(log) => log.Output}
+        render={(i) =>
+          i.Stream != "status" ? (
+            <>
+              <Text
+                color={i.Stream == "stdout" ? "green" : "red"}
+                my={0}
+                as="span"
+              >
+                [{i.Stream}]
+              </Text>{" "}
+              <Text
+                my={0}
+                as="span"
+                color={colorMode == "dark" ? "background" : "text"}
+              >
+                {i.Output}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text
+                color={colorMode == "dark" ? "snow" : "grey"}
+                my={0}
+                as="span"
+              >
+                [Build exited with status {i.Output}]
+              </Text>
+            </>
+          )
+        }
+      />
     </DashboardLayout>
   );
 }

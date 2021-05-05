@@ -6,7 +6,7 @@ Run your own backend applications for just 5hn/app/month!
 
 ## Development
 
-Contributions to the project are welcome! The backend is mostly Go, and on the frontend we use Next.js with Theme UI + Hack Club Theme for styling. Make sure to discuss changes with other contributors in a GitHub issue or on Slack before beginning development on new features or bugfixes. Please assign yourself to issues you're working on, to help everyone know what still needs to be done, and keep everyone on the same page.
+Contributions to the project are welcome! The backend is mostly Go, and on the frontend we use Next.js with Chakra UI + Hack Club Theme for styling. Make sure to discuss changes with other contributors in a GitHub issue or on Slack before beginning development on new features or bugfixes. Please assign yourself to issues you're working on, to help everyone know what still needs to be done, and keep everyone on the same page.
 
 ### Local Development
 

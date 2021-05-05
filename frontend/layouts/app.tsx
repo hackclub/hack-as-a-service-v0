@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 import useSWR from "swr";
 import DashboardLayout from "./dashboard";
 
-import { Heading } from "theme-ui";
+import { Heading } from "@chakra-ui/react";
 
 export default function AppLayout({
   children,
@@ -56,7 +56,7 @@ export default function AppLayout({
         },
       ]}
     >
-      <Heading as="h2" pb={4} pt={1}>
+      <Heading as="h2" pb={2} pt={1}>
         {selected}
       </Heading>
 
