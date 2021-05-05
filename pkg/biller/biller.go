@@ -63,10 +63,14 @@ func StartBillingApp(conn *dokku.DokkuConn, app db.App) error {
 
 	// Get the app's container ID
 	cid, err := conn.RunCommand(context.Background(), []string{"haas:cid", app.ShortName})
+	if err != nil {
+		return err
+	}
+
 	cid = strings.TrimSpace(cid)
 
 	// No container to bill
-	if err != nil || cid == "" {
+	if cid == "" {
 		return nil
 	}
 
