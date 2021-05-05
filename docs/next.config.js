@@ -1,27 +1,27 @@
 const withNextra = require('nextra')('nextra-theme-docs', './theme.config.js')
-const { ESBuildMinifyPlugin } = require("esbuild-loader");
+const { ESBuildMinifyPlugin } = require('esbuild-loader')
 
 function useEsbuildMinify(config, options) {
   const terserIndex = config.optimization.minimizer.findIndex(
-    (minimizer) => minimizer.constructor.name === "TerserPlugin"
-  );
+    (minimizer) => minimizer.constructor.name === 'TerserPlugin'
+  )
   if (terserIndex > -1) {
     config.optimization.minimizer.splice(
       terserIndex,
       1,
       new ESBuildMinifyPlugin(options)
-    );
+    )
   }
 }
 
 function useEsbuildLoader(config, options) {
   const jsLoader = config.module.rules.find(
-    (rule) => rule.test && rule.test.test(".js")
-  );
+    (rule) => rule.test && rule.test.test('.js')
+  )
 
   if (jsLoader) {
-    jsLoader.use.loader = "esbuild-loader";
-    jsLoader.use.options = options;
+    jsLoader.use.loader = 'esbuild-loader'
+    jsLoader.use.options = options
   }
 }
 
@@ -29,20 +29,22 @@ module.exports = {
   webpack: (config, { webpack }) => {
     config.plugins.push(
       new webpack.ProvidePlugin({
-        React: "react",
+        React: 'react',
       })
-    );
+    )
 
-    useEsbuildMinify(config);
+    useEsbuildMinify(config)
 
     useEsbuildLoader(config, {
       // Specify `tsx` if you're using TypeSCript
-      loader: "jsx",
-      target: "es2017",
-    });
+      loader: 'jsx',
+      target: 'es2017',
+      // note: kind of have to do this because Next.js is weird with SSR
+      platform: 'node',
+    })
 
-    return config;
-    },
-    basePath: "/docs",
-    ...withNextra()
-};
+    return config
+  },
+  basePath: '/docs',
+  ...withNextra(),
+}

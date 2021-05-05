@@ -38,6 +38,8 @@ module.exports = {
       // Specify `tsx` if you're using TypeSCript
       loader: "tsx",
       target: "es2017",
+      // note: kind of have to do this because Next.js is weird with SSR
+      platform: "node",
     });
 
     return config;
