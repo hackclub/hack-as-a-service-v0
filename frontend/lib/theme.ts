@@ -491,7 +491,6 @@ const theme = extendTheme({
         fontSize: 1,
         p: 3,
         color: "text",
-        bg: "sunken",
         overflow: "auto",
         borderRadius: "default",
         code: {
