@@ -42,9 +42,15 @@ type ProcessedOutput struct {
 
 func (stat *Stats) Process() ProcessedOutput {
 	// https://docs.docker.com/engine/api/v1.41/#operation/ContainerStats
-	mem_usage := decimal.NewFromInt(stat.MemoryStats.Usage).Sub(decimal.NewFromInt(stat.MemoryStats.Stats.Cache)).Div(decimal.NewFromInt(stat.MemoryStats.Limit))
+	mem_usage := decimal.NewFromInt(stat.MemoryStats.Usage).Sub(decimal.NewFromInt(stat.MemoryStats.Stats.Cache))
+	x := decimal.NewFromInt(stat.MemoryStats.Limit)
+	if !x.IsZero() {
+		mem_usage = mem_usage.Div(x)
+	} else {
+		mem_usage = decimal.Zero
+	}
 	cpu_usage := decimal.NewFromInt(stat.CpuStats.CpuUsage.TotalUsage).Sub(decimal.NewFromInt(stat.PrecpuStats.CpuUsage.TotalUsage))
-	x := decimal.NewFromInt(stat.CpuStats.SystemCpuUsage).Sub(decimal.NewFromInt(stat.PrecpuStats.SystemCpuUsage))
+	x = decimal.NewFromInt(stat.CpuStats.SystemCpuUsage).Sub(decimal.NewFromInt(stat.PrecpuStats.SystemCpuUsage))
 	if !x.IsZero() {
 		cpu_usage = cpu_usage.Div(x)
 	}
