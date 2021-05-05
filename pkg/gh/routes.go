@@ -7,7 +7,11 @@ import (
 	"github.com/google/go-github/v35/github"
 )
 
-func HandleWebhook(c *gin.Context) {
+func SetupRoutes(r *gin.RouterGroup) {
+	r.POST("/webhook", handleWebhook)
+}
+
+func handleWebhook(c *gin.Context) {
 	// Verify the payload and unload it
 	payload, err := github.ValidatePayload(
 		c.Request,
