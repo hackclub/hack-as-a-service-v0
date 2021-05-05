@@ -4,14 +4,14 @@ FROM node:alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY docs/package.json docs/yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 # Rebuild the source code only when needed
 FROM node:alpine AS builder
 WORKDIR /app
 COPY docs/ .
 COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline && yarn cache clean
 
 # Production image, copy all the files and run next
 FROM node:alpine AS runner
