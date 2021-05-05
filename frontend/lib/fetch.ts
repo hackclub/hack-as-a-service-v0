@@ -6,7 +6,7 @@ export default function fetchApi(url: string, init?: RequestInit) {
     .then((r) => r.json())
     .then((json) => {
       if (json.status != "ok") {
-        throw json.message;
+        throw { url, message: json.message };
       }
 
       return json;

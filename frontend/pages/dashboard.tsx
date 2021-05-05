@@ -78,17 +78,11 @@ export default function Dashboard(props: {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    const user = await fetchApi("/users/me", {
-      headers: ctx.req.headers as HeadersInit,
-    });
-
-    const teams = await fetchApi("/users/me/teams", {
-      headers: ctx.req.headers as HeadersInit,
-    });
-
-    const personalTeam = await fetchApi("/teams/me", {
-      headers: ctx.req.headers as HeadersInit,
-    });
+    const [user, teams, personalTeam] = await Promise.all(
+      ["/users/me", "/users/me/teams", "/teams/me"].map((i) =>
+        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
+      )
+    );
 
     return {
       props: {

@@ -319,35 +319,34 @@ export default function TeamPage(props: {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    const user = await fetchApi("/users/me", {
-      headers: ctx.req.headers as HeadersInit,
-    });
+    const [user, team] = await Promise.all(
+      ["/users/me", `/teams/${ctx.params.id}`].map((i) =>
+        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
+      )
+    );
 
-    try {
-      const team = await fetchApi(`/teams/${ctx.params.id}`, {
-        headers: ctx.req.headers as HeadersInit,
-      });
+    if (team.team.Personal) {
+      throw { message: "can't visit personal team" };
+    }
 
-      // Success
+    return {
+      props: {
+        user,
+        team,
+      },
+    };
+  } catch (e) {
+    if (e.url == "/users/me") {
       return {
-        props: {
-          user,
-          team,
+        redirect: {
+          destination: "/login",
+          permanent: false,
         },
       };
-    } catch (e) {
-      // Error fetching team
+    } else {
       return {
         notFound: true,
       };
     }
-  } catch (e) {
-    // Error fetching user
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
   }
 };
