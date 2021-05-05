@@ -151,7 +151,7 @@ export default function DashboardLayout({
 }>) {
   const router = useRouter();
   const { data: user, error: userError } = useSWR("/users/me");
-
+  const { colorMode } = useColorMode();
   useEffect(() => {
     if (userError && process.env.NODE_ENV !== "development") {
       router.push("/login");
@@ -166,6 +166,8 @@ export default function DashboardLayout({
         flexGrow={0}
         // px="50px"
         py="30px"
+        background={ colorMode === "dark"
+        ? 'darker' : 'snow'}
       >
         <SidebarHeader avatar={user?.user.Avatar} />
         <Box mt="40px" px="50px">
