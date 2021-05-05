@@ -21,11 +21,7 @@ function useEsbuildLoader(config, options) {
 
   if (jsLoader) {
     jsLoader.use.loader = 'esbuild-loader'
-    jsLoader.use.options = {
-      ...options,
-      // note: kind of have to do this because Next.js is weird with SSR
-      platform: 'node',
-    }
+    jsLoader.use.options = options
   }
 }
 
