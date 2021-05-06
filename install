@@ -19,6 +19,14 @@ for i in subcommands/**/*.go; do
     go build -o ../subcommands/$output $i
 done
 
+# Build Bash subcommands
+for i in subcommands/*.sh; do
+    output=$(basename $i | cut -f 1 -d '.')
+
+    cp $i ../subcommands/$output
+    chmod +x ../subcommands/$output
+done
+
 # Build triggers
 go build -o ../triggers triggers/triggers.go
 
