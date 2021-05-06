@@ -30,7 +30,7 @@ func handleGETLetsEncrypt(c *gin.Context) {
 		return
 	}
 
-	conn := c.MustGet("dokku_conn").(*dokku.DokkuConn)
+	conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
 
 	res, err := conn.RunCommand(c.Request.Context(), []string{"haas:letsencrypt-enabled", app.ShortName})
 	if err != nil {
@@ -62,7 +62,7 @@ func handlePOSTLetsEncryptEnable(c *gin.Context) {
 		return
 	}
 
-	conn := c.MustGet("dokku_conn").(*dokku.DokkuConn)
+	conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
 
 	_, err = conn.RunCommand(c.Request.Context(), []string{"letsencrypt:enable", app.ShortName})
 	if err != nil {
