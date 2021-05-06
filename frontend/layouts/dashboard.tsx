@@ -150,7 +150,7 @@ export default function DashboardLayout({
   title: string;
   image?: string;
   sidebarSections: ISidebarSection[];
-  user: IUser | undefined;
+  user?: IUser;
 }>) {
   const router = useRouter();
   const { colorMode } = useColorMode();

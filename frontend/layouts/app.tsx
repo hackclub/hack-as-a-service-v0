@@ -12,9 +12,9 @@ export default function AppLayout({
   team,
 }: PropsWithChildren<{
   selected: string;
-  app: IApp | undefined;
-  user: IUser | undefined;
-  team: ITeam | undefined;
+  app?: IApp;
+  user?: IUser;
+  team?: ITeam;
 }>) {
   return (
     <DashboardLayout
