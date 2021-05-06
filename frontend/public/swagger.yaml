@@ -464,6 +464,75 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}/letsencrypt:
+    get:
+      tags: [apps]
+      summary: Returns Let's Encrypt information about an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  letsencrypt:
+                    type: object
+                    properties:
+                      LetsEncryptEnabled:
+                        type: boolean
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}/letsencrypt/enable:
+    post:
+      tags: [apps]
+      summary: Enables Let's Encrypt for an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
   /apps/{id}/builds:
     get:
       tags: [apps]
