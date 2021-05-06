@@ -1,23 +1,25 @@
-import { useRouter } from "next/router";
 import { PropsWithChildren } from "react";
-import useSWR from "swr";
 import DashboardLayout from "./dashboard";
 
 import { Heading } from "@chakra-ui/react";
+import { IApp, ITeam, IUser } from "../types/haas";
 
 export default function AppLayout({
   children,
   selected,
-}: PropsWithChildren<{ selected: string }>) {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const { data: app } = useSWR(`/apps/${id}`);
-  const { data: team } = useSWR(() => `/teams/${app.app.TeamID}`);
-
+  app,
+  user,
+  team,
+}: PropsWithChildren<{
+  selected: string;
+  app?: IApp;
+  user?: IUser;
+  team?: ITeam;
+}>) {
   return (
     <DashboardLayout
-      title={app?.app.Name}
+      title={app?.Name}
+      user={user}
       sidebarSections={[
         {
           items: [
@@ -25,31 +27,31 @@ export default function AppLayout({
               icon: "view-back",
               text: "Back",
               url:
-                team?.team.Personal === false
-                  ? `/teams/${app.app.TeamID}`
+                team?.Personal === false
+                  ? `/teams/${app?.TeamID}`
                   : "/dashboard",
             },
           ],
         },
         {
-          title: app?.app.Name,
+          title: app?.Name,
           items: [
             {
               icon: "explore",
               text: "Dashboard",
-              url: `/apps/${id}`,
+              url: `/apps/${app?.ID}`,
               selected: selected == "Dashboard",
             },
             {
               icon: "search",
               text: "Logs",
-              url: `/apps/${id}/logs`,
+              url: `/apps/${app?.ID}/logs`,
               selected: selected == "Logs",
             },
             {
               icon: "share",
               text: "Deploy",
-              url: `/apps/${id}/deploy`,
+              url: `/apps/${app?.ID}/deploy`,
               selected: selected == "Deploy",
             },
           ],

@@ -2,7 +2,7 @@ import App from "../../components/App";
 import DashboardLayout, { ISidebarItem } from "../../layouts/dashboard";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import fetchApi from "../../lib/fetch";
+import fetchApi, { fetchSSR } from "../../lib/fetch";
 import {
   Flex,
   Text,
@@ -20,10 +20,13 @@ import {
   ModalCloseButton,
   SystemStyleObject,
   useDisclosure,
+  propNames,
 } from "@chakra-ui/react";
 
 import Icon from "@hackclub/icons";
 import { useEffect, useRef, useState } from "react";
+import { GetServerSideProps } from "next";
+import { ITeam, IUser } from "../../types/haas";
 
 function Field({
   label,
@@ -141,11 +144,18 @@ function InviteModal({
   );
 }
 
-export default function TeamPage() {
+export default function TeamPage(props: {
+  user: { user: IUser };
+  team: { team: ITeam };
+}) {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`);
+  const { data: team, mutate: mutateTeam } = useSWR(`/teams/${id}`, {
+    initialData: props.team,
+  });
+  const { data: user } = useSWR("/users/me", { initialData: props.user });
+
   const [expenses, setExpenses] = useState(0);
   const expensesWs = useRef<WebSocket | null>(null);
 
@@ -193,6 +203,7 @@ export default function TeamPage() {
     <DashboardLayout
       title={team ? team.team.Name : ""}
       image={team?.team.Avatar || undefined}
+      user={user.user}
       sidebarSections={[
         {
           items: [
@@ -231,12 +242,12 @@ export default function TeamPage() {
       <Flex>
         <Field
           label="Apps"
-          description={team?.team.Apps.length}
+          description={team?.team.Apps.length.toString()}
           sx={{ marginRight: "100px" }}
         />
         <Field
           label="Users"
-          description={team?.team.Users.length}
+          description={team?.team.Users.length.toString()}
           sx={{ marginRight: "100px" }}
         />
         <Field label="Expenses" description={`${expenses.toFixed(5)} HN`} />
@@ -305,3 +316,35 @@ export default function TeamPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  try {
+    const [user, team] = await Promise.all(
+      ["/users/me", `/teams/${ctx.params.id}`].map((i) => fetchSSR(i, ctx))
+    );
+
+    if (team.team.Personal) {
+      throw { message: "can't visit personal team" };
+    }
+
+    return {
+      props: {
+        user,
+        team,
+      },
+    };
+  } catch (e) {
+    if (e.url == "/users/me") {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        notFound: true,
+      };
+    }
+  }
+};

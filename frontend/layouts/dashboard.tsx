@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Glyph } from "../types/glyph";
 import ColorSwitcher from "../components/ColorButton";
+import { IUser } from "../types/haas";
 
 function SidebarItem({
   image,
@@ -144,19 +145,15 @@ export default function DashboardLayout({
   image,
   sidebarSections,
   children,
+  user,
 }: PropsWithChildren<{
   title: string;
   image?: string;
   sidebarSections: ISidebarSection[];
+  user?: IUser;
 }>) {
   const router = useRouter();
-  const { data: user, error: userError } = useSWR("/users/me");
   const { colorMode } = useColorMode();
-  useEffect(() => {
-    if (userError && process.env.NODE_ENV !== "development") {
-      router.push("/login");
-    }
-  }, [userError]);
 
   return (
     <Flex minHeight="100vh" flexGrow={0}>
@@ -168,7 +165,7 @@ export default function DashboardLayout({
         py="30px"
         background={colorMode === "dark" ? "darker" : "snow"}
       >
-        <SidebarHeader avatar={user?.user.Avatar} />
+        <SidebarHeader avatar={user?.Avatar} />
         <Box mt="40px" px="50px">
           {sidebarSections.map((v, i) => {
             return <SidebarSection key={i} title={v.title} items={v.items} />;

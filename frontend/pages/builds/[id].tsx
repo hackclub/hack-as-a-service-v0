@@ -4,21 +4,32 @@ import useSWR from "swr";
 import { Text, useColorMode } from "@chakra-ui/react";
 import DashboardLayout from "../../layouts/dashboard";
 import Logs from "../../components/Logs";
+import { GetServerSideProps } from "next";
+import { fetchSSR } from "../../lib/fetch";
+import { IApp, IBuild, IUser } from "../../types/haas";
 
 interface IBuildEvent {
   Stream: "stdout" | "stderr" | "status";
   Output: string;
 }
 
-export default function BuildPage() {
+export default function BuildPage(props: {
+  user: { user: IUser };
+  build: { build: IBuild };
+  app: { app: IApp };
+}) {
   const router = useRouter();
   const { id } = router.query;
 
   const { colorMode } = useColorMode();
 
-  const { data: build } = useSWR(`/builds/${id}`);
-  const { data: app } = useSWR(() => `/apps/${build?.build.AppID}`);
+  const { data: build } = useSWR(`/builds/${id}`, { initialData: props.build });
+  const { data: app } = useSWR(() => "/apps/" + build?.build.AppID, {
+    initialData: props.app,
+  });
   const [logs, setLogs] = useState<IBuildEvent[]>([]);
+
+  const { data: user } = useSWR("/users/me", { initialData: props.user });
 
   useEffect(() => {
     if (!build) return;
@@ -45,6 +56,7 @@ export default function BuildPage() {
 
   return (
     <DashboardLayout
+      user={user?.user}
       title={`Build ${build?.build.ID} for app ${app?.app.Name}`}
       sidebarSections={
         app
@@ -99,3 +111,34 @@ export default function BuildPage() {
     </DashboardLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  try {
+    const [user, build] = await Promise.all(
+      ["/users/me", `/builds/${ctx.params.id}`].map((i) => fetchSSR(i, ctx))
+    );
+
+    const app = await fetchSSR(`/apps/${build.build.AppID}`, ctx);
+
+    return {
+      props: {
+        user,
+        build,
+        app,
+      },
+    };
+  } catch (e) {
+    if (e.url == "/users/me") {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        notFound: true,
+      };
+    }
+  }
+};
