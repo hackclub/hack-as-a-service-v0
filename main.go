@@ -52,5 +52,8 @@ func main() {
 
 	oauth.SetupRoutes(&r.RouterGroup)
 
-	r.Run("0.0.0.0:" + getPort())
+	err = r.Run("0.0.0.0:" + getPort())
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

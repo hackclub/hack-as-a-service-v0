@@ -3,6 +3,7 @@ package apps
 import (
 	"bufio"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 	"sync"
@@ -89,7 +90,10 @@ func handleGETLogs(c *gin.Context) {
 
 		defer close(log_chan)
 
-		stdcopy.StdCopy(stdout_writer, stderr_writer, log_stream)
+		_, err := stdcopy.StdCopy(stdout_writer, stderr_writer, log_stream)
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 
 	// A mutex to ensure stdout and stderr aren't written simultaneously
@@ -143,6 +147,9 @@ func handleGETLogs(c *gin.Context) {
 			break
 		}
 
-		ws.WriteJSON(logs)
+		err = ws.WriteJSON(logs)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
