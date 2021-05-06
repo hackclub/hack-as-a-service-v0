@@ -146,11 +146,13 @@ export default function DashboardLayout({
   sidebarSections,
   children,
   user,
+  actionButton,
 }: PropsWithChildren<{
   title: string;
   image?: string;
   sidebarSections: ISidebarSection[];
   user?: IUser;
+  actionButton?: ReactElement;
 }>) {
   const router = useRouter();
   const { colorMode } = useColorMode();
@@ -181,6 +183,8 @@ export default function DashboardLayout({
           <Heading as="h1" fontSize={50}>
             {title}
           </Heading>
+
+          {actionButton && <Box ml={2}>{actionButton}</Box>}
         </Flex>
 
         {children}

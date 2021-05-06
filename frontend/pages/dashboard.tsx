@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { Heading } from "@chakra-ui/react";
+import { Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import App from "../components/App";
 import DashboardLayout, {
   ISidebarItem,
@@ -9,6 +9,9 @@ import { GetServerSideProps } from "next";
 import fetchApi, { fetchSSR } from "../lib/fetch";
 import { ITeam, IUser } from "../types/haas";
 import Head from "next/head";
+import Icon from "@hackclub/icons";
+import { Formik } from "formik";
+import AppCreateModal from "../components/AppCreateModal";
 
 export default function Dashboard(props: {
   user: { user: IUser };
@@ -22,6 +25,7 @@ export default function Dashboard(props: {
     initialData: props.personalTeam,
   });
   const { data: user } = useSWR("/users/me", { initialData: props.user });
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const teamList = teams.teams
     .filter((i: ITeam) => !i.Personal)
@@ -54,7 +58,17 @@ export default function Dashboard(props: {
         title="Personal Apps"
         sidebarSections={sidebarSections}
         user={user.user}
+        actionButton={
+          <IconButton aria-label="Create an app" onClick={onOpen}>
+            <Icon glyph="plus" />
+          </IconButton>
+        }
       >
+        <AppCreateModal
+          onClose={onClose}
+          isOpen={isOpen}
+          onSubmit={(e) => console.log(e)}
+        />
         {personalTeam.team.Apps.length > 0 ? (
           personalTeam.team.Apps.map((app: any) => {
             return (
