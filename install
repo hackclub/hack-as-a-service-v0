@@ -24,6 +24,7 @@ for i in subcommands/*.sh; do
     output=$(basename $i | cut -f 1 -d '.')
 
     cp $i ../subcommands/$output
+    chmod +x ../subcommands/$output
 done
 
 # Build triggers
