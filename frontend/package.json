@@ -10,7 +10,7 @@
     "format:write": "prettier -w ."
   },
   "dependencies": {
-    "@chakra-ui/react": "^1.6.0",
+    "@chakra-ui/react": "^1.6.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@hackclub/icons": "^0.0.9",
