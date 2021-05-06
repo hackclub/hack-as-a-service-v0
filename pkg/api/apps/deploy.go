@@ -47,7 +47,7 @@ func handlePOSTDeploy(c *gin.Context) {
 	}
 
 	cmd, err := conn.RunStreamingCommand(c.Request.Context(), []string{
-		"git:sync", "--build", app.ShortName, json.GitRepository,
+		"git:sync", "--build", app.ShortName, json.GitRepository, "HEAD",
 	})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
