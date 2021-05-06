@@ -324,7 +324,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     );
 
     if (team.team.Personal) {
-      throw { message: "can't visit personal team" };
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
+      };
     }
 
     return {
