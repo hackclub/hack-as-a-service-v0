@@ -6,7 +6,7 @@ import DashboardLayout, {
   ISidebarSection,
 } from "../layouts/dashboard";
 import { GetServerSideProps } from "next";
-import fetchApi from "../lib/fetch";
+import fetchApi, { fetchSSR } from "../lib/fetch";
 import { ITeam, IUser } from "../types/haas";
 import Head from "next/head";
 
@@ -79,9 +79,7 @@ export default function Dashboard(props: {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const [user, teams, personalTeam] = await Promise.all(
-      ["/users/me", "/users/me/teams", "/teams/me"].map((i) =>
-        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
-      )
+      ["/users/me", "/users/me/teams", "/teams/me"].map((i) => fetchSSR(i, ctx))
     );
 
     return {

@@ -4,7 +4,7 @@ import AppLayout from "../../../layouts/app";
 import { Text, useColorMode } from "@chakra-ui/react";
 import Logs from "../../../components/Logs";
 import { GetServerSideProps } from "next";
-import fetchApi from "../../../lib/fetch";
+import fetchApi, { fetchSSR } from "../../../lib/fetch";
 import { IApp, ITeam, IUser } from "../../../types/haas";
 import useSWR from "swr";
 
@@ -91,14 +91,10 @@ export default function AppDashboardPage(props: {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const [user, app] = await Promise.all(
-      ["/users/me", `/apps/${ctx.params.id}`].map((i) =>
-        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
-      )
+      ["/users/me", `/apps/${ctx.params.id}`].map((i) => fetchSSR(i, ctx))
     );
 
-    const team = await fetchApi(`/teams/${app.app.TeamID}`, {
-      headers: ctx.req.headers as HeadersInit,
-    });
+    const team = await fetchSSR(`/teams/${app.app.TeamID}`, ctx);
 
     return {
       props: {

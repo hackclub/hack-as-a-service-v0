@@ -2,7 +2,7 @@ import App from "../../components/App";
 import DashboardLayout, { ISidebarItem } from "../../layouts/dashboard";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import fetchApi from "../../lib/fetch";
+import fetchApi, { fetchSSR } from "../../lib/fetch";
 import {
   Flex,
   Text,
@@ -320,9 +320,7 @@ export default function TeamPage(props: {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const [user, team] = await Promise.all(
-      ["/users/me", `/teams/${ctx.params.id}`].map((i) =>
-        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
-      )
+      ["/users/me", `/teams/${ctx.params.id}`].map((i) => fetchSSR(i, ctx))
     );
 
     if (team.team.Personal) {

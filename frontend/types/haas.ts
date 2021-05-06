@@ -22,3 +22,14 @@ export interface IApp {
   ShortName: string;
   TeamID: number;
 }
+
+export interface IBuild {
+  ID: string;
+  ExecID: string;
+  AppID: number;
+  StartedAt: number;
+  EndedAt: number;
+  Running: boolean;
+  Events: string[];
+  Status: number;
+}

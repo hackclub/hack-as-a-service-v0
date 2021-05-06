@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FormEvent, useRef } from "react";
 import useSWR from "swr";
 import AppLayout from "../../../layouts/app";
-import fetchApi from "../../../lib/fetch";
+import fetchApi, { fetchSSR } from "../../../lib/fetch";
 import { IApp, ITeam, IUser } from "../../../types/haas";
 
 export default function AppDeployPage(props: {
@@ -62,14 +62,10 @@ export default function AppDeployPage(props: {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const [user, app] = await Promise.all(
-      ["/users/me", `/apps/${ctx.params.id}`].map((i) =>
-        fetchApi(i, { headers: ctx.req.headers as HeadersInit })
-      )
+      ["/users/me", `/apps/${ctx.params.id}`].map((i) => fetchSSR(i, ctx))
     );
 
-    const team = await fetchApi(`/teams/${app.app.TeamID}`, {
-      headers: ctx.req.headers as HeadersInit,
-    });
+    const team = await fetchSSR(`/teams/${app.app.TeamID}`, ctx);
 
     return {
       props: {
