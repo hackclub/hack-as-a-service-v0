@@ -23,6 +23,10 @@ export interface IApp {
   TeamID: number;
 }
 
+export interface ILetsEncrypt {
+  LetsEncryptEnabled: boolean;
+}
+
 export interface IBuild {
   ID: string;
   ExecID: string;
