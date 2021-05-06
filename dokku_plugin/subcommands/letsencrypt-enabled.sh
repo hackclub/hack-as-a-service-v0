@@ -13,20 +13,8 @@ case $? in
 	echo "true"
 	;;
 
-"1")
-	# Something went wrong
-	echo "App not found"
-	exit 1
-	;;
-
-"2")
-	# Not enabled
-	echo "false"
-	;;
-
 *)
 	# Wheeeeee
-	echo "An unknown error occured."
-	exit 1
+	echo "false"
 	;;
 esac
