@@ -51,7 +51,7 @@ export default function AppDeployPage(props: {
           </Text>
         </Text>
         <Input name="repoUrl" type="url" required ref={repoUrlRef} />
-        <Button variant="ctaLg" mt={2}>
+        <Button variant="ctaLg" mt={2} type="submit">
           Deploy
         </Button>
       </Box>

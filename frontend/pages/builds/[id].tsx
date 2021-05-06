@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { Text, useColorMode } from "@chakra-ui/react";
 import DashboardLayout from "../../layouts/dashboard";
@@ -9,8 +9,44 @@ import { fetchSSR } from "../../lib/fetch";
 import { IApp, IBuild, IUser } from "../../types/haas";
 
 interface IBuildEvent {
+  Timestamp: number;
+  Date: Date;
   Stream: "stdout" | "stderr" | "status";
   Output: string;
+}
+
+// https://stackoverflow.com/a/17415677
+function toIsoString(date: Date) {
+  var tzo = -date.getTimezoneOffset(),
+    dif = tzo >= 0 ? "+" : "-",
+    pad = function (num: number) {
+      var norm = Math.floor(Math.abs(num));
+      return (norm < 10 ? "0" : "") + norm;
+    };
+
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds()) +
+    dif +
+    pad(tzo / 60) +
+    ":" +
+    pad(tzo % 60)
+  );
+}
+
+function parseEvent(s: string): IBuildEvent {
+  const event = JSON.parse(s);
+  event.Date = new Date(event.Timestamp / 1000000);
+  return event;
 }
 
 export default function BuildPage(props: {
@@ -23,7 +59,9 @@ export default function BuildPage(props: {
 
   const { colorMode } = useColorMode();
 
-  const { data: build } = useSWR(`/builds/${id}`, { initialData: props.build });
+  const { data: build, mutate: mutateBuild } = useSWR(`/builds/${id}`, {
+    initialData: props.build,
+  });
   const { data: app } = useSWR(() => "/apps/" + build?.build.AppID, {
     initialData: props.app,
   });
@@ -33,7 +71,9 @@ export default function BuildPage(props: {
 
   useEffect(() => {
     if (!build) return;
-    setLogs(build.build.Events.map((e: string) => JSON.parse(e)));
+    const events = ((build.build.Events ?? []) as string[]).map(parseEvent);
+    events.sort((a, b) => a.Timestamp - b.Timestamp);
+    setLogs(events);
   }, [build]);
 
   useEffect(() => {
@@ -46,7 +86,17 @@ export default function BuildPage(props: {
     );
 
     ws.onmessage = (e) => {
-      setLogs((old) => old.concat(JSON.parse(e.data)));
+      const newEv = parseEvent(e.data);
+      setLogs((old) => {
+        const newLogs = old.concat(newEv);
+        newLogs.sort((a, b) => a.Timestamp - b.Timestamp);
+        console.log(`New event ts=${newEv.Timestamp}`);
+        return newLogs;
+      });
+      if (newEv.Stream == "status") {
+        // build ended, refresh through SWR for proper logs
+        mutateBuild();
+      }
     };
 
     return () => {
@@ -77,36 +127,45 @@ export default function BuildPage(props: {
       <Logs
         logs={logs}
         keyer={(log) => log.Output}
-        render={(i) =>
-          i.Stream != "status" ? (
-            <>
-              <Text
-                color={i.Stream == "stdout" ? "green" : "red"}
-                my={0}
-                as="span"
-              >
-                [{i.Stream}]
-              </Text>{" "}
-              <Text
-                my={0}
-                as="span"
-                color={colorMode == "dark" ? "background" : "text"}
-              >
-                {i.Output}
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text
-                color={colorMode == "dark" ? "snow" : "grey"}
-                my={0}
-                as="span"
-              >
-                [Build exited with status {i.Output}]
-              </Text>
-            </>
-          )
-        }
+        render={(i) => (
+          <>
+            <Text
+              color={colorMode == "dark" ? "snow" : "grey"}
+              my={0}
+              as="span"
+            >
+              {toIsoString(i.Date)}{" "}
+            </Text>
+            {i.Stream != "status" ? (
+              <>
+                <Text
+                  color={i.Stream == "stdout" ? "green" : "red"}
+                  my={0}
+                  as="span"
+                >
+                  [{i.Stream}]
+                </Text>{" "}
+                <Text
+                  my={0}
+                  as="span"
+                  color={colorMode == "dark" ? "background" : "text"}
+                >
+                  {i.Output}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text
+                  color={colorMode == "dark" ? "snow" : "grey"}
+                  my={0}
+                  as="span"
+                >
+                  [Build exited with status {i.Output}]
+                </Text>
+              </>
+            )}
+          </>
+        )}
       />
     </DashboardLayout>
   );

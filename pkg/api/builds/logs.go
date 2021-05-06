@@ -3,6 +3,7 @@ package builds
 import (
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -54,7 +55,7 @@ loop:
 			if !ok {
 				continue
 			}
-			err := ws.WriteJSON(gin.H{"Stream": "stdout", "Output": line})
+			err := ws.WriteJSON(gin.H{"Timestamp": time.Now().UnixNano(), "Stream": "stdout", "Output": line})
 			switch err.(type) {
 			case *websocket.CloseError:
 				break loop
@@ -63,13 +64,13 @@ loop:
 			if !ok {
 				continue
 			}
-			err := ws.WriteJSON(gin.H{"Stream": "stderr", "Output": line})
+			err := ws.WriteJSON(gin.H{"Timestamp": time.Now().UnixNano(), "Stream": "stderr", "Output": line})
 			switch err.(type) {
 			case *websocket.CloseError:
 				break loop
 			}
 		case status := <-cmd.StatusChan:
-			err = ws.WriteJSON(gin.H{"Stream": "status", "Output": strconv.Itoa(status)})
+			err = ws.WriteJSON(gin.H{"Timestamp": time.Now().UnixNano(), "Stream": "status", "Output": strconv.Itoa(status)})
 			if err != nil {
 				log.Println(err)
 			}

@@ -114,8 +114,9 @@ type statusMessage struct {
 }
 
 type eventLine struct {
-	Stream string
-	Output string
+	Timestamp int64 // Unix nanos
+	Stream    string
+	Output    string
 }
 
 type EventArgs struct {
@@ -137,18 +138,13 @@ func stdoutHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 	}
 	// update db in background
 	go func() {
-		var build db.Build
-		result := db.DB.First(&build, "exec_id = ?", msg.ExecId)
-		// ignore errors, nothing we can do
-		if result.Error != nil {
-			return
-		}
-		line := eventLine{Stream: "stdout", Output: msg.Line}
+		line := eventLine{Timestamp: time.Now().UnixNano(), Stream: "stdout", Output: msg.Line}
 		out, err := json.Marshal(line)
 		if err != nil {
 			return
 		}
-		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
+		db.DB.Model(&db.Build{}).Where("exec_id = ?", msg.ExecId).
+			Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -166,18 +162,13 @@ func stderrHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Req
 	}
 	// update db in background
 	go func() {
-		var build db.Build
-		result := db.DB.First(&build, "exec_id = ?", msg.ExecId)
-		// ignore errors, nothing we can do
-		if result.Error != nil {
-			return
-		}
-		line := eventLine{Stream: "stderr", Output: msg.Line}
+		line := eventLine{Timestamp: time.Now().UnixNano(), Stream: "stderr", Output: msg.Line}
 		out, err := json.Marshal(line)
 		if err != nil {
 			return
 		}
-		db.DB.Model(&build).Update("events", gorm.Expr("array_append(events, ?)", string(out)))
+		db.DB.Model(&db.Build{}).Where("exec_id = ?", msg.ExecId).
+			Update("events", gorm.Expr("array_append(events, ?)", string(out)))
 		log.Println("DB updated")
 	}()
 	return nil
@@ -201,7 +192,7 @@ func doneHandler(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Reque
 		if result.Error != nil {
 			return
 		}
-		line := eventLine{Stream: "status", Output: strconv.Itoa(msg.Status)}
+		line := eventLine{Timestamp: time.Now().UnixNano(), Stream: "status", Output: strconv.Itoa(msg.Status)}
 		out, err := json.Marshal(line)
 		if err != nil {
 			return
