@@ -13,4 +13,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.POST("/:id/letsencrypt/enable", handlePOSTLetsEncryptEnable)
 	r.POST("/:id/deploy", handlePOSTDeploy)
 	r.DELETE("/:id", handleDELETEApp)
+
+	r.GET("/:id/env", handleGETEnv)
 }
