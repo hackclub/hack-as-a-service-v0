@@ -1,6 +1,7 @@
 package apps
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -10,40 +11,21 @@ import (
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
 
-func handleGETEnv(c *gin.Context) {
-	user := c.MustGet("user").(db.User)
-	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
-	app_id := c.Param("id")
-
-	var app db.App
-	// result := db.DB.First(&app, "id = ?", app_id)
-	result := db.DB.Joins("JOIN team_users ON team_users.team_id = apps.team_id").
-		First(&app, "apps.id = ? AND team_users.user_id = ?", app_id, user.ID)
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "error",
-			"message": result.Error.Error(),
-		})
-		return
-	}
-
-	env_string, err := dokku_conn.RunCommand(c.Request.Context(), []string{"config:export", "--format", "json", app.ShortName})
+func getAppEnv(ctx context.Context, dokku *dokku.DokkuConn, app string, includeCore bool) (map[string]string, error) {
+	env_string, err := dokku.RunCommand(ctx, []string{"config:export", "--format", "json", app})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
 	raw_env := make(map[string]string)
 	err = json.Unmarshal([]byte(env_string), &raw_env)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  "error",
-			"message": err.Error(),
-		})
-		return
+		return nil, err
+	}
+
+	if includeCore {
+
+		return raw_env, nil
 	}
 
 	env := make(map[string]string)
@@ -54,8 +36,77 @@ func handleGETEnv(c *gin.Context) {
 		}
 	}
 
+	return env, nil
+}
+
+func handleGETEnv(c *gin.Context) {
+	user := c.MustGet("user").(db.User)
+	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+	app_id := c.Param("id")
+
+	var app db.App
+	result := db.DB.Joins("JOIN team_users ON team_users.team_id = apps.team_id").
+		First(&app, "apps.id = ? AND team_users.user_id = ?", app_id, user.ID)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": result.Error.Error(),
+		})
+		return
+	}
+
+	env, err := getAppEnv(c.Request.Context(), dokku_conn, app.ShortName, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(200, gin.H{
 		"status": "ok",
 		"env":    env,
 	})
+}
+
+func handlePUTEnv(c *gin.Context) {
+	user := c.MustGet("user").(db.User)
+	app_id := c.Param("id")
+	dokku_conn := c.MustGet("dokkuconn").(*dokku.DokkuConn)
+
+	var json struct {
+		Env map[string]string
+	}
+
+	err := c.BindJSON(&json)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": "Invalid JSON",
+		})
+		return
+	}
+
+	var app db.App
+	result := db.DB.Joins("JOIN team_users ON team_users.team_id = apps.team_id").
+		First(&app, "apps.id = ? AND team_users.user_id = ?", app_id, user.ID)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": result.Error.Error(),
+		})
+		return
+	}
+
+	env, err := getAppEnv(c.Request.Context(), dokku_conn, app.ShortName, true)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, env)
 }

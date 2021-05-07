@@ -15,4 +15,5 @@ func SetupRoutes(r *gin.RouterGroup) {
 	r.DELETE("/:id", handleDELETEApp)
 
 	r.GET("/:id/env", handleGETEnv)
+	r.PUT("/:id/env", handlePUTEnv)
 }
