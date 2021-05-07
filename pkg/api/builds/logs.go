@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
