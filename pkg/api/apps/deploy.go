@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hackclub/hack-as-a-service/pkg/api/util"
 	"github.com/hackclub/hack-as-a-service/pkg/db"
 	"github.com/hackclub/hack-as-a-service/pkg/dokku"
 )
@@ -46,8 +47,17 @@ func handlePOSTDeploy(c *gin.Context) {
 		return
 	}
 
+	defaultBranch, err := util.GetGitRepositoryDefaultBranch(json.GitRepository)
+	if err != nil {
+		c.JSON(500, gin.H{"status": "error", "message": err.Error()})
+	}
+
+	if defaultBranch == "" {
+		defaultBranch = "master"
+	}
+
 	cmd, err := conn.RunStreamingCommand(c.Request.Context(), []string{
-		"git:sync", "--build", app.ShortName, json.GitRepository, "HEAD",
+		"git:sync", "--build", app.ShortName, json.GitRepository, defaultBranch,
 	})
 	if err != nil {
 		c.JSON(500, gin.H{"status": "error", "message": err.Error()})

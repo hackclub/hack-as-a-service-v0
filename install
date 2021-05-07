@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export GO111MODULE=on
+
 # Clean up from previous builds
 rm -rf subcommands/
 rm commands
