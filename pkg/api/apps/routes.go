@@ -16,4 +16,6 @@ func SetupRoutes(r *gin.RouterGroup) {
 
 	r.GET("/:id/env", handleGETEnv)
 	r.PUT("/:id/env", handlePUTEnv)
+
+	r.POST("/:id/restart", handlePOSTRestart)
 }
