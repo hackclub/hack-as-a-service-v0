@@ -533,6 +533,126 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}/env:
+    get:
+      tags: [apps]
+      summary: Gets environment variables for an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+                  env:
+                    type: object
+                    example:
+                      SLACK_TOKEN: xoxb-1423-5252-4525554225
+                      SLACK_SIGNING_SECRET: "12345"
+                    properties:
+                      status:
+                        $ref: "#/components/schemas/Status"
+                      env:
+                        type: object
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+    put:
+      tags: [apps]
+      summary: Sets environment variables for an app
+      description: Normally, you should call `/apps/{id}/restart` after calling this method.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              example:
+                env:
+                  SLACK_TOKEN: xoxb-1423-5252-4525554225
+                  SLACK_SIGNING_SECRET: "12345"
+              type: object
+              properties:
+                env:
+                  type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+  /apps/{id}/restart:
+    post:
+      tags: [apps]
+      summary: Restarts an app
+      parameters:
+        - in: path
+          name: id
+          schema:
+            $ref: "#/components/schemas/ID"
+          required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/Status"
+        "400":
+          description: Invalid app ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorStatus"
+
   /apps/{id}/builds:
     get:
       tags: [apps]
