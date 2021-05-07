@@ -2,7 +2,7 @@ FROM golang:1.16-alpine AS builder
 
 WORKDIR /usr/src/app
 
-RUN apk --no-cache add libgit2-dev
+RUN apk --no-cache add libgit2-dev gcc musl-dev
 
 COPY . .
 
