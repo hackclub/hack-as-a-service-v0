@@ -127,16 +127,9 @@ export default function AppDashboardPage(props: {
 
               setLoading("Restarting app...");
 
-              await new Promise((resolve) => setTimeout(resolve, 2000));
-              {
-                /* await fetchApi(`/apps/${id}/restart`, { */
-              }
-              {
-                /*   method: "POST", */
-              }
-              {
-                /* }); */
-              }
+              await fetchApi(`/apps/${id}/restart`, {
+                method: "POST",
+              });
 
               toast({
                 status: "success",
