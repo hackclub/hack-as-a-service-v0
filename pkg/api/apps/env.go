@@ -3,6 +3,7 @@ package apps
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -99,7 +100,25 @@ func handlePUTEnv(c *gin.Context) {
 		return
 	}
 
-	env, err := getAppEnv(c.Request.Context(), dokku_conn, app.ShortName, true)
+	// Make sure no core variables are being set
+	for key, _ := range json.Env {
+		if !util.VerifyEnv(key) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": fmt.Sprintf("Invalid key: %s", key),
+			})
+			return
+		} else if util.IsCoreEnvVariable(key) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  "error",
+				"message": fmt.Sprintf("Can't set reserved environment variable: %s", key),
+			})
+			return
+		}
+	}
+
+	// Fetch the current app environment
+	env, err := getAppEnv(c.Request.Context(), dokku_conn, app.ShortName, false)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  "error",
@@ -108,5 +127,38 @@ func handlePUTEnv(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, env)
+	toDelete := []string{}
+
+	// Find environment variables to delete
+	for key := range env {
+		if _, ok := json.Env[key]; !ok {
+			toDelete = append(toDelete, key)
+		}
+	}
+
+	if len(toDelete) > 0 {
+		_, err := dokku_conn.RunCommand(c.Request.Context(), append([]string{"config:unset", "--no-restart", app.ShortName}, toDelete...))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "error",
+				"message": err.Error(),
+			})
+			return
+		}
+	}
+
+	args := append([]string{"config:set", "--no-restart", "--encoded", app.ShortName}, util.FormatEnv(json.Env)...)
+	_, err = dokku_conn.RunCommand(c.Request.Context(), args)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":  "ok",
+		"message": "success",
+	})
 }
