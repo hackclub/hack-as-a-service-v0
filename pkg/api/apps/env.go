@@ -101,7 +101,7 @@ func handlePUTEnv(c *gin.Context) {
 	}
 
 	// Make sure no core variables are being set
-	for key, _ := range json.Env {
+	for key := range json.Env {
 		if !util.VerifyEnv(key) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  "error",
