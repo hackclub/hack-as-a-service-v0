@@ -9,6 +9,7 @@ export let devAddons: IAddon[] = [
       "https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg",
     description:
       "PostgreSQL is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Postgres >>>",
+    storage: "1.2 GB",
     config: {
       ddfddfy47: {
         key: "USER",
@@ -30,6 +31,7 @@ export let devAddons: IAddon[] = [
     id: "1",
     name: "MongoDB",
     activated: true,
+    storage: "3.6 GB",
     img:
       "https://media-exp1.licdn.com/dms/image/C560BAQGC029P7UbAMQ/company-logo_200_200/0/1562088387077?e=2159024400&v=beta&t=lEY4Obku1xJ3BB_BpN3Np9ILy8_zaB1_yjsfH9A57qs",
     description:
@@ -55,6 +57,7 @@ export let devAddons: IAddon[] = [
     id: "2",
     name: "Redis",
     activated: false,
+    storage: "1.9 GB",
     img:
       "https://www.nditech.org/sites/default/files/styles/small_photo/public/redis-logo.png?itok=LrULOkWT",
     description:

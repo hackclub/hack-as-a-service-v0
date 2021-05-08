@@ -1,4 +1,6 @@
 import { KVEntry } from "./KVEntry";
+import { ConfirmDelete } from "./ConfirmDelete";
+import { Stat } from "./Stat";
 import {
   Flex,
   Button,
@@ -26,6 +28,7 @@ export function Addon({
   description,
   id,
   img,
+  storage,
   config: c,
 }: IAddon) {
   const [activated, updateActive] = useState(a);
@@ -40,11 +43,14 @@ export function Addon({
     onOpen: enableOnOpen,
     onClose: enableOnClose,
   } = useDisclosure();
-  function saveAddonData() {
-    const ogKey = Object.keys(c)[0];
-    if (ogKey != Object.keys(config)[0]) {
-    }
-  }
+  const {
+    isOpen: confirmIsOpen,
+    onOpen: confirmOnOpen,
+    onClose: confirmOnClose,
+  } = useDisclosure();
+
+  const [verb, setVerb] = useState("disable");
+
   return (
     <>
       <Flex
@@ -84,7 +90,10 @@ export function Addon({
             />
           </ModalHeader>
           <ModalBody margin="initial" padding="initial">
-            <Text margin="initial" padding="initial">Any unsaved changes will be discarded.</Text>
+            <Stat label="Storage" description={storage} />
+            <Text margin="initial" padding="initial" my="0.5em">
+              Any unsaved changes will be discarded.
+            </Text>
             {Object.entries(config).map((entry) => {
               const kv_id = entry[0];
               const v = entry[1];
@@ -109,9 +118,38 @@ export function Addon({
               variant="ghost"
               colorScheme="blue"
               px="1.5em"
+              mx="1em"
               onClick={() => {
+                setVerb("disable");
                 manageOnClose();
-                devAddons[id]["config"] = config
+                confirmOnOpen();
+              }}
+            >
+              Disable Addon
+            </Button>
+            <Button
+              margin="initial"
+              mx="1em"
+              variant="ghost"
+              colorScheme="blue"
+              px="1.5em"
+              onClick={() => {
+                setVerb("wipe");
+                manageOnClose();
+                confirmOnOpen();
+              }}
+            >
+              Wipe Data Only
+            </Button>
+            <Button
+              margin="initial"
+              ml="1em"
+              variant="ghost"
+              colorScheme="blue"
+              px="1.5em"
+              onClick={() => {
+                devAddons[id]["config"] = config;
+                manageOnClose();
               }}
             >
               Save
@@ -153,9 +191,13 @@ export function Addon({
                   id,
                   config: c,
                   img,
+                  storage,
                   description,
                 };
-                const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
+                const idx = devAddons.findIndex((o) => {
+                  console.log(o, obj);
+                  return _.isEqual(o, obj);
+                });
                 devAddons[idx].activated = true;
                 updateActive(true);
                 enableOnClose();
@@ -166,6 +208,33 @@ export function Addon({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <ConfirmDelete
+        isOpen={confirmIsOpen}
+        onClose={confirmOnClose}
+        onOpen={confirmOnOpen}
+        verb={verb}
+        name={name}
+        onCancellation={manageOnOpen}
+        onConfirmation={() => {
+          const obj = {
+            name,
+            activated,
+            id,
+            config,
+            img,
+            storage,
+            description,
+          };
+          const idx = devAddons.findIndex((o) => {
+            console.log(o, obj);
+            return _.isEqual(o, obj);
+          });
+
+          devAddons[idx].activated = false;
+          updateActive(false);
+        }}
+      />
     </>
   );
 }

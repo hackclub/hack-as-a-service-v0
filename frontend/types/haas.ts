@@ -55,4 +55,5 @@ export interface IAddon {
   img: string;
   id: string;
   config: KVConfig;
+  storage: string;
 }

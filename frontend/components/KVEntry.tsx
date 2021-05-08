@@ -4,7 +4,7 @@ import {
   InputGroup,
   InputRightElement,
   InputLeftAddon,
-  Text
+  Text,
 } from "@chakra-ui/react";
 
 import { useState } from "react";
@@ -30,21 +30,30 @@ export function KVEntry(props: {
   };
   function runCallback() {
     let obj = {};
-    obj[id] = { obscureValue, keyEditable, valueEditable, "key": newKey, value: val };
+    obj[id] = {
+      obscureValue,
+      keyEditable,
+      valueEditable,
+      key: newKey,
+      value: val,
+    };
     onDataChange(obj);
   }
   return (
     <>
       <InputGroup size="md" mb="8px">
         <InputLeftAddon margin="initial" padding="initial">
-          {keyEditable ? <Input
-            width="min-content"
-            isReadOnly={!keyEditable}
-            isDisabled={!keyEditable}
-            onChange={handleKeyChange}
-            value={newKey}
-          /> : <Text px="0.5em">{newKey}</Text>}
-          
+          {keyEditable ? (
+            <Input
+              width="min-content"
+              isReadOnly={!keyEditable}
+              isDisabled={!keyEditable}
+              onChange={handleKeyChange}
+              value={newKey}
+            />
+          ) : (
+            <Text px="0.5em">{newKey}</Text>
+          )}
         </InputLeftAddon>
         <Input
           pr="4.5rem"
@@ -53,7 +62,7 @@ export function KVEntry(props: {
           type={!hide ? "text" : "password"}
           placeholder="Enter your value here..."
           value={val}
-          autoComplete={obscureValue ? "new-password" : "off"}
+          autoComplete={"off"}
           onChange={handleChange}
         />
         <InputRightElement width="4.5rem">
