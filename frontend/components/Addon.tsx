@@ -15,6 +15,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 import { useState } from "react";
@@ -30,6 +31,7 @@ export function Addon({
   storage,
   config: c,
 }: IAddon) {
+  const border = useColorModeValue("#00000033", "#ffffff33");
   const [activated, updateActive] = useState(a);
   const [newConfig, updateConfig] = useState(c);
   const {
@@ -61,7 +63,7 @@ export function Addon({
       <Flex
         margin="2em"
         borderRadius="xl"
-        borderColor="#00000033"
+        borderColor={border}
         borderWidth="thin"
         padding="2"
         alignItems="center"
