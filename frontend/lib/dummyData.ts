@@ -6,9 +6,9 @@ export let devAddons: IAddon[] = [
     name: "PostgreSQL",
     activated: false,
     img:
-      "https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg",
+    "https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg",
     description:
-      "PostgreSQL is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Postgres >>>",
+    "PostgreSQL is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Postgres >>>",
     storage: "1.2 GB",
     config: {
       ddfddfy47: {
@@ -33,9 +33,9 @@ export let devAddons: IAddon[] = [
     activated: true,
     storage: "3.6 GB",
     img:
-      "https://media-exp1.licdn.com/dms/image/C560BAQGC029P7UbAMQ/company-logo_200_200/0/1562088387077?e=2159024400&v=beta&t=lEY4Obku1xJ3BB_BpN3Np9ILy8_zaB1_yjsfH9A57qs",
+    "https://media-exp1.licdn.com/dms/image/C560BAQGC029P7UbAMQ/company-logo_200_200/0/1562088387077?e=2159024400&v=beta&t=lEY4Obku1xJ3BB_BpN3Np9ILy8_zaB1_yjsfH9A57qs",
     description:
-      "MongoDB is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. MongoDB >>>",
+    "MongoDB is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. MongoDB >>>",
     config: {
       u488h: {
         key: "ADMIN_USER",
@@ -59,9 +59,9 @@ export let devAddons: IAddon[] = [
     activated: false,
     storage: "1.9 GB",
     img:
-      "https://www.nditech.org/sites/default/files/styles/small_photo/public/redis-logo.png?itok=LrULOkWT",
+    "https://www.nditech.org/sites/default/files/styles/small_photo/public/redis-logo.png?itok=LrULOkWT",
     description:
-      "Redis is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Redis >>>",
+    "Redis is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Redis >>>",
     config: {
       ddfsfyy5: {
         key: "ADMIN_USER",
@@ -80,3 +80,5 @@ export let devAddons: IAddon[] = [
     },
   },
 ];
+
+export const devAddonsOriginal: IAddon[] = devAddons

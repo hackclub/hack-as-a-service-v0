@@ -7,7 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { KVConfig } from "../types/haas";
 
 export function KVEntry(props: {
@@ -20,13 +20,19 @@ export function KVEntry(props: {
   const [hide, toggleVal] = useState(obscureValue);
   const [val, updateVal] = useState(value);
   const [newKey, updateKey] = useState(key);
-  const handleChange = (event) => {
-    updateVal(event.target.value);
+  useEffect(() => {
     runCallback();
+  }, [val]);
+
+  useEffect(() => {
+    runCallback();
+  }, [newKey]);
+
+  const handleChange = (evt) => {
+    updateVal(evt.target.value);
   };
   const handleKeyChange = (event) => {
     updateKey(event.target.value);
-    runCallback();
   };
   function runCallback() {
     let obj = {};
@@ -45,7 +51,6 @@ export function KVEntry(props: {
         <InputLeftAddon margin="initial" padding="initial">
           {keyEditable ? (
             <Input
-              width="min-content"
               isReadOnly={!keyEditable}
               isDisabled={!keyEditable}
               onChange={handleKeyChange}
@@ -55,6 +60,8 @@ export function KVEntry(props: {
             <Text px="0.5em">{newKey}</Text>
           )}
         </InputLeftAddon>
+        {/* this is here in an attempt to stop browsers from offering to save passwords */}
+        {hide && <Input autoComplete="off" display="none" type="password" />}
         <Input
           pr="4.5rem"
           isReadOnly={!valueEditable}

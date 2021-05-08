@@ -19,7 +19,7 @@ import {
 
 import { useState } from "react";
 import { IAddon, KVConfig } from "../types/haas";
-import { devAddons } from "../lib/dummyData";
+import { devAddons, devAddonsOriginal } from "../lib/dummyData";
 import _ from "lodash";
 
 export function Addon({
@@ -51,6 +51,12 @@ export function Addon({
 
   const [verb, setVerb] = useState("disable");
 
+  function closeAndDiscard() {
+    manageOnClose();
+    devAddons[id] = devAddonsOriginal[id];
+    updateConfig(c);
+  }
+
   return (
     <>
       <Flex
@@ -73,7 +79,7 @@ export function Addon({
         </Button>
       </Flex>
 
-      <Modal isOpen={manageIsOpen} onClose={manageOnClose}>
+      <Modal isOpen={manageIsOpen} onClose={closeAndDiscard}>
         <ModalOverlay />
         <ModalContent padding="2em">
           <ModalHeader
@@ -218,7 +224,7 @@ export function Addon({
             name,
             activated,
             id,
-            config,
+            config: c,
             img,
             storage,
             description,

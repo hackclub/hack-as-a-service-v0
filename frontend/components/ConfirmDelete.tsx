@@ -88,6 +88,7 @@ export function ConfirmDelete(props: {
             px="1.5em"
             isDisabled={!markedForDeletion}
             onClick={() => {
+              setValue("")
               onClose();
               onConfirmation();
             }}
