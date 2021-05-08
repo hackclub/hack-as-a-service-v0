@@ -194,10 +194,7 @@ export function Addon({
                   storage,
                   description,
                 };
-                const idx = devAddons.findIndex((o) => {
-                  console.log(o, obj);
-                  return _.isEqual(o, obj);
-                });
+                const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
                 devAddons[idx].activated = true;
                 updateActive(true);
                 enableOnClose();
@@ -226,13 +223,11 @@ export function Addon({
             storage,
             description,
           };
-          const idx = devAddons.findIndex((o) => {
-            console.log(o, obj);
-            return _.isEqual(o, obj);
-          });
-
-          devAddons[idx].activated = false;
-          updateActive(false);
+          const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
+          if (verb != "wipe") {
+            devAddons[idx].activated = false;
+            updateActive(false);
+          }
         }}
       />
     </>
