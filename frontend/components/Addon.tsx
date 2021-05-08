@@ -20,7 +20,6 @@ import {
 import { useState } from "react";
 import { IAddon, KVConfig } from "../types/haas";
 import { devAddons, devAddonsOriginal } from "../lib/dummyData";
-import _ from "lodash";
 
 export function Addon({
   name,
@@ -200,7 +199,7 @@ export function Addon({
                   storage,
                   description,
                 };
-                const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
+                const idx = devAddons.findIndex((o) => o.id == obj.id);
                 devAddons[idx].activated = true;
                 updateActive(true);
                 enableOnClose();
@@ -229,7 +228,11 @@ export function Addon({
             storage,
             description,
           };
-          const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
+
+          const idx = devAddons.findIndex((o) => {
+            console.log(o, obj);
+            return o.id == obj.id;
+          });
           if (verb != "wipe") {
             devAddons[idx].activated = false;
             updateActive(false);
