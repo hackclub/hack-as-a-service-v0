@@ -22,6 +22,7 @@ import Icon from "@hackclub/icons";
 import { Formik } from "formik";
 import AppCreateModal from "../components/AppCreateModal";
 import { useRouter } from "next/router";
+import { ErrorToast } from "../components/Toast";
 
 export default function Dashboard(props: {
   user: { user: IUser };
@@ -103,19 +104,7 @@ export default function Dashboard(props: {
                 duration: 5000,
                 position: "top",
                 render: () => (
-                  <Flex
-                    p={1}
-                    bg="red"
-                    color="white"
-                    borderRadius={10}
-                    fontSize={20}
-                    alignItems="center"
-                  >
-                    <Icon glyph="important" style={{ marginRight: 20 }} />
-                    <Text p={0} m={0} fontSize={20}>
-                      Your app couldn't be created. The ID may already be taken.
-                    </Text>
-                  </Flex>
+                  <ErrorToast text="Your app couldn't be created. The ID may already be taken." />
                 ),
               });
             }

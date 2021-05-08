@@ -54,6 +54,12 @@ export default function AppLayout({
               url: `/apps/${app?.ID}/deploy`,
               selected: selected == "Deploy",
             },
+            {
+              icon: "photo",
+              text: "Environment",
+              url: `/apps/${app?.ID}/environment`,
+              selected: selected == "Environment",
+            },
           ],
         },
       ]}
