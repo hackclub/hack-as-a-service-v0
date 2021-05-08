@@ -244,12 +244,12 @@ export default function TeamPage(props: {
         <Stat
           label="Apps"
           description={team?.team.Apps.length.toString()}
-          sx={{ marginRight: "100px" }}
+          style={{ marginRight: "100px" }}
         />
         <Stat
           label="Users"
           description={team?.team.Users.length.toString()}
-          sx={{ marginRight: "100px" }}
+          style={{ marginRight: "100px" }}
         />
         <Stat label="Expenses" description={`${expenses.toFixed(5)} HN`} />
       </Flex>
