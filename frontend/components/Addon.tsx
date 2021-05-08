@@ -20,7 +20,6 @@ import { IAddon, KVConfig } from "../types/haas";
 import { devAddons } from "../lib/dummyData";
 import _ from "lodash";
 
-// TODO: Make component look good lol
 export function Addon({
   name,
   activated: a,
@@ -85,6 +84,7 @@ export function Addon({
             />
           </ModalHeader>
           <ModalBody margin="initial" padding="initial">
+            <Text margin="initial" padding="initial">Any unsaved changes will be discarded.</Text>
             {Object.entries(config).map((entry) => {
               const kv_id = entry[0];
               const v = entry[1];
@@ -110,8 +110,8 @@ export function Addon({
               colorScheme="blue"
               px="1.5em"
               onClick={() => {
-                console.log("do the saving thing and close");
                 manageOnClose();
+                devAddons[id]["config"] = config
               }}
             >
               Save
@@ -156,7 +156,6 @@ export function Addon({
                   description,
                 };
                 const idx = devAddons.findIndex((o) => _.isEqual(o, obj));
-                console.log(idx, obj, devAddons);
                 devAddons[idx].activated = true;
                 updateActive(true);
                 enableOnClose();
