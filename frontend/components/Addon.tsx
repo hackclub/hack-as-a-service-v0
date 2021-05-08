@@ -32,7 +32,7 @@ export function Addon({
   config: c,
 }: IAddon) {
   const [activated, updateActive] = useState(a);
-  const [config, updateConfig] = useState(c);
+  const [newConfig, updateConfig] = useState(c);
   const {
     isOpen: manageIsOpen,
     onOpen: manageOnOpen,
@@ -100,7 +100,7 @@ export function Addon({
             <Text margin="initial" padding="initial" my="0.5em">
               Any unsaved changes will be discarded.
             </Text>
-            {Object.entries(config).map((entry) => {
+            {Object.entries(newConfig).map((entry) => {
               const kv_id = entry[0];
               const v = entry[1];
               let obj = {};
@@ -110,7 +110,7 @@ export function Addon({
                   key={kv_id}
                   id={kv_id}
                   onDataChange={(entry: KVConfig) => {
-                    updateConfig({ ...config, ...entry });
+                    updateConfig({ ...newConfig, ...entry });
                   }}
                   entry={obj}
                 />
@@ -154,7 +154,7 @@ export function Addon({
               colorScheme="blue"
               px="1.5em"
               onClick={() => {
-                devAddons[id]["config"] = config;
+                devAddons[id]["config"] = newConfig;
                 manageOnClose();
               }}
             >
