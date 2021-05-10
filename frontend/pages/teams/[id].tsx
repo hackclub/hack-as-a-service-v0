@@ -42,7 +42,6 @@ function Field({
     </Flex>
   );
 }
-import { Stat } from "../../components/Stat";
 
 function TeamMember({
   name,
@@ -241,17 +240,17 @@ export default function TeamPage(props: {
       )}
 
       <Flex>
-        <Stat
+        <Field
           label="Apps"
           description={team?.team.Apps.length.toString()}
           style={{ marginRight: "100px" }}
         />
-        <Stat
+        <Field
           label="Users"
           description={team?.team.Users.length.toString()}
           style={{ marginRight: "100px" }}
         />
-        <Stat label="Expenses" description={`${expenses.toFixed(5)} HN`} />
+        <Field label="Expenses" description={`${expenses.toFixed(5)} HN`} />
       </Flex>
 
       <Flex mt="35px" sx={{ flexWrap: "wrap", alignItems: "flex-start" }}>
