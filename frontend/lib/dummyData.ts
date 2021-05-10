@@ -2,6 +2,7 @@ import { IAddon } from "../types/haas";
 
 export let devAddons: IAddon[] = [
   {
+    price: "3",
     id: "0",
     name: "PostgreSQL",
     activated: false,
@@ -28,6 +29,7 @@ export let devAddons: IAddon[] = [
     },
   },
   {
+    price: "3",
     id: "1",
     name: "MongoDB",
     activated: true,
@@ -54,6 +56,7 @@ export let devAddons: IAddon[] = [
     },
   },
   {
+    price: "3",
     id: "2",
     name: "Redis",
     activated: false,

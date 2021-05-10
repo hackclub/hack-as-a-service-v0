@@ -30,8 +30,10 @@ export function Addon({
   img,
   storage,
   config: c,
+  price,
 }: IAddon) {
   const border = useColorModeValue("#00000033", "#ffffff33");
+  const secondary = useColorModeValue("gray.500", "gray.600");
   const [activated, updateActive] = useState(a);
   const [newConfig, updateConfig] = useState(c);
   const {
@@ -75,9 +77,25 @@ export function Addon({
           </Flex>
           <Text margin="unset">{description}</Text>
         </Flex>
-        <Button px="1.75em" onClick={activated ? manageOnOpen : enableOnOpen}>
-          {activated ? "Manage" : "Enable"}
-        </Button>
+        <Flex flexDirection="column">
+          <Flex flexDirection="row" alignItems="center">
+            <Text
+              fontSize="4xl"
+              fontWeight="bold"
+              margin="initial"
+              padding="initial"
+              mx="0.25em"
+            >
+              {price}
+            </Text>
+            <Text color={secondary} margin="initial" padding="initial">
+              hn/gb/month
+            </Text>
+          </Flex>
+          <Button px="1.75em" onClick={activated ? manageOnOpen : enableOnOpen}>
+            {activated ? "Manage" : "Enable"}
+          </Button>
+        </Flex>
       </Flex>
 
       <Modal isOpen={manageIsOpen} onClose={closeAndDiscard}>
@@ -231,9 +249,7 @@ export function Addon({
           //   description,
           // };
 
-          const idx = devAddons.findIndex((o) => 
-             o.id == id
-          );
+          const idx = devAddons.findIndex((o) => o.id == id);
           if (verb != "wipe") {
             devAddons[idx].activated = false;
             updateActive(false);

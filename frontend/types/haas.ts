@@ -56,4 +56,5 @@ export interface IAddon {
   id: string;
   config: KVConfig;
   storage: string;
+  price: string;
 }
