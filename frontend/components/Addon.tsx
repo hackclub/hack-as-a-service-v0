@@ -192,16 +192,16 @@ export function Addon({
               colorScheme="blue"
               px="1.5em"
               onClick={() => {
-                const obj = {
-                  name,
-                  activated,
-                  id,
-                  config: c,
-                  img,
-                  storage,
-                  description,
-                };
-                const idx = devAddons.findIndex((o) => o.id == obj.id);
+                // const obj = {
+                //   name,
+                //   activated,
+                //   id,
+                //   config: c,
+                //   img,
+                //   storage,
+                //   description,
+                // };
+                const idx = devAddons.findIndex((o) => o.id == id);
                 devAddons[idx].activated = true;
                 updateActive(true);
                 enableOnClose();
@@ -221,20 +221,19 @@ export function Addon({
         name={name}
         onCancellation={manageOnOpen}
         onConfirmation={() => {
-          const obj = {
-            name,
-            activated,
-            id,
-            config: c,
-            img,
-            storage,
-            description,
-          };
+          // const obj = {
+          //   name,
+          //   activated,
+          //   id,
+          //   config: c,
+          //   img,
+          //   storage,
+          //   description,
+          // };
 
-          const idx = devAddons.findIndex((o) => {
-            console.log(o, obj);
-            return o.id == obj.id;
-          });
+          const idx = devAddons.findIndex((o) => 
+             o.id == id
+          );
           if (verb != "wipe") {
             devAddons[idx].activated = false;
             updateActive(false);
