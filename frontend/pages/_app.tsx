@@ -3,6 +3,8 @@ import { SWRConfig } from "swr";
 import fetchApi from "../lib/fetch";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "@hackclub/theme/fonts/reg-bold.css";
+import { useState } from "react";
+import ThemeContext from "../lib/disable_theme";
 
 const haasTheme = extendTheme(theme as any, {
   components: {
@@ -26,11 +28,19 @@ const haasTheme = extendTheme(theme as any, {
 });
 
 function MyApp({ Component, pageProps }) {
+  const [themeEnabled, setThemeEnabled] = useState(true);
+
   return (
     <SWRConfig value={{ fetcher: fetchApi }}>
-      <ChakraProvider theme={haasTheme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <ThemeContext.Provider value={{ themeEnabled, setThemeEnabled }}>
+        {themeEnabled ? (
+          <ChakraProvider theme={haasTheme}>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        ) : (
+          <Component {...pageProps} />
+        )}
+      </ThemeContext.Provider>
     </SWRConfig>
   );
 }
