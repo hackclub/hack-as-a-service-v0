@@ -45,7 +45,7 @@ const gx = (from: string, to: string): string => `radial-gradient(
   ${cx(to)}
 )`;
 
-const fontSizes = (zip(
+const fontSizes = zip(
   [
     "xs",
     "sm",
@@ -61,11 +61,11 @@ const fontSizes = (zip(
     "8xl",
   ],
   [12, 16, 20, 24, 32, 48, 64, 96, 128, 160, 192]
-) as unknown) as Theme["fontSizes"];
+) as unknown as Theme["fontSizes"];
 
-const space = (Object.fromEntries(
+const space = Object.fromEntries(
   [0, 4, 8, 16, 32, 64, 128, 256, 512].map((x, i) => [`${i * 0.5}`, `${x}px`])
-) as unknown) as Theme["space"];
+) as unknown as Theme["space"];
 
 const lightMode = {};
 const darkMode = {
@@ -111,8 +111,7 @@ const theme = extendTheme({
   fonts: {
     heading:
       '"Phantom Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    body:
-      '"Phantom Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    body: '"Phantom Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     monospace: '"SF Mono", "Roboto Mono", Menlo, Consolas, monospace',
   },
   lineHeights: {
