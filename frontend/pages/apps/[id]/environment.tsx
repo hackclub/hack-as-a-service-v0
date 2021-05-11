@@ -200,11 +200,9 @@ export default function AppDashboardPage(props: {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const [user, app, env] = await Promise.all(
-      [
-        "/users/me",
-        `/apps/${ctx.params.id}`,
-        `/apps/${ctx.params.id}/env`,
-      ].map((i) => fetchSSR(i, ctx))
+      ["/users/me", `/apps/${ctx.params.id}`, `/apps/${ctx.params.id}/env`].map(
+        (i) => fetchSSR(i, ctx)
+      )
     );
 
     const team = await fetchSSR(`/teams/${app.app.TeamID}`, ctx);

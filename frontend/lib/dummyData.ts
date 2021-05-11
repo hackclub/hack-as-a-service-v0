@@ -6,8 +6,7 @@ export let devAddons: IAddon[] = [
     id: "0",
     name: "PostgreSQL",
     activated: false,
-    img:
-      "https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg",
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg",
     description:
       "PostgreSQL is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Postgres >>>",
     storage: "1.2 GB",
@@ -34,8 +33,7 @@ export let devAddons: IAddon[] = [
     name: "MongoDB",
     activated: true,
     storage: "3.6 GB",
-    img:
-      "https://media-exp1.licdn.com/dms/image/C560BAQGC029P7UbAMQ/company-logo_200_200/0/1562088387077?e=2159024400&v=beta&t=lEY4Obku1xJ3BB_BpN3Np9ILy8_zaB1_yjsfH9A57qs",
+    img: "https://media-exp1.licdn.com/dms/image/C560BAQGC029P7UbAMQ/company-logo_200_200/0/1562088387077?e=2159024400&v=beta&t=lEY4Obku1xJ3BB_BpN3Np9ILy8_zaB1_yjsfH9A57qs",
     description:
       "MongoDB is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. MongoDB >>>",
     config: {
@@ -61,8 +59,7 @@ export let devAddons: IAddon[] = [
     name: "Redis",
     activated: false,
     storage: "1.9 GB",
-    img:
-      "https://www.nditech.org/sites/default/files/styles/small_photo/public/redis-logo.png?itok=LrULOkWT",
+    img: "https://www.nditech.org/sites/default/files/styles/small_photo/public/redis-logo.png?itok=LrULOkWT",
     description:
       "Redis is the best database to ever exist. Sometimes it's hard to understand why people use other databases like <insert DB here>. Redis >>>",
     config: {
