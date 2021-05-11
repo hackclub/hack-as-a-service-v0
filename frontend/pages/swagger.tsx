@@ -1,10 +1,10 @@
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import fs from "fs/promises";
 import YAML from "yaml";
+import DisableTheme from "../components/DisableTheme";
 import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
-
-import Head from "next/head";
 
 export default function Swagger({ spec }: { spec: any }) {
   return (
@@ -12,6 +12,7 @@ export default function Swagger({ spec }: { spec: any }) {
       <Head>
         <title>HaaS API Reference</title>
       </Head>
+      <DisableTheme />
       <SwaggerUI spec={spec} />
     </>
   );
