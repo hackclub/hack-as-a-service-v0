@@ -1,3 +1,6 @@
+# :rotating_light: ATTENTION DEVS :rotating_light:
+We're in the process of rewriting some of the backend, and splitting Hack as a Service into several Git repositories! We've also got a fancy new organization over at https://github.com/hack-as-a-service, so this repo will no longer be maintained.
+
 # Hack as a Service (HaaS)
 
 Run your own backend applications for just 5hn/app/month!
